@@ -1,10 +1,11 @@
 ## autoUniCalendar
-An awesome script to convert the University Of Oviedo web calendar to Google or Outlook calendars.
+
+Un script en Python para convertir el calendario de la intranet de la Universidad de Oviedo en un calendario de Outlook o Google Calendar.
 
 ![](/assets/cat.jpg)
 ![](/assets/script.jpg)
 
-## Español
+## Explicación e instalación
 
 El script utiliza la cookie de sesión del usuario para acceder a los datos de su calendario tramitando solicitudes GET y POST al servidor de la Universidad de Oviedo.
 Estas solicitudes fueron analizadas y automatizadas en el script utilizando Burpsuite y la librería requests de Python, necesaria para el funcionamiento del programa.

@@ -15,7 +15,7 @@ session = sys.argv[1]
 rendermap = sys.argv[2]
 
 print("[i] autoUniCalendar, a script to convert the Uniovi calendar to Google and Microsoft calendars.")
-print("[i] Design and programmed by Daniel López Gala from the University of Oviedo.")
+print("[i] Designed and programmed by Daniel López Gala from the University of Oviedo.")
 print("[i] Visit Bimo99B9.github.io for more content.\n")
 print("\n[*] The provided session is: " + session)
 print("[*] The provided render token is: " + rendermap + "\n")
