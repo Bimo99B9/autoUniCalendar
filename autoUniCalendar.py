@@ -8,140 +8,151 @@ import urllib.parse
 import os
 
 if len(sys.argv) != 3:
-    print("\n[!] Uso: python3 " + sys.argv[0] + " <JSESSIONID> <RENDERMAP.TOKEN>\n")
+    print(f"\n[!] Uso: python3 {sys.argv[0]} <JSESSIONID> <RENDERMAP.TOKEN>\n")
     sys.exit(1)
 
 session = sys.argv[1]
 rendermap = sys.argv[2]
 
-print("[i] autoUniCalendar, a script to convert the Uniovi calendar to Google and Microsoft calendars.")
+print("[i] autoUniCalendar, is a script which converts the Uniovi calendar into Google and Microsoft calendars.")
 print("[i] Designed and programmed by Daniel López Gala from the University of Oviedo.")
-print("[i] Visit Bimo99B9.github.io for more content.\n")
-print("\n[*] The provided session is: " + session)
-print("[*] The provided render token is: " + rendermap + "\n")
+print("[i] Visit Bimo99B9.github.io for more content.")
+print(f"[*] The provided session is: {session}")
+print(f"[*] The provided render token is: {rendermap}")
+
+URL = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
 
 
-# print(session + rendermap)
+def get_uniovi_calendar_info(session, token):
+    [source, view, submit] = extract_cookies()
 
-def get_first_request(s, r):
-    print("[@] Sending the first request...")
-    url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
+    print("[@] Sending the calendar request...")
+
     payload = {
-        'JSESSIONID': s,
-        'oam.Flash.RENDERMAP.TOKEN': r
+        'JSESSIONID': session,
+        'oam.Flash.RENDERMAP.TOKEN': token,
+        'cookieconsent_status': 'dismiss'
     }
-    r = requests.get(url, cookies=payload)
-    print("[#] First request correctly finished.\n")
-    return r.text
+    headers = {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    print("[*] Creating the payload...")
+
+    bodypayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{source}_start=1630886400000&{source}_end=1652054400000&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
+
+    request = requests.post(URL, data=bodypayload,
+                            headers=headers, cookies=payload)
+
+    print("[#] Calendar request correctly retrieved.")
+
+    print("[@] Writing the raw calendar data into a .txt file...")
+
+    file = open("raw.txt", "w")
+    file.write(request.text)
+    file.close()
+
+    print("[#] File correctly written.")
 
 
-def extract_cookies(req):
+def extract_cookies():
+    req = first_uniovi_request(session, rendermap)
     print("[@] Extracting the calendar parameters...")
     for line in req.split('\n'):
-        if '<div id="j_id' in line:
+        if 'id="j_id' in line:
             tmp = line.split('<')
             src = tmp[1]
             src2 = re.findall('"([^"]*)"', src)[0]
             source = urllib.parse.quote(src2)
-            print("[*] javax.faces.source retrieved: " + source)
-            break
-
-    for line in req.split('\n'):
+            print(f"[*] javax.faces.source retrieved: {source}")
         if 'javax.faces.ViewState' in line:
             tmp = line
             st = tmp.split(' ')[12]
             viewst = re.findall('"([^"]*)"', st)[0]
             viewstate = urllib.parse.quote(viewst)
-            print("[*] javax.faces.ViewState retrieved: " + viewstate)
-            break
-
-    for line in req.split('\n'):
-        if 'action="/serviciosacademicos/web/expedientes/calendario.xhtml"' in line:
+            print(f"[*] javax.faces.ViewState retrieved: {viewstate}")
+        if 'calendario.xhtml"' in line:
             tmp = line.split(' ')
             submit = re.findall('"([^"]*)"', tmp[3])[0]
-            print("[*] javax.faces.source_SUBMIT retrieved: " + submit)
-            break
+            print(f"[*] javax.faces.source_SUBMIT retrieved: {submit}")
 
-    print("[#] Calendar parameters extracted.\n")
+    print("[#] Calendar parameters extracted.")
 
     return [source, viewstate, submit]
 
 
-def post_second_request(s, r, ajax, source, view, start, end, submit):
-    print("[@] Sending the calendar request...")
+def first_uniovi_request(session, token):
+    print("[@] Sending the first request...")
 
-    url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
     payload = {
-        'JSESSIONID': s,
-        'oam.Flash.RENDERMAP.TOKEN': r,
-        'cookieconsent_status': 'dismiss'
+        'JSESSIONID': session,
+        'oam.Flash.RENDERMAP.TOKEN': token
     }
-    stringstart = source + "_start"
-    stringend = source + "_end"
-    stringsubmit = submit + "_SUBMIT"
-    headers = {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
 
-    print("[*] Creating the payload...")
-    bodypayload = "javax.faces.partial.ajax=" + ajax + "&javax.faces.source=" + source + "&javax.faces.partial.execute=" + source + "&javax.faces.partial.render=" + source + "&" + source + "=" + source + "&" + stringstart + "=" + start + "&" + stringend + "=" + end + "&" + stringsubmit + "=1&javax.faces.ViewState=" + view
+    request = requests.get(URL, cookies=payload)
 
-    r = requests.post(url, data=bodypayload, headers=headers, cookies=payload)
-    print("[#] Calendar request correctly retrieved.\n")
+    print("[#] First request correctly finished.")
 
-    print("[@] Writing the raw calendar data into a .txt file...")
-    f = open("raw.txt", "w")
-    f.write(r.text)
-    f.close()
-    print("[#] File correctly written.\n")
+    return request.text
 
 
-def treatFile(file):
-
+def create_csv_file():
     print("[@] Creating the CSV file...")
-    f = open(file, "r")
-    g = open("Calendario.CSV", "w")
-    g.write("Asunto,Fecha de comienzo,Comienzo,Fecha de finalización,Finalización,Todo el dí­a,Reminder on/off,Reminder Date,Reminder Time,Meeting Organizer,Required Attendees,Optional Attendees,Recursos de la reuniÃƒÂ³n,Billing Information,Categories,Description,Location,Mileage,Priority,Private,Sensitivity,Show time as\n")
-    data = f.read()
+    file = open("raw.txt", "r")
+    csv_file = open("Calendario.CSV", "w")
+    csv_file.write("Asunto,Fecha de comienzo,Comienzo,Fecha de finalización,Finalización,Todo el dí­a,Reminder on/off,Reminder Date,Reminder Time,Meeting Organizer,Required Attendees,Optional Attendees,Recursos de la reuniÃƒÂ³n,Billing Information,Categories,Description,Location,Mileage,Priority,Private,Sensitivity,Show time as\n")
+    data = file.read()
     text = data.split('<')
     calendar = text[5]
     events = calendar.split('{')
     del events[0:2]
+
     print("[*] Parsing the data...")
     for event in events:
         res = []
         for ele in event.split(','):
             if ele.strip():
                 res.append(ele)
-        id = res[0]
         title = res[1]
         start = res[2]
         end = res[3]
-        allday = res[4]
-        editable = res[5]
-        className = res[6]
         description = res[7]
-        
-        titulo = re.findall('"([^"]*)"', title.split(':')[1])[0]
+
+        title = re.findall('"([^"]*)"', title.split(':')[1])[0]
+
         tmp = start.split(' ')[1].split('T')[0].removeprefix('"')
-        fechainicio = tmp.split('-')[2]+'/'+tmp.split('-')[1]+'/'+tmp.split('-')[0]
-        horainicio = start.split(' ')[1].split('T')[1].split('+')[0]
+
+        startDate = tmp.split('-')[2]+'/' + \
+            tmp.split('-')[1]+'/'+tmp.split('-')[0]
+
+        startHour = start.split(' ')[1].split('T')[1].split('+')[0]
+
         tmp = end.split(' ')[1].split('T')[0].removeprefix('"')
-        fechafin = tmp.split('-')[2]+'/'+tmp.split('-')[1]+'/'+tmp.split('-')[0]
-        horafin = end.split(' ')[1].split('T')[1].split('+')[0]
-        fechadealerta = fechainicio
-        horadealerta = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
-        creador = "Universidad de Oviedo"
+
+        endDate = tmp.split('-')[2]+'/' + \
+            tmp.split('-')[1]+'/'+tmp.split('-')[0]
+
+        alertHour = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[
+            1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
+
+        creator = "Universidad de Oviedo"
+
         body = description.split('"')[3].replace(r'\n', '')
-        csvline = titulo+','+fechainicio+','+horainicio+','+fechafin+','+horafin+',FALSO,FALSO,'+fechadealerta+','+horadealerta+','+creador+',,,,,,'+body+',,,Normal,Falso,Normal,2\n'
-        g.write(csvline)
+
+        csvline = f"{title},{startDate},{startHour},{endDate},{startDate},FALSO,FALSO,{startDate},{alertHour},{creator},,,,,,,{body},,,Normal,Falso,Normal,2\n"
+
+        csv_file.write(csvline)
+
     print("[*] Events correctly written in the CSV file.")
-    f.close()
-    g.close()
+
+    file.close()
+    csv_file.close()
+
     print("[*] Removing raw .txt file...")
+
     os.remove("raw.txt")
-    print("\n[#] Calendar generated. You can now import it in Outlook or Google Calendar selecting 'import from file' and providing the CSV file generated.\n")
+
+    print("[#] Calendar generated. You can now import it in Outlook or Google Calendar selecting 'import from file' and providing the CSV file generated.")
 
 
-first_request = get_first_request(session, rendermap)
-cookies = extract_cookies(first_request)
-post_second_request(session, rendermap, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
-treatFile("raw.txt")
+get_uniovi_calendar_info(session, rendermap)
+
+create_csv_file()
