@@ -119,7 +119,7 @@ def treatFile(file):
         editable = res[5]
         className = res[6]
         description = res[7]
-
+        
         titulo = re.findall('"([^"]*)"', title.split(':')[1])[0]
         tmp = start.split(' ')[1].split('T')[0].removeprefix('"')
         fechainicio = tmp.split('-')[2]+'/'+tmp.split('-')[1]+'/'+tmp.split('-')[0]
@@ -130,8 +130,7 @@ def treatFile(file):
         fechadealerta = fechainicio
         horadealerta = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
         creador = "Universidad de Oviedo"
-        body = re.findall('"([^"]*)"', description.split(':')[1].replace(r'\n', ''))[0]
-
+        body = description.split('"')[3].replace(r'\n', '')
         csvline = titulo+','+fechainicio+','+horainicio+','+fechafin+','+horafin+',FALSO,FALSO,'+fechadealerta+','+horadealerta+','+creador+',,,,,,'+body+',,,Normal,Falso,Normal,2\n'
         g.write(csvline)
     print("[*] Events correctly written in the CSV file.")
