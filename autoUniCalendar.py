@@ -8,17 +8,18 @@ import urllib.parse
 import os
 
 if len(sys.argv) != 3:
-    print(f"\n[!] Uso: python3 {sys.argv[0]} <JSESSIONID> <RENDERMAP.TOKEN>\n")
+    print(
+        f"\n[!] Uso: python3 {sys.argv[0]} <JSESSIONID> <RENDER_MAP.TOKEN>\n")
     sys.exit(1)
 
 session = sys.argv[1]
-rendermap = sys.argv[2]
+render_map = sys.argv[2]
 
 print("[i] autoUniCalendar, is a script which converts the Uniovi calendar into Google and Microsoft calendars.")
 print("[i] Designed and programmed by Daniel López Gala from the University of Oviedo.")
 print("[i] Visit Bimo99B9.github.io for more content.")
 print(f"[*] The provided session is: {session}")
-print(f"[*] The provided render token is: {rendermap}")
+print(f"[*] The provided render token is: {render_map}")
 
 URL = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
 
@@ -30,16 +31,16 @@ def get_uniovi_calendar_info(session, token):
 
     payload = {
         'JSESSIONID': session,
-        'oam.Flash.RENDERMAP.TOKEN': token,
+        'oam.Flash.RENDER_MAP.TOKEN': token,
         'cookieconsent_status': 'dismiss'
     }
     headers = {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
 
     print("[*] Creating the payload...")
 
-    bodypayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{source}_start=1630886400000&{source}_end=1652054400000&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
+    body_payload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{source}_start=1630886400000&{source}_end=1652054400000&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
 
-    request = requests.post(URL, data=bodypayload,
+    request = requests.post(URL, data=body_payload,
                             headers=headers, cookies=payload)
 
     print("[#] Calendar request correctly retrieved.")
@@ -54,7 +55,7 @@ def get_uniovi_calendar_info(session, token):
 
 
 def extract_cookies():
-    req = first_uniovi_request(session, rendermap)
+    req = first_uniovi_request(session, render_map)
     print("[@] Extracting the calendar parameters...")
     for line in req.split('\n'):
         if 'id="j_id' in line:
@@ -84,7 +85,7 @@ def first_uniovi_request(session, token):
 
     payload = {
         'JSESSIONID': session,
-        'oam.Flash.RENDERMAP.TOKEN': token
+        'oam.Flash.RENDER_MAP.TOKEN': token
     }
 
     request = requests.get(URL, cookies=payload)
@@ -120,26 +121,26 @@ def create_csv_file():
 
         tmp = start.split(' ')[1].split('T')[0].removeprefix('"')
 
-        startDate = tmp.split('-')[2]+'/' + \
+        start_date = tmp.split('-')[2]+'/' + \
             tmp.split('-')[1]+'/'+tmp.split('-')[0]
 
-        startHour = start.split(' ')[1].split('T')[1].split('+')[0]
+        start_hour = start.split(' ')[1].split('T')[1].split('+')[0]
 
         tmp = end.split(' ')[1].split('T')[0].removeprefix('"')
 
-        endDate = tmp.split('-')[2]+'/' + \
+        end_date = tmp.split('-')[2]+'/' + \
             tmp.split('-')[1]+'/'+tmp.split('-')[0]
 
-        alertHour = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[
+        alert_hour = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[
             1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
 
         creator = "Universidad de Oviedo"
 
         body = description.split('"')[3].replace(r'\n', '')
 
-        csvline = f"{title},{startDate},{startHour},{endDate},{startDate},FALSO,FALSO,{startDate},{alertHour},{creator},,,,,,,{body},,,Normal,Falso,Normal,2\n"
+        csv_line = f"{title},{start_date},{start_hour},{end_date},{start_date},FALSO,FALSO,{start_date},{alert_hour},{creator},,,,,,,{body},,,Normal,Falso,Normal,2\n"
 
-        csv_file.write(csvline)
+        csv_file.write(csv_line)
 
     print("[*] Events correctly written in the CSV file.")
 
@@ -153,6 +154,6 @@ def create_csv_file():
     print("[#] Calendar generated. You can now import it in Outlook or Google Calendar selecting 'import from file' and providing the CSV file generated.")
 
 
-get_uniovi_calendar_info(session, rendermap)
+get_uniovi_calendar_info(session, render_map)
 
 create_csv_file()
