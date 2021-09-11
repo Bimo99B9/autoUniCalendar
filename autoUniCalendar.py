@@ -58,22 +58,29 @@ def extract_cookies():
     req = first_uniovi_request(session, render_map)
     print("[@] Extracting the calendar parameters...")
     for line in req.split('\n'):
-        if 'id="j_id' in line:
+        if '<div id="j_id' in line:
             tmp = line.split('<')
             src = tmp[1]
             src2 = re.findall('"([^"]*)"', src)[0]
             source = urllib.parse.quote(src2)
             print(f"[*] javax.faces.source retrieved: {source}")
+            break
+
+    for line in req.split('\n'):
         if 'javax.faces.ViewState' in line:
             tmp = line
             st = tmp.split(' ')[12]
             viewst = re.findall('"([^"]*)"', st)[0]
             viewstate = urllib.parse.quote(viewst)
             print(f"[*] javax.faces.ViewState retrieved: {viewstate}")
-        if 'calendario.xhtml"' in line:
+            break
+
+    for line in req.split('\n'):
+        if 'action="/serviciosacademicos/web/expedientes/calendario.xhtml"' in line:
             tmp = line.split(' ')
             submit = re.findall('"([^"]*)"', tmp[3])[0]
             print(f"[*] javax.faces.source_SUBMIT retrieved: {submit}")
+            break
 
     print("[#] Calendar parameters extracted.")
 
