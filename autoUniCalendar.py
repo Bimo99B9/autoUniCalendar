@@ -136,7 +136,7 @@ def create_csv(file):
         start_date = start.split(' ')[1].split('T')[0].split('"')[1]
         start_date_csv = start_date.split('-')[2]+'/'+start_date.split('-')[1]+'/'+start_date.split('-')[0]
         start_hour = start.split(' ')[1].split('T')[1].split('+')[0]
-        end_date = end.split(' ')[1].split('T')[0].removeprefix('"')
+        end_date = end.split(' ')[1].split('T')[0].split('"')[1]
         end_date_csv = end_date.split('-')[2]+'/'+end_date.split('-')[1]+'/'+end_date.split('-')[0]
         end_hour = end.split(' ')[1].split('T')[1].split('+')[0]
         alert_date = start_date_csv
