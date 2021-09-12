@@ -133,7 +133,7 @@ def create_csv(file):
         
         # Make the necessary strings transformations to adapts the raw field data into a CSV readable file.
         title_csv = re.findall('"([^"]*)"', title.split(':')[1])[0]
-        start_date = start.split(' ')[1].split('T')[0].removeprefix('"')
+        start_date = start.split(' ')[1].split('T')[0].split('"')[1]
         start_date_csv = start_date.split('-')[2]+'/'+start_date.split('-')[1]+'/'+start_date.split('-')[0]
         start_hour = start.split(' ')[1].split('T')[1].split('+')[0]
         end_date = end.split(' ')[1].split('T')[0].removeprefix('"')
