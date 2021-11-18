@@ -21,7 +21,7 @@ render_map = sys.argv[2]
 print("[i] autoUniCalendar, a script which converts the Uniovi calendar into Google and Microsoft calendars.")
 print("[i] Designed and programmed by Daniel López Gala from the University of Oviedo.")
 print("[i] Visit Bimo99B9.github.io for more content.\n")
-print(f"[*] The provided session is: {session}")
+print(f"[*] The provided session cookie is: {session}")
 print(f"[*] The provided render token is: {render_map}")
 
 # Function to send the first GET HTTP request using the tokens provided.
@@ -45,24 +45,20 @@ def extract_cookies(get_response):
     print("[@] Extracting the calendar parameters...")
 
     # Iterate the response lines to search the cookies, and save them in variables.
-    # To-do: Optimize search algorithm.
+
+    found_first, found_second, found_third = False, False, False
     for line in get_response.split('\n'):
-        if '<div id="j_id' in line:
+        if '<div id="j_id' in line and not found_first:
             source = urllib.parse.quote(re.findall('"([^"]*)"', line.split('<')[1])[0])
-            print(f"[*] javax.faces.source retrieved: {source}")
-            break
+            found_first = True
 
-    for line in get_response.split('\n'):
-        if 'javax.faces.ViewState' in line:
+        if 'javax.faces.ViewState' in line and not found_second:
             viewstate = urllib.parse.quote(re.findall('"([^"]*)"', line.split(' ')[12])[0])
-            print(f"[*] javax.faces.ViewState retrieved: {viewstate}")
-            break
+            found_second = True
 
-    for line in get_response.split('\n'):
-        if 'action="/serviciosacademicos/web/expedientes/calendario.xhtml"' in line:
+        if 'action="/serviciosacademicos/web/expedientes/calendario.xhtml"' in line and not found_third:
             submit = re.findall('"([^"]*)"', line.split(' ')[3])[0]
-            print(f"[*] javax.faces.source_SUBMIT retrieved: {submit}")
-            break
+            found_third = True
 
     print("[#] Calendar parameters extracted.\n")
     # The function returns a list that contains the extracted parameters.
