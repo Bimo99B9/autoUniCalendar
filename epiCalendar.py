@@ -136,7 +136,7 @@ def create_csv(file):
         title = title_csv.split(" - ")[0]
         classType = title_csv.split(" - ")[1].replace('.','').replace('-', ' ').rsplit()
         if classType[0] == "Teoría": classType = f"CEX"
-        elif classType[1] == "Grupales": classType = f"TG{classType[2  ].strip('0')}"
+        elif classType[1] == "Grupales": classType = f"TG{classType[2].strip('0')}"
         elif classType[2] == "Aula": classType = f"PA{classType[3].strip('0')}"
         elif classType[2] == "Laboratorio": classType = f"PL{classType[3].strip('0')}"
         title = f"{title} ({classType})"
@@ -169,8 +169,7 @@ def create_csv(file):
         g.write(csv_line)
         
     print("✅")
-    f.close()
-    g.close()
+    f.close() ; g.close()
     print("Removing temp file...", end=" ")
     os.remove(tmp)
     print("✅")

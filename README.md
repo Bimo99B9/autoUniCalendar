@@ -11,7 +11,7 @@ This wouldn't be necessary if Universidad de Oviedo was a well-functioning organ
 - [requests](https://pypi.org/project/requests/)
 
 ## Run
-- Download [the script](epiCalendar.py) or clone the repo (`git clone https://github.com/miermontoto/epiCalendar`).
+- Download [the script](https://raw.githubusercontent.com/miermontoto/epiCalendar/main/epiCalendar.py) or clone the repo (`git clone https://github.com/miermontoto/epiCalendar`).
 
 - Run the script with your `JSESSIONID` and `oam.Flash.RENDERMAP.TOKEN` cookies as parameters.
 
