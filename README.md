@@ -1,21 +1,20 @@
-## autoUniCalendar
+## epiCalendar
 
-Un script en Python para convertir el calendario de la intranet de la Universidad de Oviedo en un calendario de Outlook o Google Calendar.
+The fork of a Python script that converts your personal SIES calendar to a csv format.
 
-![](/assets/cat.jpg)
-![](/assets/script.jpg)
+This wouldn't be necessary if Universidad de Oviedo was a well-functioning organization.
 
-## Explicación e instalación
+[The original repository is probably what you're looking for if you're just interested in downloading your calendar.](https://github.com/Bimo99B9/autoUniCalendar)
 
-El script utiliza la cookie de sesión del usuario para acceder a los datos de su calendario tramitando solicitudes GET y POST al servidor de la Universidad de Oviedo.
-Estas solicitudes fueron analizadas y automatizadas en el script utilizando Burpsuite y la librería requests de Python, necesaria para el funcionamiento del programa.
+## Requirements
+- python3
+- [requests](https://pypi.org/project/requests/)
 
-Puede instalarse con `python3 -m pip install requests` en Windows o `pip install requests` en Linux
+## Run
+- Download [the script](epiCalendar.py) or clone the repo (`git clone https://github.com/miermontoto/epiCalendar`).
 
-![](/assets/burp.jpg)
+- Run the script with your `JSESSIONID` and `oam.Flash.RENDERMAP.TOKEN` cookies as parameters.
 
-Para ejecutar el script, son necesarios dos parámetros. El procedimiento para obtenerlos es muy sencillo, se debe entrar en el [SIES](https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml), autenticarse normalmente, acceder al calendario, y presionar `F12`. Según el navegador, dirijirse a `Almacenamiento --> Cookies` y copiar los dos valores, JSESSIONID y oam.Flash.RENDERMAP.TOKEN, pues son los parámetros del comando para ejecutar el script.
-
-![](/assets/cookies.jpg)
-
-Una vez hecho esto, se puede ejecutar el programa abriendo una consola en la carpeta donde esté ubicado el script y ejecutando el comando `python3 autoUniCalendar.py <JSessionID> <RenderToken>`. El script generará un archivo .CSV que puede ser leído y procesado tanto por Outlook como por Google Calendar, y posiblemente otros calendarios.
+```python
+python3 epiCalendar.py 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXX XXXXXXXXX
+```

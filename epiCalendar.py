@@ -129,6 +129,15 @@ def create_csv(file):
         
         # Make the necessary strings transformations to adapts the raw field data into a CSV readable file.
         title_csv = re.findall('"([^"]*)"', title.split(':')[1])[0]
+
+        title = title_csv.split(" - ")[0]
+        type = title_csv.split(" - ")[1].replace('.','').replace('-', ' ').rsplit()
+        if type[0] == "Teoría": type = f"CEX"
+        elif type[1] == "Grupales": type = f"TG{type[2  ].strip('0')}"
+        elif type[2] == "Aula": type = f"PA{type[3].strip('0')}"
+        elif type[2] == "Laboratorio": type = f"PL{type[3].strip('0')}"
+        title_csv = f"{title} ({type})"
+
         start_date = start.split(' ')[1].split('T')[0].split('"')[1]
         start_date_csv = start_date.split('-')[2]+'/'+start_date.split('-')[1]+'/'+start_date.split('-')[0]
         start_hour = start.split(' ')[1].split('T')[1].split('+')[0]
