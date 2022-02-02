@@ -9,7 +9,7 @@ import os
 
 # Check if the required arguments have been provided, and indicate the use of the script.
 if len(sys.argv) != 3:
-    print("\n[!] Uso: python3 " + sys.argv[0] + " <JSESSIONID> <RENDERMAP.TOKEN>\n")
+    print("Usage: python3 " + sys.argv[0] + " <JSESSIONID> <RENDERMAP.TOKEN>\n")
     sys.exit(1)
 
 # Declare global variables.
@@ -18,6 +18,17 @@ session = sys.argv[1]
 render_map = sys.argv[2]
 reg = '"([^"]*)"'
 tmp = "epiTmpFile"
+
+def invalidChar():
+    print("Detected invalid cookie.\nMake sure that you're inputting the correct cookies.")
+    exit(1)
+
+# Check if the indicated cookies have the format of valid cookies.
+sessionChars = list(session)
+for i in range(4):
+    if sessionChars[i] != "0": invalidChar()
+if sessionChars[27] != ":" or sessionChars[28] != "1" or sessionChars[29] != "d":
+    invalidChar()
 
 # Script information.
 #print(f"Using {session} and {render_map} as cookies.")
