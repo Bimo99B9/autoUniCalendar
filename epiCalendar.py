@@ -139,8 +139,21 @@ def create_csv(file):
         alert_hour = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
         event_creator = "Universidad de Oviedo"
         body = description.split('"')[3].replace(r'\n', '')
+
+        info = body.split(" - ")[0]
+        location = body.split(" - ")[1].rsplit()
+        
+        if location[1] == "Informática": location = f"AN-{location[2]}"
+        elif location[1] == "De": location = f"AN-{location[3]}"
+        elif "-" in location[1]:
+            location = location[1].split("-")
+            location = f"{location[0].upper()}-{location[1]}"
+        elif "." in location[1]: location = f"EP {location[1]}"
+        elif len(location) > 2 and "." in location[2]: location = f"EP {location[2]}"
+        elif location[0] == "Aula": location = f"AN-{location[1]}"
+
         # Write all the fields into a single line, and append it to the file.
-        csv_line = f"{title_csv},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{body},,,Normal,Falso,Normal,2\n"
+        csv_line = f"{title_csv},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
         g.write(csv_line)
         
     print("[*] Events correctly written in the CSV file.")
