@@ -108,6 +108,42 @@ def post_second_request(session_token, render_token, ajax, source, view, start, 
     f.close()
     print("✅")
 
+def parseLocation(loc):
+
+    location = loc.rsplit()
+    #print(f"{location} ->",end=" ")
+    
+    if location[1] == "Informática": location = f"AN-{location[2]}"
+    elif location[1] == "De": location = f"AN-{location[3]}"
+    elif "-" in location[1]:
+        location = location[1].split("-")
+        location = f"{location[0].upper()}-{location[1]}"
+    elif location[0] == "Aula": location = f"AN-{location[1]}"
+    else:
+        found = False
+        i = 0
+        while i < len(location) and not found:
+            if "(" in location[i]: location = f"DO {location[i]}" ; found = True
+            elif "BC" in location[i]: location = f"DE {location[i]}" ; found = True
+            elif "." in location[i]: location = f"EP {location[i]}" ; found = True
+            i += 1
+    #print(location)
+    return location
+
+def parseClassType(type):
+
+    classType = type.replace('.','').replace('-', ' ').rsplit()
+    #print(f"{classType} ->", end=" ")
+
+    if classType[0] == "Teoría": classType = f"CEX"
+    elif classType[1] == "Grupales": classType = f"TG{classType[2].strip('0')}"
+    elif classType[2] == "Aula": classType = f"PA{classType[3].strip('0')}"
+    elif classType[2] == "Laboratorio": classType = f"PL{classType[3].strip('0')}"
+
+    #print(classType)
+    return classType
+
+
 # Function that creates a CSV file readable by the applications, from the raw data previously retrieved.
 def create_csv(file):
 
@@ -145,11 +181,7 @@ def create_csv(file):
         title_csv = re.findall(reg, title.split(':')[1])[0]
 
         title = title_csv.split(" - ")[0]
-        classType = title_csv.split(" - ")[1].replace('.','').replace('-', ' ').rsplit()
-        if classType[0] == "Teoría": classType = f"CEX"
-        elif classType[1] == "Grupales": classType = f"TG{classType[2].strip('0')}"
-        elif classType[2] == "Aula": classType = f"PA{classType[3].strip('0')}"
-        elif classType[2] == "Laboratorio": classType = f"PL{classType[3].strip('0')}"
+        classType = parseClassType(title_csv.split(" - ")[1])
         title = f"{title} ({classType})"
 
         start_date = start.split(' ')[1].split('T')[0].split('"')[1]
@@ -164,16 +196,7 @@ def create_csv(file):
         body = description.split('"')[3].replace(r'\n', '')
 
         info = body.split(" - ")[0]
-        location = body.split(" - ")[1].rsplit()
-        
-        if location[1] == "Informática": location = f"AN-{location[2]}"
-        elif location[1] == "De": location = f"AN-{location[3]}"
-        elif "-" in location[1]:
-            location = location[1].split("-")
-            location = f"{location[0].upper()}-{location[1]}"
-        elif "." in location[1]: location = f"EP {location[1]}"
-        elif len(location) > 2 and "." in location[2]: location = f"EP {location[2]}"
-        elif location[0] == "Aula": location = f"AN-{location[1]}"
+        location = parseLocation(body.split(" - ")[1])
 
         # Write all the fields into a single line, and append it to the file.
         csv_line = f"{title},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
