@@ -219,4 +219,7 @@ create_csv("raw.txt")
 cookies = extract_cookies(get_first_request(session, render_map))
 post_second_request(session, render_map, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
 create_csv(tmp)
+<<<<<<< HEAD
 >>>>>>> d7a59862 (console output, minor changes)
+=======
+>>>>>>> 729f7937 (EOF new line)
