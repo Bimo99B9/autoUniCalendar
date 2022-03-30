@@ -7,15 +7,19 @@ import sys
 import urllib.parse
 import os
 
-# Check if the required arguments have been provided, and indicate the use of the script.
-if len(sys.argv) != 3:
-    print("Usage: python3 " + sys.argv[0] + " <JSESSIONID> <RENDERMAP.TOKEN>\n")
-    sys.exit(1)
+# If the required arguments have not been provided, read them from input
+if len(sys.argv) == 3:
+    session = sys.argv[1]
+    render_map = sys.argv[2]
+elif len(sys.argv) == 1:
+    session = input("Enter JSESSIONID: ")
+    render_map = input("Enter RENDERMAP.TOKEN: ")
+else:
+    print("Invalid arguments.\nUsage: python3 epiCalendar.py [JSESSIONID] [RENDERMAP.TOKEN]")
+    exit(1)
 
 # Declare global variables.
 url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
-session = sys.argv[1]
-render_map = sys.argv[2]
 reg = '"([^"]*)"'
 tmp = "epiTmpFile"
 
@@ -103,9 +107,7 @@ def post_second_request(session_token, render_token, ajax, source, view, start, 
 
     # Write the raw response into a temporary file.
     print("Writing the raw calendar data to a temp file...", end=" ")
-    f = open(tmp, "w")
-    f.write(r.text)
-    f.close()
+    with open(tmp, 'w') as f: f.write(r.text)
     print("✅")
 
 def parseLocation(loc):
@@ -139,6 +141,7 @@ def parseClassType(type):
     elif classType[1] == "Grupales": classType = f"TG{classType[2].strip('0')}"
     elif classType[2] == "Aula": classType = f"PA{classType[3].strip('0')}"
     elif classType[2] == "Laboratorio": classType = f"PL{classType[3].strip('0')}"
+    else: classType = f"???"
 
     #print(classType)
     return classType
