@@ -113,38 +113,33 @@ def post_second_request(session_token, render_token, ajax, source, view, start, 
 def parseLocation(loc):
 
     location = loc.rsplit()
-    #print(f"{location} ->",end=" ")
     
-    if location[1] == "Informática": location = f"AN-{location[2]}"
-    elif location[1] == "De": location = f"AN-{location[3]}"
-    elif "-" in location[1]:
+    if location[1] == "Informática": return f"AN-{location[2]}"
+    if location[1] == "De": return f"AN-{location[3]}"
+    if "-" in location[1]:
         location = location[1].split("-")
-        location = f"{location[0].upper()}-{location[1]}"
-    elif location[0] == "Aula": location = f"AN-{location[1]}"
-    else:
-        found = False
-        i = 0
-        while i < len(location) and not found:
-            if "(" in location[i]: location = f"DO {location[i]}" ; found = True
-            elif "BC" in location[i]: location = f"DE {location[i]}" ; found = True
-            elif "." in location[i]: location = f"EP {location[i]}" ; found = True
-            i += 1
-    #print(location)
-    return location
+        return f"{location[0].upper()}-{location[1]}"
+    if location[0] == "Aula": return f"AN-{location[1]}"
+
+    i = 0
+    while i < len(location):
+        if "(" in location[i]: return f"DO {location[i]}"
+        elif "BC" in location[i]: return f"DE {location[i]}"
+        elif "." in location[i]: return f"EP {location[i]}"
+        i += 1
+    
+    return loc
 
 def parseClassType(type):
 
     classType = type.replace('.','').replace('-', ' ').rsplit()
-    #print(f"{classType} ->", end=" ")
 
-    if classType[0] == "Teoría": classType = f"CEX"
-    elif classType[1] == "Grupales": classType = f"TG{classType[2].strip('0')}"
-    elif classType[2] == "Aula": classType = f"PA{classType[3].strip('0')}"
-    elif classType[2] == "Laboratorio": classType = f"PL{classType[3].strip('0')}"
-    else: classType = f"???"
-
-    #print(classType)
-    return classType
+    if classType[0] == "Teoría": return f"CEX"
+    if classType[1] == "Grupales": return f"TG{classType[2].strip('0')}"
+    if classType[2] == "Aula": return f"PA{classType[3].strip('0')}"
+    if classType[2] == "Laboratorio": return f"PL{classType[3].strip('0')}"
+    
+    return type
 
 
 # Function that creates a CSV file readable by the applications, from the raw data previously retrieved.
