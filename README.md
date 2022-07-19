@@ -1,22 +1,28 @@
 # epiCalendar
 
-The fork of a Python script that converts your personal SIES calendar to a csv format.
-
-This wouldn't be necessary if Universidad de Oviedo was a well-functioning organization.
-
-[The original repository is probably what you're looking for if you're just interested in downloading your calendar.](https://github.com/Bimo99B9/autoUniCalendar)
+The fork of a Python script that converts your personal SIES calendar to a csv format. Works best with EPI calendars.
 
 ## Requirements
 
 - python3
-- [requests](https://pypi.org/project/requests/)
+- [requests](https://pypi.org/project/requests/) `pip3 install requests`
 
-## Run
+## Usage
 
-- Download [the script](https://raw.githubusercontent.com/miermontoto/epiCalendar/main/epiCalendar.py) or clone the repo (`git clone https://github.com/miermontoto/epiCalendar`).
 
-- Run the script with your `JSESSIONID` and `oam.Flash.RENDERMAP.TOKEN` cookies as parameters or run it without them and input them afterwards.
+- Download [the script](https://raw.githubusercontent.com/miermontoto/epiCalendar/main/epiCalendar.py). (← right click, save link as)
+- Run the script using python and input your `JSESSIONID` cookie.
 
-```python
-python3 epiCalendar.py 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXX XXXXXXXXX
 ```
+> python3 epiCalendar.py
+Enter JSESSIONID: 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXX
+```
+
+You can also run the script with the cookie as a parameter:
+```sh
+python3 epiCalendar.py 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXX
+```
+
+### Obtaining JSESSIONID
+
+To obtain your personal and expiring `JSESSIONID`, login into SIES and press F12 (or Ctrl+Shift+I) and navigate to the "Storage" section. You should find at least two cookies. Copy the `JSESSIONID` and paste it into the script's input.
