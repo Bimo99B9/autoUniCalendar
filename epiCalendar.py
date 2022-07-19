@@ -6,59 +6,51 @@ import requests
 import sys
 import urllib.parse
 import os
-
-# If the required arguments have not been provided, read them from input
-if len(sys.argv) == 3:
-    session = sys.argv[1]
-    render_map = sys.argv[2]
-elif len(sys.argv) == 1:
-    session = input("Enter JSESSIONID: ")
-    render_map = input("Enter RENDERMAP.TOKEN: ")
-else:
-    print("Invalid arguments.\nUsage: python3 epiCalendar.py [JSESSIONID] [RENDERMAP.TOKEN]")
-    exit(1)
+import time
 
 # Declare global variables.
 url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
 reg = '"([^"]*)"'
 tmp = "epiTmpFile"
+csvFile = "Calendario.csv"
+startTime = time.time()
+
+# Toggle location and class type parsing using the following global variables.
+# If all special parsing is disabled, this script behaves almost exactly as the original one.
+# If you intend to use this script for a non-EPI calendar, you should disable them all.
+# Disabling location parsing will disable experimental location parsing.
+enableLocationParsing = True
+enableExperimentalLocationParsing = True
+enableClassTypeParsing = True
+
 
 def invalidChar():
-    print("Detected invalid cookie.\nMake sure that you're inputting the correct cookies.")
+    print("× (Invalid JSESSIONID)")
     exit(1)
 
-# Check if the indicated cookies have the format of valid cookies.
-sessionChars = list(session)
-for i in range(4):
-    if sessionChars[i] != "0": invalidChar()
-if sessionChars[27] != ":" or sessionChars[28] != "1" or sessionChars[29] != "d":
-    invalidChar()
-
-# Script information.
-#print(f"Using {session} and {render_map} as cookies.")
-
 # Function to send the first GET HTTP request using the tokens provided.
-def get_first_request(session_token, render_token):
+def get_first_request(session_token):
 
-    print("Sending the first request...", end=" ")
+    print("Sending initial payload...", end=" ", flush=True)
+    initTime = time.time()
 
     # Cookies payload of the HTTP request.
     payload = {
-        'JSESSIONID': session_token,
-        'oam.Flash.RENDERMAP.TOKEN': render_token
+        'JSESSIONID': session_token
     }
 
     r = requests.get(url, cookies=payload)
-    print("✅")
+    print("✓ (%.3fs)" % (time.time() - initTime))
+
     # The function returns the server response to use it later.
     return r.text
 
 # Function to extract the cookies necessary to make the POST request, from the server response of the first request.
 def extract_cookies(get_response):
-    print("Extracting calendar parameters...", end=" ")
+    print("Extracting cookies...", end=" ", flush=True)
+    initTime = time.time()
 
     # Iterate the response lines to search the cookies, and save them in variables.
-
     found_first, found_second, found_third = False, False, False
     for line in get_response.split('\n'):
         if '<div id="j_id' in line and not found_first:
@@ -73,24 +65,22 @@ def extract_cookies(get_response):
             submit = re.findall(reg, line.split(' ')[3])[0]
             found_third = True
 
-    print("✅")
     # The function returns a list that contains the extracted parameters.
-    try:
-        return [source, viewstate, submit]
-    except UnboundLocalError:
-        print("Couldn't extract calendar parameters. (¿Invalid cookies?)")
+    if not 'source' in locals():
+        print("× (¿Invalid JSESSIONID?)")
         exit(1)
+    print("✓ (%.3fs)" % (time.time() - initTime))
+    return [source, viewstate, submit]
 
 # Function that sends the HTTP POST request to the server and retrieves the raw data of the calendar.
-def post_second_request(session_token, render_token, ajax, source, view, start, end, submit):
+def post_second_request(session_token, ajax, source, view, start, end, submit):
 
-    print("Sending the calendar request...", end=" ")
-    
+    print("Obtaining raw calendar data...", end=" ", flush=True)
+    initTime = time.time()
+
     # Cookies of the request.
     payload = {
-        'JSESSIONID': session_token,
-        'oam.Flash.RENDERMAP.TOKEN': render_token,
-        'cookieconsent_status': 'dismiss'
+        'JSESSIONID': session_token
     }
 
     # Define variables of the request.
@@ -101,19 +91,20 @@ def post_second_request(session_token, render_token, ajax, source, view, start, 
     # Creating the body with the parameters extracted before, with the syntax required by the server.
     body_payload = f"javax.faces.partial.ajax={ajax}&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{string_start}={start}&{string_end}={end}&{string_submit}=1&javax.faces.ViewState={view}"
 
-    # Send the POST request. 
+    # Send the POST request.
     r = requests.post(url, data=body_payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, cookies=payload)
-    print("✅")
 
     # Write the raw response into a temporary file.
-    print("Writing the raw calendar data to a temp file...", end=" ")
     with open(tmp, 'w') as f: f.write(r.text)
-    print("✅")
 
+    print("✓ (%.3fs)" % (time.time() - initTime))
+
+# Parse the correct class name for each entry.
 def parseLocation(loc):
 
+    if not enableLocationParsing: return loc
     location = loc.rsplit()
-    
+
     if location[1] == "Informática": return f"AN-{location[2]}"
     if location[1] == "De": return f"AN-{location[3]}"
     if "-" in location[1]:
@@ -121,48 +112,50 @@ def parseLocation(loc):
         return f"{location[0].upper()}-{location[1]}"
     if location[0] == "Aula": return f"AN-{location[1]}"
 
+    if not enableExperimentalLocationParsing: return loc
+    # The following conditions are experimental and NOT thoroughly tested.
     i = 0
     while i < len(location):
         if "(" in location[i]: return f"DO {location[i]}"
         elif "BC" in location[i]: return f"DE {location[i]}"
         elif "." in location[i]: return f"EP {location[i]}"
         i += 1
-    
-    return loc
 
+    return loc # If the location is not recognized, return the original string.
+
+# Parse the correct "class type" for each entry.
+# AFAIKthere are only "Teoría (CEX)", "Prácticas de Aula (PA)", "Prácticas de Laboratorio (PL)" and "Teorías Grupales (TG)".
 def parseClassType(type):
 
+    if not enableClassTypeParsing: return type
     classType = type.replace('.','').replace('-', ' ').rsplit()
 
     if classType[0] == "Teoría": return f"CEX"
     if classType[1] == "Grupales": return f"TG{classType[2].strip('0')}"
     if classType[2] == "Aula": return f"PA{classType[3].strip('0')}"
     if classType[2] == "Laboratorio": return f"PL{classType[3].strip('0')}"
-    
-    return type
 
+    return type # If the class type is not recognized, return the original string.
 
 # Function that creates a CSV file readable by the applications, from the raw data previously retrieved.
 def create_csv(file):
 
-    print("Creating csv file...", end=" ")
-    
+    print("Parsing data and generating new csv...", end=" ", flush=True)
+    initTime = time.time()
+
     # Create the file.
     f = open(file, "r")
-    g = open("Calendario.csv", "w")
-
-    print("✅")
+    g = open(csvFile, "w")
 
     # Write the headers in the first line.
     g.write("Asunto,Fecha de comienzo,Comienzo,Fecha de finalización,Finalización,Todo el día,Reminder on/off,Reminder Date,Reminder Time,Meeting Organizer,Required Attendees,Optional Attendees,Recursos de la reuniÃƒÂ³n,Billing Information,Categories,Description,Location,Mileage,Priority,Private,Sensitivity,Show time as\n")
-    
+
     # Separate the events from its XML context.
     text = f.read().split('<')
     events = text[5].split('{')
     del events[0:2]
 
     # Each field of the event is separated by commas.
-    print("Parsing the data...", end=" ")
     for event in events:
         data = []
         for field in event.split(','):
@@ -174,7 +167,7 @@ def create_csv(file):
         start = data[2]
         end = data[3]
         description = data[7]
-        
+
         # Make the necessary strings transformations to adapts the raw field data into a CSV readable file.
         title_csv = re.findall(reg, title.split(':')[1])[0]
 
@@ -199,15 +192,30 @@ def create_csv(file):
         # Write all the fields into a single line, and append it to the file.
         csv_line = f"{title},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
         g.write(csv_line)
-        
-    print("✅")
+
     f.close() ; g.close()
-    print("Removing temp file...", end=" ")
     os.remove(tmp)
-    print("✅")
-    print("\nCalendar generated.\n")
+    print("✓ (%.3fs)" % (time.time() - initTime))
 
+if __name__ == "__main__":
+    # If the required arguments have not been provided, read them from input
+    if len(sys.argv) == 2:
+        session = sys.argv[1]
+    elif len(sys.argv) == 1:
+        try:
+            session = input("Enter JSESSIONID: ")
+        except (KeyboardInterrupt, EOFError):
+            exit(0)
+        if (len(session)) != 37: invalidChar()
+        for i in range(4):
+            if session[i] != "0": invalidChar()
+        if session[27] != ":" or session[28] != "1" or session[29] != "d":
+            invalidChar()
+    else:
+        print("Invalid arguments.\nUsage: python3 epiCalendar.py [JSESSIONID]")
+        exit(1)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 first_request = get_first_request(session, render_map)
 cookies = extract_cookies(first_request)
@@ -221,3 +229,9 @@ create_csv(tmp)
 >>>>>>> d7a59862 (console output, minor changes)
 =======
 >>>>>>> 729f7937 (EOF new line)
+=======
+    cookies = extract_cookies(get_first_request(session))
+    post_second_request(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
+    create_csv(tmp)
+    print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
+>>>>>>> 0bf041e8 (cambios importantes)
