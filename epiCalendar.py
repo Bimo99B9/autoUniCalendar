@@ -14,6 +14,7 @@ reg = '"([^"]*)"'
 tmp = "epiTmpFile"
 csvFile = "Calendario.csv"
 startTime = time.time()
+rSession = requests.Session()
 
 # Toggle location and class type parsing using the following global variables.
 # If all special parsing is disabled, this script behaves almost exactly as the original one.
@@ -36,10 +37,11 @@ def get_first_request(session_token):
 
     # Cookies payload of the HTTP request.
     payload = {
-        'JSESSIONID': session_token
+        'JSESSIONID': session_token,
+        'cookieconsent_status': 'dismiss'
     }
 
-    r = requests.get(url, cookies=payload)
+    r = rSession.get(url, cookies=payload)
     print("✓ (%.3fs)" % (time.time() - initTime))
 
     # The function returns the server response to use it later.
@@ -78,11 +80,6 @@ def post_second_request(session_token, ajax, source, view, start, end, submit):
     print("Obtaining raw calendar data...", end=" ", flush=True)
     initTime = time.time()
 
-    # Cookies of the request.
-    payload = {
-        'JSESSIONID': session_token
-    }
-
     # Define variables of the request.
     string_start = source + "_start"
     string_end = source + "_end"
@@ -92,7 +89,7 @@ def post_second_request(session_token, ajax, source, view, start, end, submit):
     body_payload = f"javax.faces.partial.ajax={ajax}&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{string_start}={start}&{string_end}={end}&{string_submit}=1&javax.faces.ViewState={view}"
 
     # Send the POST request.
-    r = requests.post(url, data=body_payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, cookies=payload)
+    r = rSession.post(url, data=body_payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'})
 
     # Write the raw response into a temporary file.
     with open(tmp, 'w') as f: f.write(r.text)
