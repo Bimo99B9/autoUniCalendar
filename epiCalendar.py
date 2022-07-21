@@ -202,6 +202,15 @@ if __name__ == "__main__":
             session = input("Enter JSESSIONID: ")
         except (KeyboardInterrupt, EOFError):
             exit(0)
+    elif len(sys.argv) == 3: # Accept file name as argument.
+        session = sys.argv[1]
+        csvFile = sys.argv[2]
+    elif len(sys.argv) == 6: # Accept script options as arguments.
+        session = sys.argv[1]
+        csvFile = sys.argv[2]
+        enableExperimentalLocationParsing = sys.argv[3] == "true"
+        enableClassTypeParsing = sys.argv[4] == "true"
+        enableCSVFileCreation = sys.argv[5] == "true"
     else:
         print("Invalid arguments.\nUsage: python3 epiCalendar.py [JSESSIONID]")
         exit(1)
