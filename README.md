@@ -15,12 +15,12 @@ The fork of a Python script that converts your personal SIES calendar to a csv f
 
 ```
 > python3 epiCalendar.py
-Enter JSESSIONID: 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXX
+Enter JSESSIONID: 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX
 ```
 
 You can also run the script with the cookie as a parameter:
 ```sh
-python3 epiCalendar.py 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXX
+python3 epiCalendar.py 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX
 ```
 
 ### Obtaining JSESSIONID

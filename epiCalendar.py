@@ -13,7 +13,6 @@ url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xht
 reg = '"([^"]*)"'
 tmp = "epiTmpFile"
 csvFile = "Calendario.csv"
-startTime = time.time()
 rSession = requests.Session()
 
 # Toggle location and class type parsing using the following global variables.
@@ -195,7 +194,7 @@ def create_csv(file):
     print("✓ (%.3fs)" % (time.time() - initTime))
 
 if __name__ == "__main__":
-    # If the required arguments have not been provided, read them from input
+    # If the required argument hasn't been provided, read from input.
     if len(sys.argv) == 2:
         session = sys.argv[1]
     elif len(sys.argv) == 1:
@@ -203,15 +202,11 @@ if __name__ == "__main__":
             session = input("Enter JSESSIONID: ")
         except (KeyboardInterrupt, EOFError):
             exit(0)
-        if (len(session)) != 37: invalidChar()
-        for i in range(4):
-            if session[i] != "0": invalidChar()
-        if session[27] != ":" or session[28] != "1" or session[29] != "d":
-            invalidChar()
     else:
         print("Invalid arguments.\nUsage: python3 epiCalendar.py [JSESSIONID]")
         exit(1)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 first_request = get_first_request(session, render_map)
@@ -227,6 +222,16 @@ create_csv(tmp)
 =======
 >>>>>>> 729f7937 (EOF new line)
 =======
+=======
+    # Cookie verification.
+    if (len(session)) != 37: invalidChar()
+    for i in range(4):
+        if session[i] != "0": invalidChar()
+    if session[27] != ":" or session[28] != "1" or session[29] != "d":
+        invalidChar()
+
+    startTime = time.time()
+>>>>>>> fbbc953c (ajustado tiempo de ejecución, comprobación de cookie, readme)
     cookies = extract_cookies(get_first_request(session))
     post_second_request(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
     create_csv(tmp)
