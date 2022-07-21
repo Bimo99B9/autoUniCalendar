@@ -5,7 +5,7 @@ The fork of a Python script that converts your personal SIES calendar to a csv f
 ## Requirements
 
 - python3
-- [requests](https://pypi.org/project/requests/) `pip3 install requests`
+- [requests](https://pypi.org/project/requests/)
 
 ## Usage
 
