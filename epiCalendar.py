@@ -210,7 +210,7 @@ if __name__ == "__main__":
     session = ""
 
     # Read flags from arguments.
-    if sys.argv[1] == "--help" or sys.argv[1] == "-h":
+    if not len(sys.argv) == 1 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
         print("Usage: python3 epiCalendar.py [JSESSIONID] [-o | --output-file <filename>] [--disable-location-parsing] [--disable-class-type-parsing] [--disable-experimental-location-parsing]")
         exit(0)
 
