@@ -79,6 +79,11 @@ def post_second_request(session_token, ajax, source, view, start, end, submit):
     print("Obtaining raw calendar data...", end=" ", flush=True)
     initTime = time.time()
 
+    payload = {
+        'JSESSIONID': session_token,
+        'cookieconsent_status': 'dismiss'
+    }
+
     # Define variables of the request.
     string_start = source + "_start"
     string_end = source + "_end"
@@ -88,7 +93,7 @@ def post_second_request(session_token, ajax, source, view, start, end, submit):
     body_payload = f"javax.faces.partial.ajax={ajax}&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{string_start}={start}&{string_end}={end}&{string_submit}=1&javax.faces.ViewState={view}"
 
     # Send the POST request.
-    r = rSession.post(url, data=body_payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'})
+    r = rSession.post(url, data=body_payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, cookies=payload)
 
     # Write the raw response into a temporary file.
     with open(tmp, 'w') as f: f.write(r.text)
@@ -193,27 +198,35 @@ def create_csv(file):
     os.remove(tmp)
     print("✓ (%.3fs)" % (time.time() - initTime))
 
+def verifyCookie(jsessionid) -> bool:
+    if len(jsessionid) != 37: return False
+    for i in range(4):
+        if jsessionid[i] != "0": return False
+    if jsessionid[27] != ":" or jsessionid[28] != "1" or jsessionid[29] != "d":
+        return False
+    return True
+
 if __name__ == "__main__":
+    session = ""
+
+    # Read flags from arguments.
+    if sys.argv[1] == "--help" or sys.argv[1] == "-h":
+        print("Usage: python3 epiCalendar.py [JSESSIONID] [-o | --output-file <filename>] [--disable-location-parsing] [--disable-class-type-parsing] [--disable-experimental-location-parsing]")
+        exit(0)
+
+    for i in range(1, len(sys.argv)):
+        if sys.argv[i] == "--disable-location-parsing": enableLocationParsing = False
+        if sys.argv[i] == "--disable-class-type-parsing": enableClassTypeParsing = False
+        if sys.argv[i] == "--disable-experimental-location-parsing": enableExperimentalLocationParsing = False
+        if sys.argv[i] == "-o" or sys.argv[i] == "--output-file" : csvFile = sys.argv[i+1]
+        if verifyCookie(sys.argv[i]): session = sys.argv[i]
+
     # If the required argument hasn't been provided, read from input.
-    if len(sys.argv) == 2:
-        session = sys.argv[1]
-    elif len(sys.argv) == 1:
+    if session == "":
         try:
             session = input("Enter JSESSIONID: ")
         except (KeyboardInterrupt, EOFError):
             exit(0)
-    elif len(sys.argv) == 3: # Accept file name as argument.
-        session = sys.argv[1]
-        csvFile = sys.argv[2]
-    elif len(sys.argv) == 6: # Accept script options as arguments.
-        session = sys.argv[1]
-        csvFile = sys.argv[2]
-        enableExperimentalLocationParsing = sys.argv[3] == "true"
-        enableClassTypeParsing = sys.argv[4] == "true"
-        enableCSVFileCreation = sys.argv[5] == "true"
-    else:
-        print("Invalid arguments.\nUsage: python3 epiCalendar.py [JSESSIONID]")
-        exit(1)
 
 <<<<<<< HEAD
 <<<<<<< HEAD
