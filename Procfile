@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -18,3 +19,6 @@ web: flask run
 =======
 web: gunicorn app:app
 >>>>>>> e8bb5eb7 (Revert "test Procfile")
+=======
+web: gunicorn run:app
+>>>>>>> 09e4a42a (fix Procfile wrong worker)
