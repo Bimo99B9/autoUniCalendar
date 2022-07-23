@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="es">
 
 <head>
@@ -103,4 +104,63 @@
 
 </body>
 
+=======
+<html lang="en">
+
+    <head>
+        <title>epiCalendar</title>
+        <meta charset="utf-8">
+        <meta content="Convert SIES calendars to csv" name="description">
+        <meta content="Juan Mier" name="author">
+        <script>
+            function toggleModes(radioUO, radioEPI, cbLocation, cbExperimentalLocation, cbClassType) {
+                var uo = document.getElementById(radioUO);
+                var epi = document.getElementById(radioEPI);
+
+                var location = document.getElementById(cbLocation);
+                var experimentalLocation = document.getElementById(cbExperimentalLocation);
+                var classType = document.getElementById(cbClassType);
+
+                if (uo.checked) {
+                    location.disabled = true;
+                    experimentalLocation.disabled = true;
+                    location.checked = false;
+                    experimentalLocation.checked = false;
+                    classType.checked = true;
+                } else {
+                    location.disabled = false;
+                    experimentalLocation.disabled = false;
+                    location.checked = true;
+                    experimentalLocation.checked = true;
+                    classType.checked = true;
+                }
+            }
+        </script>
+    </head>
+
+    <body onload="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')">
+        <form method="post">
+            <fieldset id="cookie">
+                <span>JSESSIONID: </span> <input type="text" id="jsessionid" placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"/>
+                <input type="submit" value="Generate" id="submit">
+            </fieldset>
+            <fieldset id="options"> <label for="options">Settings</label>
+                <span>File name: </span><input type="text" id="filename" placeholder="Calendario.csv"> <br>
+                <fieldset id="radios">
+                    <legend> Quick settings </legend>
+                    <input type="radio" name="radios" id="uo"
+                        onclick="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')"> <label for="uo">University of Oviedo</label> <br>
+                    <input type="radio" name="radios" id="epi" checked
+                        onclick="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')"> <label for="epi">EPI Gijón</label> <br>
+                </fieldset>
+                <fieldset id="checkboxes">
+                    <legend> Advanced settings </legend>
+                    <input type="checkbox" name="cb" id="location"> <label for="location">Enable location parsing (EPI Gijón)</label> <br>
+                    <input type="checkbox" name="cb" id="experimental-location"> <label for="experimental-location">Enable experimental location parsing (EPI Gijón)</label> <br>
+                    <input type="checkbox" name="cb" id="class-type"> <label for="class-type">Enable class type parsing</label> <br>
+                </fieldset>
+            </fieldset>
+        </form>
+    </body>
+>>>>>>> e87fc758 (estructura general, form html)
 </html>
