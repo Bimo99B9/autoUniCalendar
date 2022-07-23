@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -14,3 +15,6 @@ web: source env/bin/activate
 >>>>>>> a3800278 (Revert "test Procfile")
 web: flask run
 >>>>>>> d4196ab6 (test Procfile)
+=======
+web: gunicorn app:app
+>>>>>>> e8bb5eb7 (Revert "test Procfile")
