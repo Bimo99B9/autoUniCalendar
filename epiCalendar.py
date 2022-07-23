@@ -209,20 +209,21 @@ def verifyCookie(jsessionid) -> bool:
         return False
     return True
 
-if __name__ == "__main__":
+def main(argv) -> int:
+    global enableLocationParsing, enableClassTypeParsing, enableExperimentalLocationParsing
     session = ""
 
     # Read flags from arguments.
-    if not len(sys.argv) == 1 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
+    if not len(argv) == 1 and (argv[1] == "--help" or argv[1] == "-h"):
         print("Usage: python3 epiCalendar.py [JSESSIONID] [-o | --output-file <filename>] [--disable-location-parsing] [--disable-class-type-parsing] [--disable-experimental-location-parsing]")
         exit(0)
 
-    for i in range(1, len(sys.argv)):
-        if sys.argv[i] == "--disable-location-parsing": enableLocationParsing = False
-        if sys.argv[i] == "--disable-class-type-parsing": enableClassTypeParsing = False
-        if sys.argv[i] == "--disable-experimental-location-parsing": enableExperimentalLocationParsing = False
-        if sys.argv[i] == "-o" or sys.argv[i] == "--output-file" : csvFile = sys.argv[i+1]
-        if verifyCookie(sys.argv[i]): session = sys.argv[i]
+    for i in range(1, len(argv)):
+        if argv[i] == "--disable-location-parsing": enableLocationParsing = False
+        if argv[i] == "--disable-class-type-parsing": enableClassTypeParsing = False
+        if argv[i] == "--disable-experimental-location-parsing": enableExperimentalLocationParsing = False
+        if argv[i] == "-o" or argv[i] == "--output-file" : csvFile = argv[i+1]
+        if verifyCookie(argv[i]): session = argv[i]
 
     # If the required argument hasn't been provided, read from input.
     if session == "":
@@ -266,4 +267,11 @@ create_csv(tmp)
     createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
 >>>>>>> 542ef996 (removal of temp files, verifications/optimizations)
     print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
+<<<<<<< HEAD
 >>>>>>> 0bf041e8 (cambios importantes)
+=======
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
+>>>>>>> e87fc758 (estructura general, form html)
