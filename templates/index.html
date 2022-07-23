@@ -112,40 +112,18 @@
         <meta charset="utf-8">
         <meta content="Convert SIES calendars to csv" name="description">
         <meta content="Juan Mier" name="author">
-        <script>
-            function toggleModes(radioUO, radioEPI, cbLocation, cbExperimentalLocation, cbClassType) {
-                var uo = document.getElementById(radioUO);
-                var epi = document.getElementById(radioEPI);
-
-                var location = document.getElementById(cbLocation);
-                var experimentalLocation = document.getElementById(cbExperimentalLocation);
-                var classType = document.getElementById(cbClassType);
-
-                if (uo.checked) {
-                    location.disabled = true;
-                    experimentalLocation.disabled = true;
-                    location.checked = false;
-                    experimentalLocation.checked = false;
-                    classType.checked = true;
-                } else {
-                    location.disabled = false;
-                    experimentalLocation.disabled = false;
-                    location.checked = true;
-                    experimentalLocation.checked = true;
-                    classType.checked = true;
-                }
-            }
-        </script>
+        <script src="{{url_for('static', filename='js/form.js')}}"></script>
     </head>
 
     <body onload="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')">
         <form method="post">
-            <fieldset id="cookie">
-                <span>JSESSIONID: </span> <input type="text" id="jsessionid" placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"/>
+            <fieldset id="cookie"> <legend>epiCalendar</legend>
+                <span>JSESSIONID: </span> <input type="text" id="jsessionid" name="jsessionid" placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"/>
                 <input type="submit" value="Generate" id="submit">
+                <input type="reset" value="Clear" id="reset" onclick="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')">
             </fieldset>
-            <fieldset id="options"> <label for="options">Settings</label>
-                <span>File name: </span><input type="text" id="filename" placeholder="Calendario.csv"> <br>
+            <fieldset id="options"> <legend>Settings</legend>
+                <span>File name: </span><input type="text" id="filename" name="filename" placeholder="Calendario.csv"> <br>
                 <fieldset id="radios">
                     <legend> Quick settings </legend>
                     <input type="radio" name="radios" id="uo"
@@ -162,5 +140,9 @@
             </fieldset>
         </form>
     </body>
+<<<<<<< HEAD
 >>>>>>> e87fc758 (estructura general, form html)
+=======
+
+>>>>>>> 8d8cb67e (it works!)
 </html>
