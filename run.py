@@ -9,13 +9,22 @@ def index():
 
     jsessionid = request.form.get('jsessionid')
     filename = request.form.get('filename')
-    filename = filename if filename else defaultFilename
+    settings = request.form.getlist('cb')
+
+    filename = filename if filename else defaultFilename # if filename is not provided, use default
     print(f"{jsessionid} → {filename}")
+    print(f"{settings}")
 
     if epiCalendar.verifyCookie(jsessionid):
         if os.path.exists(defaultFilename): os.remove(defaultFilename)
-        epiCalendar.main(['epiCalendar.py', jsessionid])
+        argv = ['epiCalendar.py', jsessionid]
+
+        if not 'location' in settings: argv.append('--disable-location-parsing')
+        if not 'class-type' in settings: argv.append('--disable-class-type-parsing')
+        if not 'experimental-location' in settings: argv.append('--disable-experimental-location-parsing')
+
+        epiCalendar.main(argv)
         return send_file(defaultFilename, as_attachment=True, attachment_filename=filename)
-        if os.path.exists(defaultFilename): os.remove(defaultFilename)
+
 
     return render_template('index.html')
