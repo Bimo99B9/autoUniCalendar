@@ -25,6 +25,16 @@ python3 epiCalendar.py 0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX
 
 ### Obtaining JSESSIONID
 
-To obtain your personal and expiring `JSESSIONID`, login into SIES and press F12 (or Ctrl+Shift+I) and navigate to the "Storage" section. You should find at least two cookies. Copy the `JSESSIONID` and paste it into the script's input.
+To obtain your personal and expiring `JSESSIONID`, login into SIES and press F12 (or Ctrl+Shift+I) and navigate to the "Storage" section. You should find at least two cookies. Copy the `JSESSIONID` from `/serviciosacademicos` and paste it into the script's input.
+
+### Flags
+
+The following flags can be provided as arguments:
+
+- `[-h | --help]` to show the help dialog.
+- `[-o | --output <filename>]` to change the name of the resulting csv file.
+- `[--disable-location-parsing]` to disable location parsing specific to EPI.
+- `[--disable-experimental-location-parsing]` to disable some experimental location parsing specific to EPI.
+- `[--disable-class-type-parsing]` to disable class type parsing.
 
 [epiCalendar](https://github.com/miermontoto/epiCalendar) © 2022 by [Juan Mier](https://github.com/miermontoto) is licensed under [CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)
