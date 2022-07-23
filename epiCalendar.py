@@ -7,7 +7,6 @@ import sys
 import urllib.parse
 import os
 import time
-from flask import Flask, render_template, request
 
 # Declare global variables.
 url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
