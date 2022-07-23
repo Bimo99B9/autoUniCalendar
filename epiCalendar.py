@@ -11,14 +11,14 @@ import time
 # Declare global variables.
 url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
 reg = '"([^"]*)"'
-tmp = "epiTmpFile"
-csvFile = "Calendario.csv"
+csvFile = "Calendario.csv" # Can be changed through "-o" flag.
 rSession = requests.Session()
 
 # Toggle location and class type parsing using the following global variables.
 # If all special parsing is disabled, this script behaves almost exactly as the original one.
 # If you intend to use this script for a non-EPI calendar, you should disable them all.
 # Disabling location parsing will disable experimental location parsing.
+# This options can be easily toggled through argument flags.
 enableLocationParsing = True
 enableExperimentalLocationParsing = True
 enableClassTypeParsing = True
@@ -29,7 +29,7 @@ def invalidChar():
     exit(1)
 
 # Function to send the first GET HTTP request using the tokens provided.
-def get_first_request(session_token):
+def getFirstRequest(session_token):
 
     print("Sending initial payload...", end=" ", flush=True)
     initTime = time.time()
@@ -47,7 +47,7 @@ def get_first_request(session_token):
     return r.text
 
 # Function to extract the cookies necessary to make the POST request, from the server response of the first request.
-def extract_cookies(get_response):
+def extractCookies(get_response):
     print("Extracting cookies...", end=" ", flush=True)
     initTime = time.time()
 
@@ -70,17 +70,19 @@ def extract_cookies(get_response):
     if not 'source' in locals():
         print("× (¿Invalid JSESSIONID?)")
         exit(1)
+
     print("✓ (%.3fs)" % (time.time() - initTime))
     return [source, viewstate, submit]
 
 # Function that sends the HTTP POST request to the server and retrieves the raw data of the calendar.
-def post_second_request(session_token, ajax, source, view, start, end, submit):
+# The raw text response is returned.
+def postCalendarRequest(jsessionid, ajax, source, view, start, end, submit) -> str:
 
     print("Obtaining raw calendar data...", end=" ", flush=True)
     initTime = time.time()
 
     payload = {
-        'JSESSIONID': session_token,
+        'JSESSIONID': jsessionid,
         'cookieconsent_status': 'dismiss'
     }
 
@@ -95,13 +97,16 @@ def post_second_request(session_token, ajax, source, view, start, end, submit):
     # Send the POST request.
     r = rSession.post(url, data=body_payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, cookies=payload)
 
-    # Write the raw response into a temporary file.
-    with open(tmp, 'w') as f: f.write(r.text)
+    # Basic response verification.
+    if r.text.split('<')[-1] != "/partial-response>":
+        print("× (Invalid response)")
+        exit(1)
 
     print("✓ (%.3fs)" % (time.time() - initTime))
+    return r.text
 
 # Parse the correct class name for each entry.
-def parseLocation(loc):
+def parseLocation(loc) -> str:
 
     if not enableLocationParsing: return loc
     location = loc.rsplit()
@@ -126,7 +131,7 @@ def parseLocation(loc):
 
 # Parse the correct "class type" for each entry.
 # AFAIKthere are only "Teoría (CEX)", "Prácticas de Aula (PA)", "Prácticas de Laboratorio (PL)" and "Teorías Grupales (TG)".
-def parseClassType(type):
+def parseClassType(type) -> str:
 
     if not enableClassTypeParsing: return type
     classType = type.replace('.','').replace('-', ' ').rsplit()
@@ -139,20 +144,19 @@ def parseClassType(type):
     return type # If the class type is not recognized, return the original string.
 
 # Function that creates a CSV file readable by the applications, from the raw data previously retrieved.
-def create_csv(file):
+def createCsv(rawResponse):
 
     print("Parsing data and generating new csv...", end=" ", flush=True)
     initTime = time.time()
 
     # Create the file.
-    f = open(file, "r")
     g = open(csvFile, "w")
 
     # Write the headers in the first line.
     g.write("Asunto,Fecha de comienzo,Comienzo,Fecha de finalización,Finalización,Todo el día,Reminder on/off,Reminder Date,Reminder Time,Meeting Organizer,Required Attendees,Optional Attendees,Recursos de la reuniÃƒÂ³n,Billing Information,Categories,Description,Location,Mileage,Priority,Private,Sensitivity,Show time as\n")
 
     # Separate the events from its XML context.
-    text = f.read().split('<')
+    text = rawResponse.split('<')
     events = text[5].split('{')
     del events[0:2]
 
@@ -194,8 +198,7 @@ def create_csv(file):
         csv_line = f"{title},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
         g.write(csv_line)
 
-    f.close() ; g.close()
-    os.remove(tmp)
+    g.close()
     print("✓ (%.3fs)" % (time.time() - initTime))
 
 def verifyCookie(jsessionid) -> bool:
@@ -253,9 +256,14 @@ create_csv(tmp)
         invalidChar()
 
     startTime = time.time()
+<<<<<<< HEAD
 >>>>>>> fbbc953c (ajustado tiempo de ejecución, comprobación de cookie, readme)
     cookies = extract_cookies(get_first_request(session))
     post_second_request(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
     create_csv(tmp)
+=======
+    cookies = extractCookies(getFirstRequest(session))
+    createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
+>>>>>>> 542ef996 (removal of temp files, verifications/optimizations)
     print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
 >>>>>>> 0bf041e8 (cambios importantes)
