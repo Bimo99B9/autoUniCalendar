@@ -1,3 +1,3 @@
 #!/bin/bash
 gunicorn run:app &
-npm run linux-start
+npm run start
