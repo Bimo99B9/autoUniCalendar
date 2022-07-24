@@ -23,8 +23,6 @@ const Form = (props) => {
     reset: nameReset,
   } = useInput((value) => value.length > 0);
 
-  console.log(enteredCode.length);
-
   let formIsValid = false;
 
   if (codeIsValid && nameIsValid) {

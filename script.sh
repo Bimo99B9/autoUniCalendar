@@ -1,3 +1,3 @@
 #!/bin/bash
-exec gunicorn run:app
-exec npm run linux-start
+gunicorn run:app &
+npm run linux-start
