@@ -20,3 +20,7 @@ function toggleModes(radioUO, radioEPI, cbLocation, cbExperimentalLocation, cbCl
         classType.checked = true;
     }
 }
+
+function clearCookie(idCookie) {
+    document.getElementById(idCookie).value = "";
+}

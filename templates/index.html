@@ -115,14 +115,16 @@
 
         <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
         <script src="{{url_for('static', filename='js/form.js')}}"></script>
+        <script src="{{url_for('static', filename='js/main.js')}}"></script>
     </head>
 
-    <body onload="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')">
+    <body onload="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')" onload="clearCookie('jsessionid')">
         <form method="post">
             <fieldset id="cookie"> <legend>epiCalendar</legend>
-                <span>JSESSIONID: </span> <input type="text" id="jsessionid" name="jsessionid" placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"/>
+                <span>JSESSIONID: </span> <input type="text" size="37" id="jsessionid" name="jsessionid" placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"/>
                 <input type="submit" value="Generate" id="submit">
                 <input type="reset" value="Clear" id="reset" onclick="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')">
+                <span id="error">{{ slug_error }}</span>
             </fieldset>
             <fieldset id="options"> <legend>Settings</legend>
                 <span>File name: </span><input type="text" id="filename" name="filename" placeholder="Calendario.csv"> <br>
