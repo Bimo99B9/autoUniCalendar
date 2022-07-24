@@ -18,7 +18,7 @@ def form_post():
     filename = request.form.get('filename')
     settings = request.form.getlist('cb')
 
-    filename = filename if filename else defaultFilename # if filename is not provided, use default
+    filename = filename + '.csv' if filename else defaultFilename # if filename is not provided, use default
 
     if epiCalendar.verifyCookie(jsessionid):
 
