@@ -118,14 +118,13 @@
         <script src="{{url_for('static', filename='js/main.js')}}"></script>
     </head>
 
-    <body onload="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')"
-        onload="verifyCookie('jsessionid', 'submit')">
+    <body onload="init();">
         <form method="post">
             <fieldset id="cookie"> <legend>epiCalendar</legend>
                 <span>JSESSIONID: </span> <input type="text" size="37" id="jsessionid" name="jsessionid" placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"
                     oninput="verifyCookie('jsessionid', 'submit')"/>
-                <span title="test">[?]</span><br>
-                <input type="submit" value="Generate" id="submit">
+                <span title="test" id="help">[?]</span><br>
+                <input type="submit" value="Generate" id="submit" disabled>
                 <input type="reset" value="Clear" id="reset" onclick="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')">
                 <span id="error">{{ slug_error }}</span>
             </fieldset>

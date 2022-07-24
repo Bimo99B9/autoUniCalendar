@@ -18,3 +18,7 @@ footer {
 .text-input-correct {
     border-color: green;
 }
+
+#help:hover {
+    cursor: help;
+}
