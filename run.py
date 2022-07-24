@@ -11,7 +11,7 @@ uuidStr = ""
 @app.route('/', methods = ['GET'])
 def index():
     global uuidStr
-    uuidStr = str(uuid.uuid4())
+    uuidStr = str(uuid.uuid4()) # Generate a random UUID for the session.
     return serve()
 
 @app.route('/', methods = ['POST'])
@@ -45,6 +45,7 @@ def form_post():
            return target
 
     return serve()
+
 
 @app.errorhandler(404)
 def serve():
