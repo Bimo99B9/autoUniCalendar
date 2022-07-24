@@ -14,3 +14,7 @@ footer {
     color: red;
     font-weight: bold;
 }
+
+.text-input-correct {
+    border-color: green;
+}
