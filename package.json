@@ -6,7 +6,6 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "n": "^9.0.0",
     "nodejs": "^0.0.0",
     "npm": "^8.15.0",
     "react": "^18.2.0",
@@ -41,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://127.0.0.1:5000"
+  #"proxy": "http://127.0.0.1:5000"
 }
