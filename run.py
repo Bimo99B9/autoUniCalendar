@@ -1,6 +1,7 @@
 import epiCalendar
 import os
 import uuid
+import utils
 from flask import Flask, render_template, request, send_file
 app = Flask(__name__)
 defaultFilename = epiCalendar.csvFile
@@ -20,7 +21,7 @@ def form_post():
 
     filename = filename + '.csv' if filename else defaultFilename # if filename is not provided, use default
 
-    if epiCalendar.verifyCookie(jsessionid):
+    if utils.verifyCookieExpiration(jsessionid):
 
         argv = ['epiCalendar.py', jsessionid]
 
@@ -36,4 +37,4 @@ def form_post():
             os.remove(uuidStr)
             return target
 
-    return render_template('index.html', slug_error='Something went wrong. Check your JSESSIONID and try again.')
+    return render_template('index.html', slug_error='Invalid or expired JSESSIONID.')
