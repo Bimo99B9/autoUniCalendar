@@ -1,0 +1,26 @@
+.form {
+  display: flex;
+  margin-left: 30px;
+  margin-bottom: 8px;
+}
+.form label {
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+/*
+.label {
+  margin-left: 100px;
+}
+.input[type="radio"] {
+  flex-direction: column;
+  margin-left: 70px;
+}
+.input[type="radio"] + label {
+  margin-left: 10px;
+}
+.input[type="radio"] + label:after {
+  content: "";
+  display: block;
+}
+*/

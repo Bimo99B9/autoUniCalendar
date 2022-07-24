@@ -1,0 +1,112 @@
+.form {
+  margin-bottom: 1rem;
+  flex: 1;
+  text-align: center;
+  align-self: center;
+  box-sizing: border-box;
+}
+
+.form div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.form input,
+.form label {
+  display: block;
+  color: white;
+  font-size: 30px;
+}
+
+.form label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.form input,
+.form select {
+  font: inherit;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 30rem;
+  background-color: #e0d4fd;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  color: grey;
+}
+
+.form input:focus {
+  outline: none;
+  border-color: #240370;
+  background-color: #e0d4fd;
+  color: black;
+}
+
+.control {
+  display: flex;
+  column-gap: 1rem;
+  /*flex-wrap: wrap;*/
+  flex-direction: column;
+}
+
+.control .form {
+  min-width: 15rem;
+  flex: 1;
+}
+
+button {
+  font: inherit;
+  background-color: #4a5fc1;
+  color: white;
+  border: 1px solid #240370;
+  padding: 0.75rem 3rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 25px;
+  font-weight: bold;
+}
+
+button:hover,
+button:active {
+  background-color: #1939c6;
+  border-color: #33059e;
+}
+
+button:disabled,
+button:disabled:hover,
+button:disabled:active {
+  background-color: #aab4e0;
+  color: #292929;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+}
+
+.actions button {
+  margin-left: 1rem;
+}
+
+.invalid input {
+  border: 1px solid #b40e0e;
+  background-color: #fddddd;
+}
+
+.invalid input:focus {
+  border-color: #ff8800;
+  background-color: #fbe8d2;
+}
+
+.error {
+  color: #b40e0e;
+}
