@@ -123,7 +123,7 @@
             <fieldset id="cookie"> <legend>epiCalendar</legend>
                 <span>JSESSIONID: </span> <input type="text" size="37" id="jsessionid" name="jsessionid" placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"
                     oninput="verifyCookie('jsessionid', 'submit')"/>
-                <span title="test" id="help">[?]</span><br>
+                <span title="Log in to SIES, press F12, find 'JSESSIONID' from '/serviciosacademicos' in 'Storage/Cookies'." id="help">[<a href="https://github.com/miermontoto/epiCalendar#obtaining-jsessionid" target="_blank">?</a>]</span><br>
                 <input type="submit" value="Generate" id="submit" disabled>
                 <input type="reset" value="Clear" id="reset" onclick="toggleModes('uo', 'epi', 'location', 'experimental-location', 'class-type')">
                 <span id="error">{{ slug_error }}</span>

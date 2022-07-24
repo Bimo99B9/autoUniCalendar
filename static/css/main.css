@@ -19,6 +19,6 @@ footer {
     border-color: green;
 }
 
-#help:hover {
+#help:hover, #help:hover * {
     cursor: help;
 }
