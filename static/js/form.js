@@ -30,7 +30,7 @@ function verifyCookie(idCookie, idSubmit) {
     var submit = document.getElementById(idSubmit);
     var cookie = cookieDom.value;
 
-    console.log(cookie.innerHTML);
+    //console.log(cookie.innerHTML);
     if (cookie.length == 37) {
         if (cookie.charAt(0) == '0' && cookie.charAt(1) == '0' && cookie.charAt(2) == '0' && cookie.charAt(3) == '0'
             && cookie.charAt(27) == ':' && cookie.charAt(28) == '1' && cookie.charAt(29) == 'd') {
@@ -42,4 +42,17 @@ function verifyCookie(idCookie, idSubmit) {
         cookieDom.classList.remove("text-input-correct");
     }
 
+}
+
+function init() {
+    var radioUO = "uo";
+    var radioEPI = "epi";
+    var cbLocation = "location";
+    var cbExperimentalLocation = "experimental-location";
+    var cbClassType = "class-type";
+    toggleModes(radioUO, radioEPI, cbLocation, cbExperimentalLocation, cbClassType);
+
+    var idCookie = "jsessionid";
+    var idSubmit = "submit";
+    verifyCookie(idCookie, idSubmit);
 }

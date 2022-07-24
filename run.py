@@ -9,7 +9,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/', methods = ['POST'])
-def index_post():
+def form_post():
     jsessionid = request.form.get('jsessionid')
     filename = request.form.get('filename')
     settings = request.form.getlist('cb')
