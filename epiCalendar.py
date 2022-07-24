@@ -266,8 +266,12 @@ create_csv(tmp)
 >>>>>>> 542ef996 (removal of temp files, verifications/optimizations)
     print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0bf041e8 (cambios importantes)
 =======
+=======
+    print("Saved as \"%s\"" % csvFile)
+>>>>>>> dea54aa3 (f/b comms, no settings and no download)
     return 0
 
 if __name__ == "__main__":

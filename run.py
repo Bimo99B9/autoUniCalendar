@@ -2,6 +2,7 @@ import epiCalendar
 import os
 import uuid
 import utils
+import re
 from flask import Flask, render_template, request, send_file
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 defaultFilename = epiCalendar.csvFile
@@ -16,12 +17,18 @@ def index():
 @app.route('/', methods = ['POST'])
 def form_post():
 
-    print(request.get_data())
-    jsessionid = request.form.get('jsessionid')
-    filename = request.form.get('filename')
-    settings = request.form.getlist('cb')
+    body = re.split(':|,', str(request.get_data())[3:-2].replace('"', ""))
+    print(body)
 
-    filename = filename + '.csv' if filename else defaultFilename # if filename is not provided, use default
+    for i in range(len(body)):
+        if body[i] == "jsessionid":
+            jsessionid = body[i+1] + ":" + body[i+2]
+        elif body[i] == "filename":
+            filename = body[i+1] + ".csv"
+
+    print(f"{jsessionid} → {filename}")
+
+    settings = request.form.getlist('cb')
 
     if utils.verifyCookieExpiration(jsessionid):
 
@@ -31,13 +38,11 @@ def form_post():
         if not 'class-type' in settings: argv.append('--disable-class-type-parsing')
         if not 'experimental-location' in settings: argv.append('--disable-experimental-location-parsing')
 
-        argv.append('-o')
-        argv.append(uuidStr)
-
+        #if os.path.exists(defaultFilename): os.remove(defaultFilename)
         if epiCalendar.main(argv) == 0:
-            target = send_file(uuidStr, as_attachment=True, attachment_filename=filename)
-            os.remove(uuidStr)
-            return target
+           target = send_file(defaultFilename, as_attachment=True, attachment_filename=filename)
+           #if os.path.exists(defaultFilename): os.remove(defaultFilename)
+           return target
 
     return serve()
 
