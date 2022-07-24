@@ -3,7 +3,7 @@ import os
 import uuid
 import utils
 from flask import Flask, render_template, request, send_file
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./build', static_url_path='/')
 defaultFilename = epiCalendar.csvFile
 uuidStr = ""
 
@@ -11,7 +11,7 @@ uuidStr = ""
 def index():
     global uuidStr
     uuidStr = str(uuid.uuid4())
-    return render_template('index.html')
+    return serve()
 
 @app.route('/', methods = ['POST'])
 def form_post():
@@ -39,9 +39,8 @@ def form_post():
             os.remove(uuidStr)
             return target
 
-    return render_template('index.html', slug_error='Invalid or expired JSESSIONID.')
+    return serve()
 
-@app.route('/', methods = ['OPTIONS'])
-def options():
-    print("asd2")
-    return render_template('index.html')
+@app.errorhandler(404)
+def serve():
+    return app.send_static_file('index.html')
