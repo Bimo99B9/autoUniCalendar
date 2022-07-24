@@ -28,5 +28,5 @@ def index_post():
             target = send_file(defaultFilename, as_attachment=True, attachment_filename=filename)
             if os.path.exists(filename): os.remove(filename)
             return target
-        else:
-            return render_template('index.html', slug_error='Something went wrong. Check your JSESSIONID and try again.')
+
+    return render_template('index.html', slug_error='Something went wrong. Check your JSESSIONID and try again.')
