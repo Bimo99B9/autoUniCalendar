@@ -9,6 +9,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -52,3 +53,6 @@ web: npm run linux-start
 =======
 web: npm run start
 >>>>>>> d1a858bb (test frontend start)
+=======
+web: sh script.sh
+>>>>>>> e8205773 (add backend, small fixes)
