@@ -15,6 +15,8 @@ def index():
 
 @app.route('/', methods = ['POST'])
 def form_post():
+
+    print(request.get_data())
     jsessionid = request.form.get('jsessionid')
     filename = request.form.get('filename')
     settings = request.form.getlist('cb')
@@ -38,3 +40,8 @@ def form_post():
             return target
 
     return render_template('index.html', slug_error='Invalid or expired JSESSIONID.')
+
+@app.route('/', methods = ['OPTIONS'])
+def options():
+    print("asd2")
+    return render_template('index.html')

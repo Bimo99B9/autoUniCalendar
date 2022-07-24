@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -22,3 +23,7 @@ web: gunicorn app:app
 =======
 web: gunicorn run:app
 >>>>>>> 09e4a42a (fix Procfile wrong worker)
+=======
+web: npm run start-api
+web: npm run start-linux
+>>>>>>> 715beab2 (pass through form content)
