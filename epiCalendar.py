@@ -277,6 +277,5 @@ create_csv(tmp)
     return 0
 
 if __name__ == "__main__":
-    print(sys.argv)
     sys.exit(main(sys.argv))
 >>>>>>> e87fc758 (estructura general, form html)
