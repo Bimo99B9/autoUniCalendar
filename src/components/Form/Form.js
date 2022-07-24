@@ -50,15 +50,13 @@ const Form = (props) => {
       return;
     }
 
-    fetch("http://127.0.0.1:5000", {
-      method: "POST",
-      body: JSON.parse(
-        JSON.stringify({
-          jsessionid: enteredCode,
-          filename: enteredName,
-        })
-      ),
-    });
+    // fetch("http://127.0.0.1:5000", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     jsessionid: enteredCode,
+    //     filename: enteredName,
+    //   }),
+    // });
 
     codeReset();
     nameReset();
@@ -81,7 +79,7 @@ const Form = (props) => {
   //   : "form-control";
 
   return (
-    <form onSubmit={formSubmissionHandler}>
+    <form method="POST" onSubmit={formSubmissionHandler}>
       <div className={classes.control}>
         <div className={codeInputClasses}>
           <label htmlFor="codigo">Código</label>
