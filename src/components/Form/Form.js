@@ -52,10 +52,12 @@ const Form = (props) => {
 
     fetch("http://127.0.0.1:5000", {
       method: "POST",
-      body: JSON.stringify({
-        jsessionid: enteredCode,
-        filename: enteredName,
-      }),
+      body: JSON.parse(
+        JSON.stringify({
+          jsessionid: enteredCode,
+          filename: enteredName,
+        })
+      ),
     });
 
     codeReset();
