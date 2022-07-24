@@ -6,6 +6,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -40,3 +41,6 @@ web: npm run start-api
 =======
 web: gunicorn run:app
 >>>>>>> ea3b57bd (gunicorn in Procfile)
+=======
+web: sh script.sh
+>>>>>>> 6647b180 (script in Procfile)
