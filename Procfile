@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -31,3 +32,7 @@ web: npm run start-linux
 =======
 web: npm run linux-start
 >>>>>>> 2cfd330b (move react to root dir)
+=======
+web: npm run linux-start
+web: npm run start-api
+>>>>>>> 460eba56 (test Procfile fix)
