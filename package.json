@@ -10,7 +10,7 @@
     "npm": "^8.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "^2.1.3",
+    "react-scripts": "^2.1.8",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
