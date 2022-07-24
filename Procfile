@@ -10,6 +10,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -56,3 +57,6 @@ web: npm run start
 =======
 web: sh script.sh
 >>>>>>> e8205773 (add backend, small fixes)
+=======
+web: gunicorn run:app
+>>>>>>> e18500cd (remove dynamic flask content, use react frontend)
