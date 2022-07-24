@@ -7,6 +7,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 web: gunicorn app:app
 =======
 web: gunicorn app:app
@@ -44,3 +45,6 @@ web: gunicorn run:app
 =======
 web: sh script.sh
 >>>>>>> 6647b180 (script in Procfile)
+=======
+web: npm run linux-start
+>>>>>>> 9f04a4dc (test frontend start)
