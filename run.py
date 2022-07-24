@@ -17,18 +17,11 @@ def index():
 @app.route('/', methods = ['POST'])
 def form_post():
 
-    body = re.split(':|,', str(request.get_data())[3:-2].replace('"', ""))
-    print(body)
-
-    for i in range(len(body)):
-        if body[i] == "jsessionid":
-            jsessionid = body[i+1] + ":" + body[i+2]
-        elif body[i] == "filename":
-            filename = body[i+1] + ".csv"
+    jsessionid = request.form['jsessionid']
+    filename = request.form['filename'] + ".csv"
+    settings = ""
 
     print(f"{jsessionid} → {filename}")
-
-    settings = request.form.getlist('cb')
 
     if utils.verifyCookieExpiration(jsessionid):
 
@@ -38,10 +31,10 @@ def form_post():
         if not 'class-type' in settings: argv.append('--disable-class-type-parsing')
         if not 'experimental-location' in settings: argv.append('--disable-experimental-location-parsing')
 
-        #if os.path.exists(defaultFilename): os.remove(defaultFilename)
+        if os.path.exists(defaultFilename): os.remove(defaultFilename)
         if epiCalendar.main(argv) == 0:
            target = send_file(defaultFilename, as_attachment=True, attachment_filename=filename)
-           #if os.path.exists(defaultFilename): os.remove(defaultFilename)
+           if os.path.exists(defaultFilename): os.remove(defaultFilename)
            return target
 
     return serve()

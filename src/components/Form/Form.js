@@ -50,14 +50,7 @@ const Form = (props) => {
       return;
     }
 
-    // fetch("http://127.0.0.1:5000", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     jsessionid: enteredCode,
-    //     filename: enteredName,
-    //   }),
-    // });
-
+    document.getElementById("form").submit();
     codeReset();
     nameReset();
   };
@@ -79,13 +72,14 @@ const Form = (props) => {
   //   : "form-control";
 
   return (
-    <form method="POST" onSubmit={formSubmissionHandler}>
+    <form method="post" onSubmit={formSubmissionHandler} id="form">
       <div className={classes.control}>
         <div className={codeInputClasses}>
           <label htmlFor="codigo">Código</label>
           <input
             type="text"
             id="codigo"
+            name="jsessionid"
             onChange={codeChangeHandler}
             onBlur={codeBlurHandler}
             value={enteredCode}
@@ -99,6 +93,7 @@ const Form = (props) => {
           <input
             type="text"
             id="saveAs"
+            name="filename"
             onChange={nameChangeHandler}
             onBlur={nameBlurHandler}
             value={enteredName}
