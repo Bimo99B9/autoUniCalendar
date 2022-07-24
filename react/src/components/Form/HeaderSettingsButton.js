@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import SettingsIcon from "../Settings/SettingsIcon";
 //import CartContext from "../../store/cart-context";

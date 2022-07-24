@@ -1,3 +1,4 @@
+import React from 'react';
 import classes from "./RadioButtons.module.css";
 
 const RadioButtons = () => {
