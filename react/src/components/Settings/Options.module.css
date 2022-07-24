@@ -1,0 +1,14 @@
+.options {
+  /*display: flex;
+  flex-direction: column;
+  align-self: left;*/
+  overflow: auto;
+}
+
+.options h2 {
+  text-align: left;
+  font-weight: bold;
+  font-size: 50px;
+  margin-top: 5px;
+  margin-bottom: 1rem;
+}
