@@ -207,7 +207,7 @@ def verifyCookie(jsessionid) -> bool:
     return True
 
 def main(argv) -> int:
-    global enableLocationParsing, enableClassTypeParsing, enableExperimentalLocationParsing
+    global enableLocationParsing, enableClassTypeParsing, enableExperimentalLocationParsing, csvFile
     session = ""
 
     # Read flags from arguments.
