@@ -7,6 +7,7 @@ import sys
 import urllib.parse
 import os
 import time
+import utils
 
 # Declare global variables.
 url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
@@ -22,6 +23,8 @@ rSession = requests.Session()
 enableLocationParsing = True
 enableExperimentalLocationParsing = True
 enableClassTypeParsing = True
+
+
 
 # Function to send the first GET HTTP request using the tokens provided.
 def getFirstRequest(session_token):
@@ -196,15 +199,6 @@ def createCsv(rawResponse):
     g.close()
     print("✓ (%.3fs)" % (time.time() - initTime))
 
-def verifyCookie(jsessionid) -> bool:
-    if jsessionid is None: return False
-    if jsessionid == "0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX": return False
-    if len(jsessionid) != 37: return False
-    for i in range(4):
-        if jsessionid[i] != "0": return False
-    if jsessionid[27] != ":" or jsessionid[28] != "1" or jsessionid[29] != "d":
-        return False
-    return True
 
 def main(argv) -> int:
     global enableLocationParsing, enableClassTypeParsing, enableExperimentalLocationParsing, csvFile
@@ -220,7 +214,7 @@ def main(argv) -> int:
         if argv[i] == "--disable-class-type-parsing": enableClassTypeParsing = False
         if argv[i] == "--disable-experimental-location-parsing": enableExperimentalLocationParsing = False
         if argv[i] == "-o" or argv[i] == "--output-file" : csvFile = argv[i+1]
-        if verifyCookie(argv[i]): session = argv[i]
+        if utils.verifyCookieStructure(argv[i]): session = argv[i]
 
     # If the required argument hasn't been provided, read from input.
     if session == "":
@@ -255,7 +249,7 @@ create_csv(tmp)
         invalidChar()
 =======
     # If the JSESSIONID is not valid, exit.
-    if not verifyCookie(session):
+    if not utils.verifyCookieStructure(session):
         print("× Invalid JSESSIONID.")
         exit(1)
 >>>>>>> 8d8cb67e (it works!)
