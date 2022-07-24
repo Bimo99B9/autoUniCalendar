@@ -1,6 +1,6 @@
 import useInput from "../../hooks/use-input";
 import HeaderSettingsButton from "./HeaderSettingsButton";
-import React from 'react';
+import React from "react";
 
 import classes from "./Form.module.css";
 
@@ -12,7 +12,17 @@ const Form = (props) => {
     valueChangeHandler: codeChangeHandler,
     inputBlurHandler: codeBlurHandler,
     reset: codeReset,
-  } = useInput((value) => value.length === 37 && value.charAt(0) === '0' && value.charAt(1) === '0' && value.charAt(2) === '0' && value.charAt(3) === '0' && value.charAt(27) === ':' && value.charAt(28) === '1' && value.charAt(29) === 'd');
+  } = useInput(
+    (value) =>
+      value.length === 37 &&
+      value.charAt(0) === "0" &&
+      value.charAt(1) === "0" &&
+      value.charAt(2) === "0" &&
+      value.charAt(3) === "0" &&
+      value.charAt(27) === ":" &&
+      value.charAt(28) === "1" &&
+      value.charAt(29) === "d"
+  );
 
   const {
     value: enteredName,
@@ -40,14 +50,17 @@ const Form = (props) => {
       return;
     }
 
-    fetch('http://127.0.0.1:5000', {
-      method: 'POST',
+    fetch("http://127.0.0.1:5000", {
+      method: "POST",
       body: JSON.stringify({
         jsessionid: enteredCode,
-        filename: enteredName
-      })
+        filename: enteredName,
+      }),
     });
-  }
+
+    codeReset();
+    nameReset();
+  };
 
   const codeInputClasses = `${classes.form} ${
     codeHasError ? classes.invalid : ""
