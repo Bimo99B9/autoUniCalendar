@@ -2,13 +2,20 @@
 
 The fork of a Python script that converts your personal SIES calendar to a csv format. Works best with EPI calendars.
 
+## Webpage
+
+You can use the (beta) [web version](https://epicalendar.herokuapp.com/) to convert your calendar on the fly!
+
 ## Requirements
 
 - python3
 - [requests](https://pypi.org/project/requests/)
 
-## Usage
+Web requirements:
+- [flask](https://pypi.org/project/Flask/)
+- [gunicorn](https://gunicorn.org/)
 
+## Usage
 
 - Download [the script](https://raw.githubusercontent.com/miermontoto/epiCalendar/main/epiCalendar.py). (← right click, save link as)
 - Run the script using python and input your `JSESSIONID` cookie.
@@ -37,4 +44,4 @@ The following flags can be provided as arguments:
 - `[--disable-experimental-location-parsing]` to disable some experimental location parsing specific to EPI.
 - `[--disable-class-type-parsing]` to disable class type parsing.
 
-[epiCalendar](https://github.com/miermontoto/epiCalendar) © 2022 by [Juan Mier](https://github.com/miermontoto) is licensed under [CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)
+[epiCalendar](https://github.com/miermontoto/epiCalendar), a fork of [autoUniCalendar](https://github.com/BimoBB9B/autoUniCalendar), 2022 by [Juan Mier](https://github.com/miermontoto) is licensed under [CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)
