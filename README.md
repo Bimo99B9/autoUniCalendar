@@ -4,7 +4,7 @@ The fork of a Python script that converts your personal SIES calendar to a csv f
 
 ## Webpage
 
-You can use the (beta) [web version](https://epicalendar.herokuapp.com/) to convert your calendar on the fly!
+You can use the (beta) [web version](https://epicalendar-react.herokuapp.com/) to convert your calendar on the fly!
 
 ## Requirements
 
