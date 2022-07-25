@@ -11,17 +11,19 @@ uuidStr = ""
 @app.route('/', methods = ['GET'])
 def index():
     global uuidStr
-    uuidStr = str(uuid.uuid4()) # Generate a random UUID for the session.
+    uuidStr = str(uuid.uuid4()) + ".csv" # Generate a random UUID for the session.
     return serve()
 
 @app.route('/', methods = ['POST'])
 def form_post():
 
+    #print(request.form)
+
     jsessionid = request.form['jsessionid']
     filename = request.form['filename'] + ".csv"
     settings = ""
 
-    print(f"{jsessionid} → {filename}")
+    #print(f"{jsessionid} → {filename}")
 
     if utils.verifyCookieExpiration(jsessionid):
 
@@ -31,11 +33,18 @@ def form_post():
         if not 'class-type' in settings: argv.append('--disable-class-type-parsing')
         if not 'experimental-location' in settings: argv.append('--disable-experimental-location-parsing')
 
-        if os.path.exists(defaultFilename): os.remove(defaultFilename)
-        if epiCalendar.main(argv) == 0:
-           target = send_file(defaultFilename, as_attachment=True, attachment_filename=filename)
-           if os.path.exists(defaultFilename): os.remove(defaultFilename)
-           return target
+        argv.append('-o')
+        argv.append(uuidStr)
+        #print(uuidStr)
+
+        try:
+            if epiCalendar.main(argv) == 0:
+                target = send_file(uuidStr, as_attachment=True, attachment_filename=filename)
+                if os.path.exists(uuidStr): os.remove(uuidStr)
+                return target
+        except FileNotFoundError:
+            print("Error temporal (¿?)")
+            return serve()
 
     return serve()
 
