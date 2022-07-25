@@ -8,18 +8,14 @@ from flask import Flask, render_template, request, send_file
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 
 defaultFilename = epiCalendar.csvFile
-uuidStr = ""
 debug = os.environ.get('FLASK_ENV') == 'development'
 
 @app.route('/', methods = ['GET'])
 def index():
-    global uuidStr
-    uuidStr = str(uuid.uuid4()) + ".csv" # Generate a random UUID for the session.
     return serve()
 
 @app.route('/', methods = ['POST'])
 def form_post():
-
     if debug: print(request.form)
 
     jsessionid = request.form['jsessionid']
@@ -36,6 +32,7 @@ def form_post():
         if not 'class-type' in settings: argv.append('--disable-class-type-parsing')
         if not 'experimental-location' in settings: argv.append('--disable-experimental-location-parsing')
 
+        uuidStr = str(uuid.uuid4())
         argv.append('-o')
         argv.append(uuidStr)
         if debug:
