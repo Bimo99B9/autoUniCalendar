@@ -40,6 +40,8 @@ const Form = (props) => {
       return;
     }
 
+    console.log("all good");
+
     document.getElementById("form").submit();
     codeReset();
   };
@@ -74,7 +76,7 @@ const Form = (props) => {
 
       <div className={classes.actions}>
         <HeaderSettingsButton onClick={props.onShowSettings} />
-        <button className="button" disabled={!formIsValid}>
+        <button className="button" disabled={!formIsValid} onClick={formSubmissionHandler}>
           Generar
         </button>
       </div>
