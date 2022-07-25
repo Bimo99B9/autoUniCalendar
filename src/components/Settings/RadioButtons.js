@@ -1,29 +1,73 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import classes from "./RadioButtons.module.css";
 import SettingsContext from "../../store/settings-context";
 
-const RadioButtons = () => {
-  const settingsContext = useContext(SettingsContext);
+const universityList = [
+  { value: "uo", label: "University of Oviedo" },
+  { value: "epi", label: "EPI Gijón" },
+];
 
-  const onClickHandler = (event) => {
-    if (event.target.name === "epi") {
-      settingsContext.check("epi");
-      console.log("1");
-    } else if (event.target.name === "uo") {
-      settingsContext.check("uo");
-      console.log("2");
-    }
+const RadioButtons = (props) => {
+  // const settingsContext = useContext(SettingsContext);
+
+  // const onClickHandler = (event) => {
+  //   if (event.target.name === "epi") {
+  //     settingsContext.check("epi");
+  //     console.log("1");
+  //   } else if (event.target.name === "uo") {
+  //     settingsContext.check("uo");
+  //     console.log("2");
+  //   }
+  // };
+
+  const handleChange = (e) => {
+    props.onClick(e.target.value);
   };
 
   return (
-    <form>
-      <div>
-        <input type="radio" value="MALE" defaultChecked name="gender" /> Male
-        <input type="radio" value="FEMALE" name="gender" /> Female
-      </div>
-    </form>
+    <div>
+      {universityList.map((x, i) => (
+        <div className={classes.form}>
+          <label key={i}>
+            <input
+              type="radio"
+              name="university"
+              value={x.value}
+              onChange={handleChange}
+              defaultChecked={x.value === "epi"}
+            />{" "}
+            {x.label}
+          </label>
+        </div>
+      ))}
+    </div>
   );
 };
+
+/*
+<form>
+      <div>
+        <input
+          type="radio"
+          value="uo"
+          checked={settingsContext.university === "uo"}
+          onChange={onClickHandler}
+          name="uo"
+        />{" "}
+        University of Oviedo
+        <input
+          type="radio"
+          value="epi"
+          checked={settingsContext.university === "epi"}
+          onChange={settingsContext.check("epi")}
+          name="epi"
+        />{" "}
+        EPI Gijón
+      </div>
+    </form>
+
+
+*/
 
 /*
 
