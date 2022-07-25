@@ -24,7 +24,7 @@ const RadioButtons = (props) => {
               name="university"
               value={x.value}
               onChange={handleChange}
-              defaultChecked={x.value === "epi"}
+              defaultChecked={x.value === props.university}
             />{" "}
             {x.label}
           </label>

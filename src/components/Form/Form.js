@@ -4,6 +4,10 @@ import React from "react";
 
 import SettingsContext from "../../store/settings-context";
 import classes from "./Form.module.css";
+import {
+  DEFAULT_FILENAME,
+  DEFAULT_UNIVERSITY,
+} from "../../store/settings-context";
 
 const Form = (props) => {
   const ctx = React.useContext(SettingsContext);
@@ -40,9 +44,9 @@ const Form = (props) => {
       return;
     }
 
-    console.log("all good");
-
     document.getElementById("form").submit();
+    ctx.saveNameHandler(DEFAULT_FILENAME);
+    ctx.check(DEFAULT_UNIVERSITY);
     codeReset();
   };
 
@@ -65,7 +69,12 @@ const Form = (props) => {
               value={enteredCode}
             />
             {codeHasError && (
-              <p className={classes.error}>El código no es válido.</p>
+              <React.Fragment>
+                <p className={classes.error}>El código no es válido.</p>
+                <p className={classes.error}>
+                  Ejemplo de código: 0000wahqA9h2G43ge6FtEJJAkhH:1d18eurd6
+                </p>
+              </React.Fragment>
             )}
           </div>
           <div>
@@ -76,7 +85,11 @@ const Form = (props) => {
 
       <div className={classes.actions}>
         <HeaderSettingsButton onClick={props.onShowSettings} />
-        <button className="button" disabled={!formIsValid} onClick={formSubmissionHandler}>
+        <button
+          className="button"
+          disabled={!formIsValid}
+          onClick={formSubmissionHandler}
+        >
           Generar
         </button>
       </div>

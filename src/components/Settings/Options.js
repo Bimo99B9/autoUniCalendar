@@ -10,8 +10,8 @@ const Options = (props) => {
       <div className={classes.options}>
         <h2>Settings</h2>
       </div>
-      <RadioButtons onClick={props.onCheck} />
-      <Checkboxes />
+      <RadioButtons onClick={props.onCheck} university={props.university} />
+      <Checkboxes university={props.university} />
     </React.Fragment>
   );
 };
