@@ -34,10 +34,13 @@ const Saver = (props) => {
           onChange={nameHandlerValue}
           onBlur={nameBlurHandler}
           value={enteredName}
+          placeholder="Calendario"
         />
       </div>
     </React.Fragment>
   );
 };
+
+// ↑ añadir input con atributo "readOnly" que indique que la extensión es .csv obligatoriamente
 
 export default Saver;

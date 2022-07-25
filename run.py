@@ -3,10 +3,13 @@ import os
 import uuid
 import utils
 import re
+
 from flask import Flask, render_template, request, send_file
 app = Flask(__name__, static_folder='./build', static_url_path='/')
+
 defaultFilename = epiCalendar.csvFile
 uuidStr = ""
+debug = os.environ.get('FLASK_ENV') == 'development'
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -17,13 +20,13 @@ def index():
 @app.route('/', methods = ['POST'])
 def form_post():
 
-    #print(request.form)
+    if debug: print(request.form)
 
     jsessionid = request.form['jsessionid']
     filename = request.form['filename'] + ".csv"
     settings = ""
 
-    #print(f"{jsessionid} → {filename}")
+    if debug: print(f"{jsessionid} → {filename}")
 
     if utils.verifyCookieExpiration(jsessionid):
 
@@ -35,7 +38,9 @@ def form_post():
 
         argv.append('-o')
         argv.append(uuidStr)
-        #print(uuidStr)
+        if debug:
+            print(uuidStr)
+            print(argv)
 
         try:
             if epiCalendar.main(argv) == 0:
