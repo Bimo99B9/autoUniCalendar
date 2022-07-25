@@ -3,11 +3,8 @@ import Checkboxes from "./Checkboxes";
 
 import classes from "./Options.module.css";
 import RadioButtons from "./RadioButtons";
-// import SettingsContext from "../../store/settings-context";
 
 const Options = (props) => {
-  // const ctx = React.useContext(SettingsContext);
-
   return (
     <React.Fragment>
       <div className={classes.options}>

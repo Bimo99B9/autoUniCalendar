@@ -10,13 +10,6 @@ const Saver = (props) => {
     inputBlurHandler: nameBlurHandler,
   } = useInput((value) => value.length > 0);
 
-  // Not needed anymore
-  //   let formIsValid = false;
-
-  //   if (nameIsValid) {
-  //     formIsValid = true;
-  //   }
-
   const nameHandlerValue = (name) => {
     if (name.target.value.trim().length > 0) {
       nameChangeHandler(name);
@@ -27,10 +20,6 @@ const Saver = (props) => {
       props.onSave("Calendario");
     }
   };
-
-  // const nameInputClasses = `${classes.form} ${
-  //   nameHasError ? classes.invalid : ""
-  // }`;
 
   return (
     <React.Fragment>
@@ -50,11 +39,5 @@ const Saver = (props) => {
     </React.Fragment>
   );
 };
-
-/* 
-{nameHasError && (
-          <p className={classes.error}>El nombre del fichero no es válido.</p>
-        )}
-*/
 
 export default Saver;

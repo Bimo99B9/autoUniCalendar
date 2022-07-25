@@ -48,60 +48,38 @@ const Form = (props) => {
     codeHasError ? classes.invalid : ""
   }`;
 
-  // const codeInputClasses = codeHasError
-  //   ? {"form-control invalid"}
-  //   : "form-control";
-
-  // const nameInputClasses = nameHasError
-  //   ? "form-control invalid"
-  //   : "form-control";
-
   return (
-    <form method="post" onSubmit={formSubmissionHandler} id="form">
-      <div className={classes.control}>
-        <div className={codeInputClasses}>
-          <label htmlFor="codigo">Código</label>
-          <input
-            type="text"
-            id="codigo"
-            name="jsessionid"
-            onChange={codeChangeHandler}
-            onBlur={codeBlurHandler}
-            value={enteredCode}
-          />
-          {codeHasError && (
-            <p className={classes.error}>El código no es válido.</p>
-          )}
+    <React.Fragment>
+      <form method="post" onSubmit={formSubmissionHandler} id="form">
+        <div className={classes.control}>
+          <div className={codeInputClasses}>
+            <label htmlFor="codigo">Código</label>
+            <input
+              type="text"
+              id="codigo"
+              name="jsessionid"
+              onChange={codeChangeHandler}
+              onBlur={codeBlurHandler}
+              value={enteredCode}
+            />
+            {codeHasError && (
+              <p className={classes.error}>El código no es válido.</p>
+            )}
+          </div>
+          <div>
+            <input type="hidden" name="filename" value={ctx.saveas} />
+          </div>
         </div>
-        <div>
-          <input type="hidden" name="saveas" value={ctx.saveas} />
-        </div>
-        <div className={classes.actions}>
-          <HeaderSettingsButton onClick={props.onShowSettings} />
-          <button className="button" disabled={!formIsValid}>
-            Generar
-          </button>
-        </div>
+      </form>
+
+      <div className={classes.actions}>
+        <HeaderSettingsButton onClick={props.onShowSettings} />
+        <button className="button" disabled={!formIsValid}>
+          Generar
+        </button>
       </div>
-    </form>
+    </React.Fragment>
   );
 };
-
-/* 
-<div className={nameInputClasses}>
-          <label htmlFor="saveAs">Guardar Como</label>
-          <input
-            type="text"
-            id="saveAs"
-            name="filename"
-            onChange={nameChangeHandler}
-            onBlur={nameBlurHandler}
-            value={enteredName}
-          />
-          {nameHasError && (
-            <p className={classes.error}>El nombre del fichero no es válido.</p>
-          )}
-        </div>
-*/
 
 export default Form;
