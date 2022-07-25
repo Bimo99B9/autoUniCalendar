@@ -8,28 +8,31 @@ import SettingsContext from "../../store/settings-context";
 const Settings = (props) => {
   const ctx = React.useContext(SettingsContext);
   // Function for updating script settings
-  const settingsHandler = () => {
-    console.log(ctx.university);
-    console.log(ctx.saveas);
-    console.log("CONFIRMACION");
-  };
+  // const settingsHandler = () => {
+  //   console.log(ctx.university);
+  //   console.log(ctx.saveas);
+  //   console.log("CONFIRMACION");
+  // };
 
   return (
     <Modal onClose={props.onClose}>
       <div className={classes.overall}>
         <Saver onSave={ctx.saveNameHandler} />
-        <Options onCheck={ctx.check} />
+        <Options onCheck={ctx.check} university={ctx.university} />
         <div className={classes.buttons}>
           <button className={classes["button--alt"]} onClick={props.onClose}>
             Close
-          </button>
-          <button className={classes.button} onClick={settingsHandler}>
-            Update
           </button>
         </div>
       </div>
     </Modal>
   );
 };
+
+/* <button className={classes.button} onClick={settingsHandler}>
+            Update
+          </button>
+          
+          */
 
 export default Settings;
