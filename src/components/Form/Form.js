@@ -2,9 +2,12 @@ import useInput from "../../hooks/use-input";
 import HeaderSettingsButton from "./HeaderSettingsButton";
 import React from "react";
 
+import SettingsContext from "../../store/settings-context";
 import classes from "./Form.module.css";
 
 const Form = (props) => {
+  const ctx = React.useContext(SettingsContext);
+
   const {
     value: enteredCode,
     isValid: codeIsValid,
@@ -24,18 +27,9 @@ const Form = (props) => {
       value.charAt(29) === "d"
   );
 
-  const {
-    value: enteredName,
-    isValid: nameIsValid,
-    hasError: nameHasError,
-    valueChangeHandler: nameChangeHandler,
-    inputBlurHandler: nameBlurHandler,
-    reset: nameReset,
-  } = useInput((value) => value.length > 0);
-
   let formIsValid = false;
 
-  if (codeIsValid && nameIsValid) {
+  if (codeIsValid) {
     formIsValid = true;
   }
 
@@ -45,21 +39,12 @@ const Form = (props) => {
       console.log("Code is not valid");
       return;
     }
-    if (!nameIsValid) {
-      console.log("Name is not valid (cannot be empty)");
-      return;
-    }
 
     document.getElementById("form").submit();
     codeReset();
-    nameReset();
   };
 
   const codeInputClasses = `${classes.form} ${
-    codeHasError ? classes.invalid : ""
-  }`;
-
-  const nameInputClasses = `${classes.form} ${
     codeHasError ? classes.invalid : ""
   }`;
 
@@ -88,7 +73,22 @@ const Form = (props) => {
             <p className={classes.error}>El código no es válido.</p>
           )}
         </div>
-        <div className={nameInputClasses}>
+        <div>
+          <input type="hidden" name="saveas" value={ctx.saveas} />
+        </div>
+        <div className={classes.actions}>
+          <HeaderSettingsButton onClick={props.onShowSettings} />
+          <button className="button" disabled={!formIsValid}>
+            Generar
+          </button>
+        </div>
+      </div>
+    </form>
+  );
+};
+
+/* 
+<div className={nameInputClasses}>
           <label htmlFor="saveAs">Guardar Como</label>
           <input
             type="text"
@@ -102,15 +102,6 @@ const Form = (props) => {
             <p className={classes.error}>El nombre del fichero no es válido.</p>
           )}
         </div>
-        <div className={classes.actions}>
-          <HeaderSettingsButton onClick={props.onShowSettings} />
-          <button className="button" disabled={!formIsValid}>
-            Generar
-          </button>
-        </div>
-      </div>
-    </form>
-  );
-};
+*/
 
 export default Form;

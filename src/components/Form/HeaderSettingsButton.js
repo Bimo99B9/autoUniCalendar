@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import SettingsIcon from "../Settings/SettingsIcon";
 //import CartContext from "../../store/cart-context";
 import classes from "./HeaderSettingsButton.module.css";
 
 const HeaderSettingsButton = (props) => {
-  const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
+  const [btnIsHighlighted] = useState(false);
   // const cartCtx = useContext(CartContext);
 
   // const { items } = cartCtx;
@@ -33,9 +33,7 @@ const HeaderSettingsButton = (props) => {
   //   };
   // }, [items]);
 
-  {
-    /* <button className={btnClasses} onClick={props.onClick}> */
-  }
+  /* <button className={btnClasses} onClick={props.onClick}> */
 
   return (
     <button className={btnClasses} onClick={props.onClick}>
