@@ -1,6 +1,6 @@
 import useInput from "../../hooks/use-input";
 import HeaderSettingsButton from "./HeaderSettingsButton";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import SettingsContext from "../../store/settings-context";
 import classes from "./Form.module.css";
@@ -11,6 +11,28 @@ import {
 
 const Form = (props) => {
   const ctx = React.useContext(SettingsContext);
+
+  const [opciones, setOpciones] = useState({
+    location: true,
+    experimental_location: true,
+    class_type: true,
+  });
+
+  useEffect(() => {
+    if (ctx.university === "uo") {
+      setOpciones({
+        location: ctx.oviedoCheck.location,
+        experimental_location: ctx.oviedoCheck.experimental_location,
+        class_type: ctx.oviedoCheck.class_type,
+      });
+    } else if (ctx.university === "epi") {
+      setOpciones({
+        location: ctx.epiCheck.location,
+        experimental_location: ctx.epiCheck.experimental_location,
+        class_type: ctx.epiCheck.class_type,
+      });
+    }
+  }, [ctx.university]);
 
   const {
     value: enteredCode,
@@ -39,12 +61,15 @@ const Form = (props) => {
 
   const formSubmissionHandler = (event) => {
     event.preventDefault();
+    console.log("UNIVERSIDAD" + ctx.university);
+    console.log(ctx.epiCheck.parse);
+
     if (!codeIsValid) {
       console.log("Code is not valid");
       return;
     }
 
-    document.getElementById("form").submit();
+    // document.getElementById("form").submit();
     ctx.saveNameHandler(DEFAULT_FILENAME);
     ctx.check(DEFAULT_UNIVERSITY);
     codeReset();
@@ -80,36 +105,20 @@ const Form = (props) => {
             <input type="hidden" name="filename" value={ctx.saveas} />
           </div>
           <div>
-            <input
-              type="hidden"
-              name="location"
-              value={
-                ctx.university === "uo"
-                  ? ctx.oviedoCheck.parse
-                  : ctx.epiCheck.parse
-              }
-            />
+            <input type="hidden" name="location" value={opciones.location} />
           </div>
           <div>
             <input
               type="hidden"
               name="experimental-location"
-              value={
-                ctx.university === "uo"
-                  ? ctx.oviedoCheck.experimental
-                  : ctx.epiCheck.experimental
-              }
+              value={opciones.experimental_location}
             />
           </div>
           <div>
             <input
               type="hidden"
               name="class-type"
-              value={
-                ctx.university === "uo"
-                  ? ctx.oviedoCheck.classParsing
-                  : ctx.epiCheck.classParsing
-              }
+              value={opciones.class_type}
             />
           </div>
         </div>
