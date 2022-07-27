@@ -85,8 +85,8 @@ const Form = (props) => {
               name="location"
               value={
                 ctx.university === "uo"
-                  ? ctx.epiCheck.parse
-                  : ctx.oviedoCheck.parse
+                  ? ctx.oviedoCheck.parse
+                  : ctx.epiCheck.parse
               }
             />
           </div>
@@ -96,8 +96,8 @@ const Form = (props) => {
               name="experimental-location"
               value={
                 ctx.university === "uo"
-                  ? ctx.epiCheck.experimental
-                  : ctx.oviedoCheck.experimental
+                  ? ctx.oviedoCheck.experimental
+                  : ctx.epiCheck.experimental
               }
             />
           </div>
@@ -107,8 +107,8 @@ const Form = (props) => {
               name="class-type"
               value={
                 ctx.university === "uo"
-                  ? ctx.epiCheck.classParsing
-                  : ctx.oviedoCheck.classParsing
+                  ? ctx.oviedoCheck.classParsing
+                  : ctx.epiCheck.classParsing
               }
             />
           </div>
