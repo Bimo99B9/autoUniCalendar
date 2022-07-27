@@ -79,6 +79,39 @@ const Form = (props) => {
           <div>
             <input type="hidden" name="filename" value={ctx.saveas} />
           </div>
+          <div>
+            <input
+              type="hidden"
+              name="location"
+              value={
+                ctx.university === "uo"
+                  ? ctx.epiCheck.parse
+                  : ctx.oviedoCheck.parse
+              }
+            />
+          </div>
+          <div>
+            <input
+              type="hidden"
+              name="experimental-location"
+              value={
+                ctx.university === "uo"
+                  ? ctx.epiCheck.experimental
+                  : ctx.oviedoCheck.experimental
+              }
+            />
+          </div>
+          <div>
+            <input
+              type="hidden"
+              name="class-type"
+              value={
+                ctx.university === "uo"
+                  ? ctx.epiCheck.classParsing
+                  : ctx.oviedoCheck.classParsing
+              }
+            />
+          </div>
         </div>
       </form>
 

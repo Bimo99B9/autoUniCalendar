@@ -47,22 +47,7 @@ const Checkboxes = () => {
         classParsingDisabled: ctx.epiCheck.classParsingDisabled,
       });
     }
-  }, [ctx.university]);
-
-  // useEffect(() => {
-  //   setParse({
-  //     parse: ctx.epiCheck.parse,
-  //     parseDisabled: ctx.epiCheck.parseDisabled,
-  //   });
-  //   setExperimental({
-  //     experimental: ctx.epiCheck.experimental,
-  //     experimentalDisabled: ctx.epiCheck.experimentalDisabled,
-  //   });
-  //   setClassParse({
-  //     classParsing: ctx.epiCheck.classParsing,
-  //     classParsingDisabled: ctx.epiCheck.classParsingDisabled,
-  //   });
-  // }, [ctx.epiCheck]);
+  }, [ctx.university, ctx.update]);
 
   // Effect for updating the checkboxes
   useEffect(() => {
@@ -76,6 +61,7 @@ const Checkboxes = () => {
       ...previousState,
       parse: !previousState.parse,
     }));
+    ctx.updateHandler(true);
   };
 
   const experimentalHandler = () => {
@@ -83,6 +69,7 @@ const Checkboxes = () => {
       ...previousState,
       experimental: !previousState.experimental,
     }));
+    ctx.updateHandler(true);
   };
 
   const classParsingHandler = () => {
@@ -90,6 +77,7 @@ const Checkboxes = () => {
       ...previousState,
       classParsing: !previousState.classParsing,
     }));
+    ctx.updateHandler(true);
   };
 
   return (

@@ -14,15 +14,18 @@ const SettingsContext = createContext({
   parseHandler: (state) => {},
   experimentalHandler: (state) => {},
   classParsingHandler: (state) => {},
-  isTouched: false,
-  isTouchHandler: (state) => {},
+  update: false,
+  updateHandler: (state) => {},
+  // isTouched: false,
+  // isTouchHandler: (state) => {},
 });
 
 export const SettingsProvider = (props) => {
   const [university, setUniversity] = useState("epi");
   const [saveas, setSaveas] = useState("Calendario");
   // States for checkboxes
-  const [isTouched, setIsTouched] = useState(false);
+  // const [isTouched, setIsTouched] = useState(false);
+  const [update, setUpdate] = useState(false);
   const [isCheckedParsing, setIsCheckedParsing] = useState(true);
   const [isCheckedExperimental, setIsCheckedExperimental] = useState(true);
   const [isClassParsing, setIsClassParsing] = useState(true);
@@ -57,18 +60,35 @@ export const SettingsProvider = (props) => {
         classParsingDisabled: false,
       }));
     }
+    setUpdate(false);
   }, [isCheckedParsing]);
 
   useEffect(() => {
+    console.log("entra");
     if (university === "epi") {
       setEpiCheck((previousState) => ({
         ...previousState,
         experimental: isCheckedParsing === true ? isCheckedExperimental : false,
       }));
     }
+    setUpdate(false);
   }, [isCheckedExperimental]);
 
-  useEffect(() => {}, [isClassParsing]);
+  useEffect(() => {
+    console.log("entra en classParsing");
+    if (university === "uo") {
+      setOviedoCheck((previousState) => ({
+        ...previousState,
+        classParsing: isClassParsing,
+      }));
+    } else {
+      setEpiCheck((previousState) => ({
+        ...previousState,
+        classParsing: isClassParsing,
+      }));
+    }
+    setUpdate(false);
+  }, [isClassParsing]);
 
   const checkHandler = (name) => {
     setUniversity(name);
@@ -88,30 +108,34 @@ export const SettingsProvider = (props) => {
 
   const classParsingHandler = (state) => {
     // console.log(state);
-    if (university === "uo") {
-      setOviedoCheck({
-        parse: false,
-        experimental: false,
-        classParsing: state,
-        parseDisabled: true,
-        experimentalDisabled: true,
-        classParsingDisabled: false,
-      });
-    } else {
-      setEpiCheck({
-        parse: epiCheck.parse,
-        experimental: epiCheck.experimental,
-        classParsing: state,
-        parseDisabled: false,
-        experimentalDisabled: false,
-        classParsingDisabled: false,
-      });
-    }
-    // setIsClassParsing(state);
+    // if (university === "uo") {
+    //   setOviedoCheck({
+    //     parse: false,
+    //     experimental: false,
+    //     classParsing: state,
+    //     parseDisabled: true,
+    //     experimentalDisabled: true,
+    //     classParsingDisabled: false,
+    //   });
+    // } else {
+    //   setEpiCheck({
+    //     parse: epiCheck.parse,
+    //     experimental: epiCheck.experimental,
+    //     classParsing: state,
+    //     parseDisabled: false,
+    //     experimentalDisabled: false,
+    //     classParsingDisabled: false,
+    //   });
+    // }
+    setIsClassParsing(state);
   };
 
-  const isTouchedHandler = (state) => {
-    setIsTouched(state);
+  // const isTouchedHandler = (state) => {
+  //   setIsTouched(state);
+  // };
+
+  const updateHandler = (state) => {
+    setUpdate(state);
   };
 
   return (
@@ -127,10 +151,12 @@ export const SettingsProvider = (props) => {
         parseHandler: parseHandler,
         experimentalHandler: experimentalHandler,
         classParsingHandler: classParsingHandler,
-        isTouched: isTouched,
-        isTouchHandler: isTouchedHandler,
+        // isTouched: isTouched,
+        // isTouchHandler: isTouchedHandler,
         oviedoCheck: oviedoCheck,
         epiCheck: epiCheck,
+        update: update,
+        updateHandler: updateHandler,
       }}
     >
       {props.children}
