@@ -20,7 +20,9 @@ def form_post():
 
     jsessionid = request.form['jsessionid']
     filename = request.form['filename'] + ".csv"
-    settings = ""
+    location = request.form['location'] == "true"
+    classType = request.form['class-type'] == "true"
+    experimentalLocation = request.form['experimental-location'] == "true"
 
     if debug: print(f"{jsessionid} → {filename}")
 
@@ -28,9 +30,9 @@ def form_post():
 
         argv = ['epiCalendar.py', jsessionid]
 
-        if not 'location' in settings: argv.append('--disable-location-parsing')
-        if not 'class-type' in settings: argv.append('--disable-class-type-parsing')
-        if not 'experimental-location' in settings: argv.append('--disable-experimental-location-parsing')
+        if not location: argv.append('--disable-location-parsing')
+        if not classType: argv.append('--disable-class-type-parsing')
+        if not experimentalLocation: argv.append('--disable-experimental-location-parsing')
 
         uuidStr = str(uuid.uuid4())
         argv.append('-o')
