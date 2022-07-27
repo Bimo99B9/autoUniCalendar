@@ -16,7 +16,7 @@ const RadioButtons = (props) => {
   // Key should be in the outer component to have access to the whole block
   return (
     <div>
-      {universityList.map((x, i) => (
+      {universityList.map((x) => (
         <div className={classes.form} key={x.id}>
           <label>
             <input

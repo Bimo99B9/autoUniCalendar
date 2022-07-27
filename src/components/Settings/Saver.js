@@ -36,6 +36,14 @@ const Saver = (props) => {
           value={enteredName}
           placeholder="Calendario"
         />
+        <input
+          className={classes.extension}
+          type="text"
+          value=".csv"
+          name="extension"
+          id="extension"
+          disabled={true}
+        />
       </div>
     </React.Fragment>
   );

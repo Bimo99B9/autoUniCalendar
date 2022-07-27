@@ -5,6 +5,8 @@
   text-align: center;
   align-self: center;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
 }
 
 .form div {
@@ -37,6 +39,7 @@
   max-width: 100%;
   margin-bottom: 1rem;
   color: grey;
+  margin-right: 0.5rem;
 }
 
 .form input:focus {
@@ -71,4 +74,9 @@
   font-size: 50px;
   margin-top: 5px;
   margin-bottom: 1rem;
+}
+
+.form .extension {
+  width: 3rem;
+  color: black;
 }
