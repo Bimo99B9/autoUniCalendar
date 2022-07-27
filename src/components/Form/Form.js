@@ -1,6 +1,6 @@
 import useInput from "../../hooks/use-input";
 import HeaderSettingsButton from "./HeaderSettingsButton";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import SettingsContext from "../../store/settings-context";
 import classes from "./Form.module.css";
@@ -11,6 +11,8 @@ import {
 
 const Form = (props) => {
   const ctx = React.useContext(SettingsContext);
+
+  const [isValidCookie, setIsValidCookie] = useState(true);
 
   const {
     value: enteredCode,
@@ -37,6 +39,13 @@ const Form = (props) => {
     formIsValid = true;
   }
 
+  useEffect(() => {
+    if (codeIsValid) {
+      setIsValidCookie(false);
+      // AQUI VA EL SCRIPT
+    }
+  }, [codeIsValid]);
+
   const formSubmissionHandler = (event) => {
     event.preventDefault();
     if (!codeIsValid) {
@@ -44,7 +53,7 @@ const Form = (props) => {
       return;
     }
 
-    document.getElementById("form").submit();
+    // document.getElementById("form").submit();
     ctx.saveNameHandler(DEFAULT_FILENAME);
     ctx.check(DEFAULT_UNIVERSITY);
     codeReset();
@@ -73,6 +82,11 @@ const Form = (props) => {
             {codeHasError && (
               <React.Fragment>
                 <p className={classes.error}>El código no es válido.</p>
+              </React.Fragment>
+            )}
+            {!isValidCookie && (
+              <React.Fragment>
+                <p className={classes.error}>La cookie está caducada.</p>
               </React.Fragment>
             )}
           </div>
