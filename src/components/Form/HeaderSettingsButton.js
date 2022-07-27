@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import SettingsIcon from "../Settings/SettingsIcon";
 //import CartContext from "../../store/cart-context";
 import classes from "./HeaderSettingsButton.module.css";
 
