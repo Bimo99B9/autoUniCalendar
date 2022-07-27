@@ -55,7 +55,7 @@ export const SettingsProvider = (props) => {
         ...existingValues,
         parse: isCheckedParsing,
         parseDisabled: false,
-        experimental: isCheckedParsing === true ? isCheckedExperimental : false,
+        experimental: isCheckedParsing === true ? true : false,
         experimentalDisabled: isCheckedParsing === true ? false : true,
         classParsingDisabled: false,
       }));
