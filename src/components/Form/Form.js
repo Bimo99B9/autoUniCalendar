@@ -1,6 +1,6 @@
 import useInput from "../../hooks/use-input";
 import HeaderSettingsButton from "./HeaderSettingsButton";
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import SettingsContext from "../../store/settings-context";
 import classes from "./Form.module.css";
@@ -16,9 +16,12 @@ const Form = (props) => {
   // Access the settings context
   const ctx = React.useContext(SettingsContext);
 
+<<<<<<< HEAD
   const [isValidCookie, setIsValidCookie] = useState(true);
 
   // useInput hook for the jsessionid input
+=======
+>>>>>>> 81c3b366 (Revert "cookie check script prep on form")
   const {
     value: enteredCode,
     isValid: codeIsValid,
@@ -41,6 +44,7 @@ const Form = (props) => {
   // Variable for the validity of the form
   let formIsValid = codeIsValid;
 
+<<<<<<< HEAD
   useEffect(() => {
     if (codeIsValid) {
       setIsValidCookie(false);
@@ -49,6 +53,8 @@ const Form = (props) => {
   }, [codeIsValid]);
 
   // Function that handles the form submit and the post request
+=======
+>>>>>>> 81c3b366 (Revert "cookie check script prep on form")
   const formSubmissionHandler = (event) => {
     event.preventDefault();
     if (!codeIsValid) {
@@ -56,7 +62,7 @@ const Form = (props) => {
       return;
     }
 
-    // document.getElementById("form").submit();
+    document.getElementById("form").submit();
     ctx.saveNameHandler(DEFAULT_FILENAME);
     ctx.check(DEFAULT_UNIVERSITY);
     codeReset();
@@ -86,11 +92,6 @@ const Form = (props) => {
             {codeHasError && (
               <React.Fragment>
                 <p className={classes.error}>El código no es válido.</p>
-              </React.Fragment>
-            )}
-            {!isValidCookie && (
-              <React.Fragment>
-                <p className={classes.error}>La cookie está caducada.</p>
               </React.Fragment>
             )}
           </div>
