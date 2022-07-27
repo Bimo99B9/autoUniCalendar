@@ -13,10 +13,11 @@ const HeaderSettingsButton = (props) => {
 
   return (
     <button className={btnClasses} onClick={props.onClick}>
-      <span className={classes.icon}>
-        <SettingsIcon />
-      </span>
-      <span>Settings</span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      ⚙
     </button>
   );
 };

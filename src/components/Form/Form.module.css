@@ -1,9 +1,33 @@
+html {
+  height: 100%;
+}
+
+body {
+  margin:0;
+  padding:0;
+  font-family: sans-serif;
+  background: linear-gradient(#141e30, #243b55);
+}
+
 .form {
   margin-bottom: 1rem;
   flex: 1;
   text-align: center;
   align-self: center;
   box-sizing: border-box;
+}
+
+main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  padding: 30px;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,.5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;
 }
 
 .form div {
@@ -13,17 +37,34 @@
   align-items: center;
 }
 
+input {
+  position: relative
+}
+
 .form input,
-.form label {
+.form label,
+form legend {
   display: block;
   color: white;
   font-size: 30px;
   text-align: center;
 }
 
-.form label {
+form legend {
+  font-size: 40px;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  margin-top: 0rem;
+}
+
+.form label {
+  top:0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
 }
 
 .form input,
@@ -32,17 +73,15 @@
   padding: 0.5rem;
   border-radius: 4px;
   border: 1px solid #ccc;
-  width: 30rem;
-  background-color: #e0d4fd;
+  width: 25rem;
   max-width: 100%;
   margin-bottom: 1rem;
-  color: grey;
+  color: #141e30;
 }
 
 .form input:focus {
   outline: none;
   border-color: #240370;
-  background-color: #e0d4fd;
   color: black;
 }
 
@@ -59,32 +98,138 @@
 }
 
 button {
-  font: inherit;
-  background-color: #4a5fc1;
-  color: white;
-  border: 1px solid #240370;
-  padding: 0.75rem 3rem;
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  color: #03e9f4;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 40px;
+  letter-spacing: 2px;
+  background: inherit;
+  border: none;
+}
+
+button:hover {
+  background: #03e9f4;
+  color: #fff;
+  box-shadow: 0 0 5px #03e9f4,
+              0 0 25px #03e9f4,
+              0 0 50px #03e9f4,
+              0 0 100px #03e9f4;
   cursor: pointer;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-radius: 25px;
-  font-weight: bold;
 }
 
-button:hover,
-button:active {
-  background-color: #1939c6;
-  border-color: #33059e;
-}
-
-button:disabled,
-button:disabled:hover,
-button:disabled:active {
-  background-color: #aab4e0;
-  color: #292929;
-  border-color: #ccc;
+button:disabled {
   cursor: not-allowed;
+  color: red;
+}
+
+button:disabled:hover {
+  background: #740808;
+  box-shadow: 0 0 5px #740808,
+              0 0 25px #740808,
+              0 0 50px #740808,
+              0 0 100px #740808;
+}
+
+button span:nth-child(1) {
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #03e9f4);
+  animation: btn-anim1 1s linear infinite;
+}
+
+@keyframes btn-anim1 {
+  0% {
+    left: -100%;
+  }
+  50%,100% {
+    left: 100%;
+  }
+}
+
+button span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, #03e9f4);
+  animation: btn-anim2 1s linear infinite;
+  animation-delay: .25s
+}
+
+@keyframes btn-anim2 {
+  0% {
+    top: -100%;
+  }
+  50%,100% {
+    top: 100%;
+  }
+}
+
+button span:nth-child(3) {
+  bottom: 0;
+  right: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(270deg, transparent, #03e9f4);
+  animation: btn-anim3 1s linear infinite;
+  animation-delay: .5s
+}
+
+@keyframes btn-anim3 {
+  0% {
+    right: -100%;
+  }
+  50%,100% {
+    right: 100%;
+  }
+}
+
+button span {
+  position: absolute;
+  display: block;
+}
+
+button span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(0deg, transparent, #03e9f4);
+  animation: btn-anim4 1s linear infinite;
+  animation-delay: .75s
+}
+
+@keyframes btn-anim4 {
+  0% {
+    bottom: -100%;
+  }
+  50%,100% {
+    bottom: 100%;
+  }
+}
+
+button:disabled span:nth-child(1) {
+  background: linear-gradient(90deg, transparent, red);
+}
+
+button:disabled span:nth-child(2) {
+  background: linear-gradient(180deg, transparent, red);
+}
+
+button:disabled span:nth-child(3) {
+  background: linear-gradient(270deg, transparent, red);
+}
+
+button:disabled span:nth-child(4) {
+  background: linear-gradient(0deg, transparent, red);
 }
 
 .actions {

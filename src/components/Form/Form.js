@@ -57,9 +57,10 @@ const Form = (props) => {
   return (
     <React.Fragment>
       <form method="post" onSubmit={formSubmissionHandler} id="form">
+        <legend>epiCalendar</legend>
         <div className={classes.control}>
           <div className={codeInputClasses}>
-            <label htmlFor="codigo">Código</label>
+            <label htmlFor="codigo">JSESSIONID</label>
             <input
               type="text"
               id="codigo"
@@ -67,13 +68,11 @@ const Form = (props) => {
               onChange={codeChangeHandler}
               onBlur={codeBlurHandler}
               value={enteredCode}
+              placeholder="0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"
             />
             {codeHasError && (
               <React.Fragment>
                 <p className={classes.error}>El código no es válido.</p>
-                <p className={classes.error}>
-                  Ejemplo de código: 0000wahqA9h2G43ge6FtEJJAkhH:1d18eurd6
-                </p>
               </React.Fragment>
             )}
           </div>
@@ -90,6 +89,10 @@ const Form = (props) => {
           disabled={!formIsValid}
           onClick={formSubmissionHandler}
         >
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
           Generar
         </button>
       </div>
