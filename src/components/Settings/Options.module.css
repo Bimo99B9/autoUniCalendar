@@ -12,3 +12,16 @@
   margin-top: 5px;
   margin-bottom: 1rem;
 }
+
+.separation {
+  display: flex;
+  flex-direction: row;
+}
+
+/*
+.separation hr {
+  color: black;
+  height: 10;
+  width: 10;
+}
+*/

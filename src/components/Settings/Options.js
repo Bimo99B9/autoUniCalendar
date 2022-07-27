@@ -10,8 +10,24 @@ const Options = (props) => {
       <div className={classes.options}>
         <h2>Settings</h2>
       </div>
-      <RadioButtons onClick={props.onCheck} university={props.university} />
-      <Checkboxes university={props.university} />
+      <div className={classes.separation}>
+        <RadioButtons onClick={props.onCheck} university={props.university} />
+        <hr
+          style={{
+            color: "grey",
+            backgroundColor: "grey",
+            borderColor: "grey",
+            height: 115,
+            fontWeight: "bold",
+            width: 5,
+            marginTop: "0px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: 14,
+          }}
+        />
+        <Checkboxes university={props.university} />
+      </div>
     </React.Fragment>
   );
 };

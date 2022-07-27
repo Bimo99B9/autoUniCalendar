@@ -5,32 +5,91 @@ import SettingsContext from "../../store/settings-context";
 
 const Checkboxes = () => {
   const ctx = useContext(SettingsContext);
-  // const [isCheckedParsing, setIsCheckedParsing] = useState(true);
-  // const [isCheckedExperimental, setIsCheckedExperimental] = useState(true);
-  // const [isClassParsing, setIsClassParsing] = useState(true);
 
+  const [parse, setParse] = useState({ parse: true, parseDisabled: false });
+  const [experimental, setExperimental] = useState({
+    experimental: true,
+    experimentalDisabled: false,
+  });
+  const [classParse, setClassParse] = useState({
+    classParsing: true,
+    classParsingDisabled: false,
+  });
+
+  // No dependecies as we want the checkboxes to be updated only on first render
   useEffect(() => {
     if (ctx.university === "uo") {
-      ctx.parseHandler(false);
-      ctx.experimentalHandler(false);
-      ctx.classParsingHandler(true);
+      console.log("entra uo");
+      setParse({
+        parse: ctx.oviedoCheck.parse,
+        parseDisabled: ctx.oviedoCheck.parseDisabled,
+      });
+      setExperimental({
+        experimental: ctx.oviedoCheck.experimental,
+        experimentalDisabled: ctx.oviedoCheck.experimentalDisabled,
+      });
+      setClassParse({
+        classParsing: ctx.oviedoCheck.classParsing,
+        classParsingDisabled: ctx.oviedoCheck.classParsingDisabled,
+      });
     } else if (ctx.university === "epi") {
-      ctx.parseHandler(true);
-      ctx.experimentalHandler(true);
-      ctx.classParsingHandler(true);
+      console.log("entra epi");
+      setParse({
+        parse: ctx.epiCheck.parse,
+        parseDisabled: ctx.epiCheck.parseDisabled,
+      });
+      setExperimental({
+        experimental: ctx.epiCheck.experimental,
+        experimentalDisabled: ctx.epiCheck.experimentalDisabled,
+      });
+      setClassParse({
+        classParsing: ctx.epiCheck.classParsing,
+        classParsingDisabled: ctx.epiCheck.classParsingDisabled,
+      });
     }
   }, [ctx.university]);
 
-  const checkParsingHandler = () => {
-    ctx.parseHandler(!ctx.parse);
+  // useEffect(() => {
+  //   setParse({
+  //     parse: ctx.epiCheck.parse,
+  //     parseDisabled: ctx.epiCheck.parseDisabled,
+  //   });
+  //   setExperimental({
+  //     experimental: ctx.epiCheck.experimental,
+  //     experimentalDisabled: ctx.epiCheck.experimentalDisabled,
+  //   });
+  //   setClassParse({
+  //     classParsing: ctx.epiCheck.classParsing,
+  //     classParsingDisabled: ctx.epiCheck.classParsingDisabled,
+  //   });
+  // }, [ctx.epiCheck]);
+
+  // Effect for updating the checkboxes
+  useEffect(() => {
+    ctx.parseHandler(parse.parse);
+    ctx.experimentalHandler(experimental.experimental);
+    ctx.classParsingHandler(classParse.classParsing);
+  }, [parse.parse, experimental.experimental, classParse.classParsing]);
+
+  const parseHandler = () => {
+    setParse((previousState) => ({
+      ...previousState,
+      parse: !previousState.parse,
+    }));
   };
 
-  const checkExperimentalHandler = () => {
-    ctx.experimentalHandler(!ctx.experimental);
+  const experimentalHandler = () => {
+    setExperimental((previousState) => ({
+      ...previousState,
+      experimental: !previousState.experimental,
+    }));
   };
 
-  const checkClassParsingHandler = () => {
-    ctx.classParsingHandler(!ctx.classParsing);
+  const classParsingHandler = () => {
+    setClassParse((previousState) => ({
+      ...previousState,
+      classParsing: !previousState.classParsing,
+    }));
   };
 
   return (
@@ -39,9 +98,9 @@ const Checkboxes = () => {
         <input
           type="checkbox"
           id="location-parsing"
-          checked={ctx.parse}
-          onChange={checkParsingHandler}
-          disabled={ctx.university === "uo"}
+          checked={parse.parse}
+          onChange={parseHandler}
+          disabled={parse.parseDisabled}
         />
         <label htmlFor="location-parsing">
           Enable location parsing (EPI Gijón)
@@ -51,9 +110,9 @@ const Checkboxes = () => {
         <input
           type="checkbox"
           id="experimental-parsing"
-          checked={ctx.experimental}
-          onChange={checkExperimentalHandler}
-          disabled={ctx.university === "uo"}
+          checked={experimental.experimental}
+          onChange={experimentalHandler}
+          disabled={experimental.experimentalDisabled}
         />
         <label htmlFor="experimental-parsing">
           Enable experimental location parsing (EPI Gijón)
@@ -63,8 +122,8 @@ const Checkboxes = () => {
         <input
           type="checkbox"
           id="class-parsing"
-          checked={ctx.classParsing}
-          onChange={checkClassParsingHandler}
+          checked={classParse.classParsing}
+          onChange={classParsingHandler}
         />
         <label htmlFor="class-parsing">Enable class type parsing</label>
       </div>

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 export const DEFAULT_FILENAME = "Calendario";
 export const DEFAULT_UNIVERSITY = "epi";
@@ -14,15 +14,61 @@ const SettingsContext = createContext({
   parseHandler: (state) => {},
   experimentalHandler: (state) => {},
   classParsingHandler: (state) => {},
+  isTouched: false,
+  isTouchHandler: (state) => {},
 });
 
 export const SettingsProvider = (props) => {
   const [university, setUniversity] = useState("epi");
   const [saveas, setSaveas] = useState("Calendario");
   // States for checkboxes
+  const [isTouched, setIsTouched] = useState(false);
   const [isCheckedParsing, setIsCheckedParsing] = useState(true);
   const [isCheckedExperimental, setIsCheckedExperimental] = useState(true);
   const [isClassParsing, setIsClassParsing] = useState(true);
+
+  // Cambio en estado de checkboxes para intentar hacer un estado por universidad
+  const [oviedoCheck, setOviedoCheck] = useState({
+    parse: false,
+    experimental: false,
+    classParsing: true,
+    parseDisabled: true,
+    experimentalDisabled: true,
+    classParsingDisabled: false,
+  });
+
+  const [epiCheck, setEpiCheck] = useState({
+    parse: true,
+    experimental: true,
+    classParsing: true,
+    parseDisabled: false,
+    experimentalDisabled: false,
+    classParsingDisabled: false,
+  });
+
+  useEffect(() => {
+    if (university === "epi") {
+      setEpiCheck((existingValues) => ({
+        ...existingValues,
+        parse: isCheckedParsing,
+        parseDisabled: false,
+        experimental: isCheckedParsing === true ? isCheckedExperimental : false,
+        experimentalDisabled: isCheckedParsing === true ? false : true,
+        classParsingDisabled: false,
+      }));
+    }
+  }, [isCheckedParsing]);
+
+  useEffect(() => {
+    if (university === "epi") {
+      setEpiCheck((previousState) => ({
+        ...previousState,
+        experimental: isCheckedParsing === true ? isCheckedExperimental : false,
+      }));
+    }
+  }, [isCheckedExperimental]);
+
+  useEffect(() => {}, [isClassParsing]);
 
   const checkHandler = (name) => {
     setUniversity(name);
@@ -41,7 +87,31 @@ export const SettingsProvider = (props) => {
   };
 
   const classParsingHandler = (state) => {
-    setIsClassParsing(state);
+    // console.log(state);
+    if (university === "uo") {
+      setOviedoCheck({
+        parse: false,
+        experimental: false,
+        classParsing: state,
+        parseDisabled: true,
+        experimentalDisabled: true,
+        classParsingDisabled: false,
+      });
+    } else {
+      setEpiCheck({
+        parse: epiCheck.parse,
+        experimental: epiCheck.experimental,
+        classParsing: state,
+        parseDisabled: false,
+        experimentalDisabled: false,
+        classParsingDisabled: false,
+      });
+    }
+    // setIsClassParsing(state);
+  };
+
+  const isTouchedHandler = (state) => {
+    setIsTouched(state);
   };
 
   return (
@@ -51,12 +121,16 @@ export const SettingsProvider = (props) => {
         university: university,
         saveNameHandler: saveNameHandler,
         saveas: saveas,
-        parse: isCheckedParsing,
-        experimental: isCheckedExperimental,
-        classParsing: isClassParsing,
+        // parse: isCheckedParsing,
+        // experimental: isCheckedExperimental,
+        // classParsing: isClassParsing,
         parseHandler: parseHandler,
         experimentalHandler: experimentalHandler,
         classParsingHandler: classParsingHandler,
+        isTouched: isTouched,
+        isTouchHandler: isTouchedHandler,
+        oviedoCheck: oviedoCheck,
+        epiCheck: epiCheck,
       }}
     >
       {props.children}
