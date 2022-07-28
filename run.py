@@ -16,7 +16,7 @@ def index():
 
 @app.route('/', methods = ['POST'])
 def form_post():
-    if debug: print(request.form)
+    if debug: print(f"[DEBUG] POST data received from React: {request.form}")
 
     jsessionid = request.form['jsessionid']
     filename = request.form['filename'] + ".csv"
@@ -24,7 +24,11 @@ def form_post():
     classType = request.form['class-type'] == "true"
     experimentalLocation = request.form['experimental-location'] == "true"
 
-    if debug: print(f"{jsessionid} → {filename}")
+    if debug:
+        print(f"[DEBUG] Calendar info: {jsessionid} → {filename}")
+        print(f"[DEBUG] Location: {location}")
+        print(f"[DEBUG] Experimental location: {experimentalLocation}")
+        print(f"[DEBUG] Class type: {classType}")
 
     if utils.verifyCookieExpiration(jsessionid):
 
@@ -38,8 +42,8 @@ def form_post():
         argv.append('-o')
         argv.append(uuidStr)
         if debug:
-            print(uuidStr)
-            print(argv)
+            print(f"[DEBUG] UUID: {uuidStr}")
+            print(f"[DEBUG] Arguments: {argv}")
 
         try:
             if epiCalendar.main(argv) == 0:
@@ -47,8 +51,11 @@ def form_post():
                 if os.path.exists(uuidStr): os.remove(uuidStr)
                 return target
         except FileNotFoundError:
-            print("Error temporal (¿?)")
+            print("[DEBUG][ERROR] Exception occurred while generating the CSV file.")
             return serve()
+
+    elif debug:
+        print("[DEBUG][ERROR] Expired cookie submited.")
 
     return serve()
 
