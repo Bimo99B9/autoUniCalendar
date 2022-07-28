@@ -33,30 +33,3 @@
   display: flex;
   justify-content: flex-end;
 }
-
-.buttons button {
-  font: inherit;
-  cursor: pointer;
-  background-color: #4a5fc1;
-  border: 1px solid #4a5fc1;
-  padding: 0.5rem 2rem;
-  border-radius: 25px;
-  margin-left: 1rem;
-}
-
-.buttons button:hover,
-.buttons button:active {
-  background-color: #240370;
-  border-color: #240370;
-  color: white;
-}
-
-.buttons .button--alt {
-  align-self: center;
-  color: white;
-}
-
-.buttons .button {
-  background-color: #4a5fc1;
-  color: white;
-}

@@ -17,6 +17,10 @@ const Settings = (props) => {
         <Options onCheck={ctx.check} university={ctx.university} />
         <div className={classes.buttons}>
           <button className={classes["button--alt"]} onClick={props.onClose}>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
             Close
           </button>
         </div>

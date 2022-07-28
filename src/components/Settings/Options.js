@@ -9,7 +9,7 @@ const Options = (props) => {
   return (
     <React.Fragment>
       <div className={classes.options}>
-        <h2>Settings</h2>
+        <h3>Settings</h3>
       </div>
       <div className={classes.separation}>
         <RadioButtons onClick={props.onCheck} university={props.university} />
