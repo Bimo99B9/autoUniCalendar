@@ -7,6 +7,7 @@ const universityList = [
   { value: "epi", label: "EPI Gijón", id: "epi" },
 ];
 
+// Component which contains the radio buttons for the universities
 const RadioButtons = (props) => {
   // Function that updates the university setting state
   const handleChange = (e) => {

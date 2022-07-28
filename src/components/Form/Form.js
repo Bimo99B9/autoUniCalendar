@@ -4,16 +4,21 @@ import React, { useState, useEffect } from "react";
 
 import SettingsContext from "../../store/settings-context";
 import classes from "./Form.module.css";
+
+// Import the default state
 import {
   DEFAULT_FILENAME,
   DEFAULT_UNIVERSITY,
 } from "../../store/settings-context";
 
+// Component that represents the form
 const Form = (props) => {
+  // Access the settings context
   const ctx = React.useContext(SettingsContext);
 
   const [isValidCookie, setIsValidCookie] = useState(true);
 
+  // useInput hook for the jsessionid input
   const {
     value: enteredCode,
     isValid: codeIsValid,
@@ -33,11 +38,8 @@ const Form = (props) => {
       value.charAt(29) === "d"
   );
 
-  let formIsValid = false;
-
-  if (codeIsValid) {
-    formIsValid = true;
-  }
+  // Variable for the validity of the form
+  let formIsValid = codeIsValid;
 
   useEffect(() => {
     if (codeIsValid) {
@@ -46,6 +48,7 @@ const Form = (props) => {
     }
   }, [codeIsValid]);
 
+  // Function that handles the form submit and the post request
   const formSubmissionHandler = (event) => {
     event.preventDefault();
     if (!codeIsValid) {
@@ -59,6 +62,7 @@ const Form = (props) => {
     codeReset();
   };
 
+  // Styling for the form (error message)
   const codeInputClasses = `${classes.form} ${
     codeHasError ? classes.invalid : ""
   }`;

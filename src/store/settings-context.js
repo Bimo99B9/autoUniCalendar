@@ -1,8 +1,10 @@
 import React, { createContext, useEffect, useState } from "react";
 
+// Default values for the context
 export const DEFAULT_FILENAME = "Calendario";
 export const DEFAULT_UNIVERSITY = "epi";
 
+// Context for the settings of the app (better autocomplete)
 const SettingsContext = createContext({
   check: (name) => {},
   university: "",
@@ -16,21 +18,19 @@ const SettingsContext = createContext({
   classParsingHandler: (state) => {},
   update: false,
   updateHandler: (state) => {},
-  // isTouched: false,
-  // isTouchHandler: (state) => {},
 });
 
 export const SettingsProvider = (props) => {
-  const [university, setUniversity] = useState("epi");
-  const [saveas, setSaveas] = useState("Calendario");
+  const [university, setUniversity] = useState("epi"); // State for the university
+  const [saveas, setSaveas] = useState("Calendario"); // State for the filename
+
   // States for checkboxes
-  // const [isTouched, setIsTouched] = useState(false);
   const [update, setUpdate] = useState(false);
   const [isCheckedParsing, setIsCheckedParsing] = useState(true);
   const [isCheckedExperimental, setIsCheckedExperimental] = useState(true);
   const [isClassParsing, setIsClassParsing] = useState(true);
 
-  // Cambio en estado de checkboxes para intentar hacer un estado por universidad
+  // More general states which are used in the form to save the settings
   const [oviedoCheck, setOviedoCheck] = useState({
     parse: false,
     experimental: false,
@@ -39,7 +39,6 @@ export const SettingsProvider = (props) => {
     experimentalDisabled: true,
     classParsingDisabled: false,
   });
-
   const [epiCheck, setEpiCheck] = useState({
     parse: true,
     experimental: true,
@@ -49,6 +48,7 @@ export const SettingsProvider = (props) => {
     classParsingDisabled: false,
   });
 
+  // useEffect hooks to update the states of the checkboxes
   useEffect(() => {
     if (university === "epi") {
       setEpiCheck((existingValues) => ({
@@ -62,7 +62,6 @@ export const SettingsProvider = (props) => {
     }
     setUpdate(false);
   }, [isCheckedParsing]);
-
   useEffect(() => {
     console.log("entra");
     if (university === "epi") {
@@ -73,7 +72,6 @@ export const SettingsProvider = (props) => {
     }
     setUpdate(false);
   }, [isCheckedExperimental]);
-
   useEffect(() => {
     console.log("entra en classParsing");
     if (university === "uo") {
@@ -90,50 +88,28 @@ export const SettingsProvider = (props) => {
     setUpdate(false);
   }, [isClassParsing]);
 
+  // Function to set the university state
   const checkHandler = (name) => {
     setUniversity(name);
   };
 
+  // Function to set the filename state
   const saveNameHandler = (name) => {
     setSaveas(name);
   };
 
+  // Functions to set the checkboxes state
   const parseHandler = (state) => {
     setIsCheckedParsing(state);
   };
-
   const experimentalHandler = (state) => {
     setIsCheckedExperimental(state);
   };
-
   const classParsingHandler = (state) => {
-    // console.log(state);
-    // if (university === "uo") {
-    //   setOviedoCheck({
-    //     parse: false,
-    //     experimental: false,
-    //     classParsing: state,
-    //     parseDisabled: true,
-    //     experimentalDisabled: true,
-    //     classParsingDisabled: false,
-    //   });
-    // } else {
-    //   setEpiCheck({
-    //     parse: epiCheck.parse,
-    //     experimental: epiCheck.experimental,
-    //     classParsing: state,
-    //     parseDisabled: false,
-    //     experimentalDisabled: false,
-    //     classParsingDisabled: false,
-    //   });
-    // }
     setIsClassParsing(state);
   };
 
-  // const isTouchedHandler = (state) => {
-  //   setIsTouched(state);
-  // };
-
+  // Function to set the update state
   const updateHandler = (state) => {
     setUpdate(state);
   };
@@ -145,14 +121,9 @@ export const SettingsProvider = (props) => {
         university: university,
         saveNameHandler: saveNameHandler,
         saveas: saveas,
-        // parse: isCheckedParsing,
-        // experimental: isCheckedExperimental,
-        // classParsing: isClassParsing,
         parseHandler: parseHandler,
         experimentalHandler: experimentalHandler,
         classParsingHandler: classParsingHandler,
-        // isTouched: isTouched,
-        // isTouchHandler: isTouchedHandler,
         oviedoCheck: oviedoCheck,
         epiCheck: epiCheck,
         update: update,

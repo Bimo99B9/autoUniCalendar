@@ -5,14 +5,10 @@ import Saver from "./Saver";
 import classes from "./Settings.module.css";
 import SettingsContext from "../../store/settings-context";
 
+// Settings component which contains the modal and the options
 const Settings = (props) => {
+  // Context to access the settings state
   const ctx = React.useContext(SettingsContext);
-  // Function for updating script settings
-  // const settingsHandler = () => {
-  //   console.log(ctx.university);
-  //   console.log(ctx.saveas);
-  //   console.log("CONFIRMACION");
-  // };
 
   return (
     <Modal onClose={props.onClose}>
@@ -28,11 +24,5 @@ const Settings = (props) => {
     </Modal>
   );
 };
-
-/* <button className={classes.button} onClick={settingsHandler}>
-            Update
-          </button>
-          
-          */
 
 export default Settings;

@@ -4,6 +4,7 @@ import Checkboxes from "./Checkboxes";
 import classes from "./Options.module.css";
 import RadioButtons from "./RadioButtons";
 
+// General component for the radio buttons and checkboxes
 const Options = (props) => {
   return (
     <React.Fragment>
