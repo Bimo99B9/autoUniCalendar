@@ -97,7 +97,7 @@ const Checkboxes = () => {
           disabled={parse.parseDisabled}
         />
         <label htmlFor="location-parsing">
-          Enable location parsing (EPI Gijón)
+          Location parsing (EPI Gijón)
         </label>
       </div>
       <div>
@@ -109,7 +109,7 @@ const Checkboxes = () => {
           disabled={experimental.experimentalDisabled}
         />
         <label htmlFor="experimental-parsing">
-          Enable experimental location parsing (EPI Gijón)
+          Experimental location parsing (EPI Gijón)
         </label>
       </div>
       <div>
@@ -119,7 +119,7 @@ const Checkboxes = () => {
           checked={classParse.classParsing}
           onChange={classParsingHandler}
         />
-        <label htmlFor="class-parsing">Enable class type parsing</label>
+        <label htmlFor="class-parsing">Class type parsing</label>
       </div>
     </div>
   );

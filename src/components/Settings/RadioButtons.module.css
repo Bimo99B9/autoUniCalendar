@@ -1,14 +1,10 @@
 .form {
-  display: flex;
-  margin-left: 30px;
-  margin-bottom: 8px;
+  display: block;
+  align-content: center;
 }
 .form label {
-  margin-left: 10px;
   width: 100%;
-  font-size: 18px;
-  margin-top: 10px;
-  margin-right: 0px;
+  color: white;
 }
 
 /*
