@@ -3,9 +3,12 @@ import React, { useState, useEffect, useContext } from "react";
 import classes from "./Checkboxes.module.css";
 import SettingsContext from "../../store/settings-context";
 
+// Component that represents the 3 checkboxes
 const Checkboxes = () => {
+  // Access the settings context
   const ctx = useContext(SettingsContext);
 
+  // State for the checkboxes
   const [parse, setParse] = useState({ parse: true, parseDisabled: false });
   const [experimental, setExperimental] = useState({
     experimental: true,
@@ -56,6 +59,7 @@ const Checkboxes = () => {
     ctx.classParsingHandler(classParse.classParsing);
   }, [parse.parse, experimental.experimental, classParse.classParsing]);
 
+  // Function that handles the checkbox change (parse or location)
   const parseHandler = () => {
     setParse((previousState) => ({
       ...previousState,
@@ -64,6 +68,7 @@ const Checkboxes = () => {
     ctx.updateHandler(true);
   };
 
+  // Function that handles the checkbox change (experimental or experimental-location)
   const experimentalHandler = () => {
     setExperimental((previousState) => ({
       ...previousState,
@@ -72,6 +77,7 @@ const Checkboxes = () => {
     ctx.updateHandler(true);
   };
 
+  // Function that handles the checkbox change (class-type or class-type)
   const classParsingHandler = () => {
     setClassParse((previousState) => ({
       ...previousState,

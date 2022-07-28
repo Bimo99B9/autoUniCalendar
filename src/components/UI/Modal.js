@@ -3,10 +3,12 @@ import ReactDOM from "react-dom";
 
 import classes from "./Modal.module.css";
 
+// Modal backdrop
 const Backdrop = (props) => {
   return <div className={classes.backdrop} onClick={props.onClose} />;
 };
 
+// Modal overlay which contains the modal
 const ModalOverlay = (props) => {
   return (
     <div className={classes.modal}>
@@ -15,8 +17,10 @@ const ModalOverlay = (props) => {
   );
 };
 
+// Get the overlays element from the public/index.html file
 const portalElement = document.getElementById("overlays");
 
+// Modal component which contains the backdrop and the modal overlay
 const Modal = (props) => {
   return (
     <Fragment>

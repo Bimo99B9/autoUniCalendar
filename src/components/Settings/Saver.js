@@ -3,13 +3,16 @@ import React from "react";
 import useInput from "../../hooks/use-input";
 import classes from "./Saver.module.css";
 
+// Component to set the name of the filename
 const Saver = (props) => {
+  // useInput hook to get the name of filename
   const {
     value: enteredName,
     valueChangeHandler: nameChangeHandler,
     inputBlurHandler: nameBlurHandler,
   } = useInput((value) => value.length > 0);
 
+  // Function to set the name of the file
   const nameHandlerValue = (name) => {
     if (name.target.value.trim().length > 0) {
       nameChangeHandler(name);
@@ -48,7 +51,5 @@ const Saver = (props) => {
     </React.Fragment>
   );
 };
-
-// ↑ añadir input con atributo "readOnly" que indique que la extensión es .csv obligatoriamente
 
 export default Saver;
