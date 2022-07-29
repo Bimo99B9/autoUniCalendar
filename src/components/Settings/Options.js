@@ -11,11 +11,12 @@ const Options = (props) => {
       <div className={classes.options}>
         <h3>Settings</h3>
       </div>
-      <div className={classes.separation}>
-        <fieldset id="radiobuttons">
+      <div className={classes.cajitas}>
         <RadioButtons onClick={props.onCheck} university={props.university} />
-        </fieldset>
-        <Checkboxes university={props.university} />
+      </div>
+      <hr></hr>
+      <div className={classes.cajitas}>
+        <Checkboxes university={props.university}/>
       </div>
     </React.Fragment>
   );

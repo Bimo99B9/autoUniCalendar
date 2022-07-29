@@ -22,7 +22,6 @@ const Checkboxes = () => {
   // No dependecies as we want the checkboxes to be updated only on first render
   useEffect(() => {
     if (ctx.university === "uo") {
-      console.log("entra uo");
       setParse({
         parse: ctx.oviedoCheck.parse,
         parseDisabled: ctx.oviedoCheck.parseDisabled,
@@ -36,7 +35,6 @@ const Checkboxes = () => {
         classParsingDisabled: ctx.oviedoCheck.classParsingDisabled,
       });
     } else if (ctx.university === "epi") {
-      console.log("entra epi");
       setParse({
         parse: ctx.epiCheck.parse,
         parseDisabled: ctx.epiCheck.parseDisabled,

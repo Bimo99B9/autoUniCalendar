@@ -18,7 +18,7 @@ const Saver = (props) => {
       nameChangeHandler(name);
       props.onSave(name.target.value);
     } else if (name.target.value === "") {
-      console.log("Name is empty");
+      100("Name is empty");
       nameChangeHandler(name);
       props.onSave("Calendario");
     }

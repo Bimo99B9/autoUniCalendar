@@ -29,4 +29,14 @@ const Settings = (props) => {
   );
 };
 
+/*
+<button className={classes.button}>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  🇪🇸/🇬🇧
+</button>
+*/
+
 export default Settings;

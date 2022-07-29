@@ -53,11 +53,10 @@ h3 {
   padding: 0.5rem;
   border-radius: 4px;
   border: 1px solid #ccc;
-  width: 95%;
-  max-width: 100%;
-  margin-bottom: 1rem;
+  width: 90%;
   color: grey;
-  margin-right: 0.5rem;
+  margin-right: 0.25rem;
+  margin-left: 0.25rem;
 }
 
 .form input:focus {
