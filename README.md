@@ -4,7 +4,11 @@ Fork de [un script de Python](https://github.com/Bimo99B9/autoUniCalendar) que c
 
 ## Uso
 
+<<<<<<< HEAD
 Para utilizar el script, se puede utilizar tanto [la versión web](https://epicalendar.herokuapp.com) como el script en local.
+=======
+You can use the (new!) [web version](https://epicalendar.herokuapp.com/) to convert your calendar on the fly!
+>>>>>>> 3d163d42 (Update README.md)
 
 ### Página web (recomendado)
 
