@@ -13,9 +13,22 @@
   margin-bottom: 1rem;
 }
 
-.separation {
-  display: flex;
-  flex-direction: row;
+.cajitas {
+  display: block;
+  margin: auto;
+  width: 60%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+hr {
+  width: 75%;
+  color: white;
+}
+
+.separation input {
+  align-content: center;
 }
 
 /*

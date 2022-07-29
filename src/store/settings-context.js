@@ -63,7 +63,6 @@ export const SettingsProvider = (props) => {
     setUpdate(false);
   }, [isCheckedParsing]);
   useEffect(() => {
-    console.log("entra");
     if (university === "epi") {
       setEpiCheck((previousState) => ({
         ...previousState,
@@ -73,7 +72,6 @@ export const SettingsProvider = (props) => {
     setUpdate(false);
   }, [isCheckedExperimental]);
   useEffect(() => {
-    console.log("entra en classParsing");
     if (university === "uo") {
       setOviedoCheck((previousState) => ({
         ...previousState,
