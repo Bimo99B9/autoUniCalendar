@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import Form from "./components/Form/Form";
 import Settings from "./components/Settings/Settings";
 import classes from "./App.module.css";
-import NotValid from "./pages/NotValid";
+import NotValidCookie from "./pages/NotValidCookie";
 
 function App() {
   // State for the modal window to be open or closed
@@ -24,7 +24,7 @@ function App() {
     <div>
       <Switch>
         <Route path="/error" exact>
-          <NotValid />
+          <NotValidCookie />
         </Route>
         <Route path="*">
           <div className={classes.app}>

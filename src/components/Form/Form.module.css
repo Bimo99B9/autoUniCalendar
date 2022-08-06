@@ -24,9 +24,9 @@ main {
   width: min(80%, 35rem);
   padding: 30px;
   transform: translate(-50%, -50%);
-  background: rgba(0,0,0,.5);
+  background: rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
-  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
   border-radius: 10px;
 }
 
@@ -38,7 +38,7 @@ main {
 }
 
 input {
-  position: relative
+  position: relative;
 }
 
 .form input,
@@ -63,7 +63,7 @@ form legend {
   padding: 10px 0;
   font-size: 16px;
   pointer-events: none;
-  transition: .5s;
+  transition: 0.5s;
 }
 
 .form input,
@@ -93,7 +93,7 @@ button {
   text-decoration: none;
   text-transform: uppercase;
   overflow: hidden;
-  transition: .5s;
+  transition: 0.5s;
   margin-top: 40px;
   letter-spacing: 2px;
   background: inherit;
@@ -103,10 +103,8 @@ button {
 button:hover {
   background: #03e9f4;
   color: #fff;
-  box-shadow: 0 0 5px #03e9f4,
-              0 0 25px #03e9f4,
-              0 0 50px #03e9f4,
-              0 0 100px #03e9f4;
+  box-shadow: 0 0 5px #03e9f4, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
+    0 0 100px #03e9f4;
   cursor: pointer;
 }
 
@@ -117,10 +115,8 @@ button:disabled {
 
 button:disabled:hover {
   background: #740808;
-  box-shadow: 0 0 5px #740808,
-              0 0 25px #740808,
-              0 0 50px #740808,
-              0 0 100px #740808;
+  box-shadow: 0 0 5px #740808, 0 0 25px #740808, 0 0 50px #740808,
+    0 0 100px #740808;
 }
 
 button span:nth-child(1) {
@@ -136,7 +132,8 @@ button span:nth-child(1) {
   0% {
     left: -100%;
   }
-  50%,100% {
+  50%,
+  100% {
     left: 100%;
   }
 }
@@ -148,14 +145,15 @@ button span:nth-child(2) {
   height: 100%;
   background: linear-gradient(180deg, transparent, #03e9f4);
   animation: btn-anim2 1s linear infinite;
-  animation-delay: .3s
+  animation-delay: 0.3s;
 }
 
 @keyframes btn-anim2 {
   0% {
     top: -100%;
   }
-  50%,100% {
+  50%,
+  100% {
     top: 100%;
   }
 }
@@ -167,14 +165,15 @@ button span:nth-child(3) {
   height: 2px;
   background: linear-gradient(270deg, transparent, #03e9f4);
   animation: btn-anim3 1s linear infinite;
-  animation-delay: .55s
+  animation-delay: 0.55s;
 }
 
 @keyframes btn-anim3 {
   0% {
     right: -100%;
   }
-  50%,100% {
+  50%,
+  100% {
     right: 100%;
   }
 }
@@ -191,14 +190,15 @@ button span:nth-child(4) {
   height: 100%;
   background: linear-gradient(0deg, transparent, #03e9f4);
   animation: btn-anim4 1s linear infinite;
-  animation-delay: .8s
+  animation-delay: 0.8s;
 }
 
 @keyframes btn-anim4 {
   0% {
     bottom: -100%;
   }
-  50%,100% {
+  50%,
+  100% {
     bottom: 100%;
   }
 }
