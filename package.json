@@ -10,6 +10,7 @@
     "i18next-browser-languagedetector": "^6.1.4",
     "nodejs": "^0.0.0",
     "npm": "^8.15.0",
+    "nth-check": "^2.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^11.18.3",
