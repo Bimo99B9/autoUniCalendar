@@ -51,11 +51,11 @@ def form_post():
                 if os.path.exists(uuidStr): os.remove(uuidStr)
                 return target
         except FileNotFoundError:
-            print("[DEBUG][ERROR] Exception occurred while generating the CSV file.")
+            print("[DEBUG] [ERROR] Exception occurred while generating the CSV file.")
             return serve()
 
     elif debug:
-        print("[DEBUG][ERROR] Expired cookie submited.")
+        print("[DEBUG] [ERROR] Expired cookie submited.")
 
     return serve()
 
