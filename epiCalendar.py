@@ -32,7 +32,6 @@ def getFirstRequest(session_token):
     print("Sending initial payload...", end=" ", flush=True)
     initTime = time.time()
 
-    # Cookies payload of the HTTP request.
     payload = {
         'JSESSIONID': session_token,
         'cookieconsent_status': 'dismiss'
@@ -41,7 +40,6 @@ def getFirstRequest(session_token):
     r = rSession.get(url, cookies=payload)
     print("✓ (%.3fs)" % (time.time() - initTime))
 
-    # The function returns the server response to use it later.
     return r.text
 
 # Function to extract the cookies necessary to make the POST request, from the server response of the first request.
@@ -66,13 +64,12 @@ def extractCookies(get_response):
 
         if found_first and found_second and found_third: break
 
-    # The function returns a list that contains the extracted parameters.
-    if not 'source' in locals():
+    if not 'source' in locals(): # If the variable 'source' is not defined, the cookie was probably not valid.
         print("× (¿Invalid JSESSIONID?)")
         exit(1)
 
     print("✓ (%.3fs)" % (time.time() - initTime))
-    return [source, viewstate, submit]
+    return [source, viewstate, submit] # Return a list that contains the extracted parameters.
 
 # Function that sends the HTTP POST request to the server and retrieves the raw data of the calendar.
 # The raw text response is returned.
@@ -109,28 +106,35 @@ def postCalendarRequest(jsessionid, ajax, source, view, start, end, submit) -> s
 def parseLocation(loc) -> str:
 
     if not enableLocationParsing: return loc
-    location = loc.rsplit()
+    epRegex = re.compile(r'\d\.\d\.\d\d') # Edificio Polivalente regex
+    anRegex = re.compile(r'[A-Z]\d') # Aulario Norte regex
+    asRegex = re.compile(r'A[Ss]-\d') # Aulario Sur regex
 
-    if location[1] == "Informática": return f"AN-{location[2]}"
-    if location[1] == "De": return f"AN-{location[3]}"
-    if "-" in location[1]:
-        location = location[1].split("-")
-        return f"{location[0].upper()}-{location[1]}"
-    if location[0] == "Aula": return f"AN-{location[1]}"
+    asResult = asRegex.search(loc)
+    if bool(asResult):
+        return asResult.group(0).upper()
+
+    anResult = anRegex.search(loc)
+    if bool(anResult):
+        return f"AN-{anResult.group(0)}"
+
+    epResult = epRegex.search(loc)
+    if bool(epResult):
+        return f"EP-{epResult.group(0)}"
 
     if not enableExperimentalLocationParsing: return loc
     # The following conditions are experimental and NOT thoroughly tested.
+    location = loc.rsplit()
     i = 0
     while i < len(location):
-        if "(" in location[i]: return f"DO {location[i]}"
-        elif "BC" in location[i]: return f"DE {location[i]}"
-        elif "." in location[i]: return f"EP {location[i]}"
+        if "(" in location[i]: return f"DO-{location[i]}"
+        elif "BC" in location[i]: return f"DE-{location[i]}"
         i += 1
 
     return loc # If the location is not recognized, return the original string.
 
 # Parse the correct "class type" for each entry.
-# AFAIKthere are only "Teoría (CEX)", "Prácticas de Aula (PA)", "Prácticas de Laboratorio (PL)" and "Teorías Grupales (TG)".
+# AFAIK there are only "Teoría (CEX)", "Prácticas de Aula (PA)", "Prácticas de Laboratorio (PL)" and "Teorías Grupales (TG)".
 def parseClassType(type) -> str:
 
     if not enableClassTypeParsing: return type
@@ -176,9 +180,9 @@ def createCsv(rawResponse):
         # Make the necessary strings transformations to adapts the raw field data into a CSV readable file.
         title_csv = re.findall(reg, title.split(':')[1])[0]
 
-        title = title_csv.split(" - ")[0]
-        classType = parseClassType(title_csv.split(" - ")[1])
-        title = f"{title} ({classType})"
+        titleSplit = title_csv.split(" - ")
+        classType = parseClassType(titleSplit[1])
+        title = f"{titleSplit[0]} ({classType})"
 
         start_date = start.split(' ')[1].split('T')[0].split('"')[1]
         start_date_csv = start_date.split('-')[2]+'/'+start_date.split('-')[1]+'/'+start_date.split('-')[0]
@@ -189,13 +193,13 @@ def createCsv(rawResponse):
         alert_date = start_date_csv
         alert_hour = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
         event_creator = "Universidad de Oviedo"
-        body = description.split('"')[3].replace(r'\n', '')
 
-        info = body.split(" - ")[0]
+        body = description.split('"')[3].replace(r'\n', '')
+        info = body.replace(' - ', ' @ ')
         location = parseLocation(body.split(" - ")[1])
 
         # Write all the fields into a single line, and append it to the file.
-        csv_line = f"{title},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
+        csv_line = f"{title},{start_date_csv},{start_hour},{end_date_csv},{end_hour},Falso,Falso,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
         g.write(csv_line)
 
     g.close()
