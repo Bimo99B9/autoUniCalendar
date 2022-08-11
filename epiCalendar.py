@@ -26,7 +26,7 @@ enableClassTypeParsing = True
 
 
 
-# Function to send the first GET HTTP request using the tokens provided.
+# Function to send the first GET request using the cookie provided.
 def getFirstRequest(session_token):
 
     print("Sending initial payload...", end=" ", flush=True)
@@ -63,6 +63,8 @@ def extractCookies(get_response):
         if 'action="/serviciosacademicos/web/expedientes/calendario.xhtml"' in line and not found_third:
             submit = re.findall(reg, line.split(' ')[3])[0]
             found_third = True
+
+        if found_first and found_second and found_third: break
 
     # The function returns a list that contains the extracted parameters.
     if not 'source' in locals():
