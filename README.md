@@ -21,6 +21,8 @@ Para utilizar la web, solo hay que [obtener una cookie](https://github.com/mierm
   ```git clone https://github.com/miermontoto/epiCalendar```
 - Una vez descargado, el script se ejecuta normalmente como cualquier otro input de Python: `python3 epiCalendar.py`
   - El script admite parámetros de entrada, tanto flags como la propia cookie necesaria.
+  
+Necesita el paquete [`requests`](https://pypi.org/project/requests/).
 
 ## Obtener JSESSIONID
 
@@ -33,7 +35,7 @@ Copia la cookie `JSESSIONID`. Si hay varias, busca la que tenga como `Path`: `/s
 
 ## Modificaciones
 
-### Filtrado de localización
+### Filtrado de localización (solo EPI Gijón)
 
 El "filtrado de localización" corrige automáticamente el nombre de las clases insertadas en el calendario del SIES.
 Ejemplos de esto son:
@@ -44,7 +46,7 @@ Ejemplos de esto son:
 - `Aula Informática S8` → `AN-S8`
 
 
-#### Filtrado de localización experimental
+#### Filtrado de localización experimental (solo EPI Gijón)
 
 El "filtrado de localización experimental" corrige el nombre de algunas clases a fuerza, de modo que algunas clases pueden
 estar mal filtradas.
