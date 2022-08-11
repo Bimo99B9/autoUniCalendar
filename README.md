@@ -21,7 +21,7 @@ Para utilizar la web, solo hay que [obtener una cookie](https://github.com/mierm
   ```git clone https://github.com/miermontoto/epiCalendar```
 - Una vez descargado, el script se ejecuta normalmente como cualquier otro input de Python: `python3 epiCalendar.py`
   - El script admite parámetros de entrada, tanto flags como la propia cookie necesaria.
-  
+
 Necesita el paquete [`requests`](https://pypi.org/project/requests/).
 
 ## Obtener JSESSIONID
@@ -43,7 +43,8 @@ Ejemplos de esto son:
 - `Aula As-1` → `AS-1`
 - `Aula B5` → `AN-B5`
 - `Aula de Informática B1` → `AN-B1`
-- `Aula Informática S8` → `AN-S8`
+- `Sala Informática S8` → `AN-S8`
+- `Laboratorio 1.5.01 Tecnología y Microprocesadores` → `EP-1.5.01`
 
 
 #### Filtrado de localización experimental (solo EPI Gijón)
@@ -51,7 +52,6 @@ Ejemplos de esto son:
 El "filtrado de localización experimental" corrige el nombre de algunas clases a fuerza, de modo que algunas clases pueden
 estar mal filtradas.
 
-- Se supone que todas las clases que contengan un punto forman parte del Edificio Polivalente, sin filtrar nada más: `EP-XXXX`
 - Se supone que todas las clases que contengan "BC" forman parte del Departamental Este, sin filtrar nada más: `DE-XXXX`
 - Se supone que todas las clases que contengan "(" forman parte del Departamental Oeste, sin filtrar nada más: `DO-XXXX`
 
