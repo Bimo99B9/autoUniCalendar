@@ -46,15 +46,6 @@ Ejemplos de esto son:
 - `Sala Informática S8` → `AN-S8`
 - `Laboratorio 1.5.01 Tecnología y Microprocesadores` → `EP-1.5.01`
 
-
-#### Filtrado de localización experimental (solo EPI Gijón)
-
-El "filtrado de localización experimental" corrige el nombre de algunas clases a fuerza, de modo que algunas clases pueden
-estar mal filtradas.
-
-- Se supone que todas las clases que contengan "BC" forman parte del Departamental Este, sin filtrar nada más: `DE-XXXX`
-- Se supone que todas las clases que contengan "(" forman parte del Departamental Oeste, sin filtrar nada más: `DO-XXXX`
-
 ### Filtrado de tipos de clase
 
 Se añade al final de cada clase el tipo de clase, como por ejemplo: `Cálculo (CEX)`, o `Fundamentos de Informática (PL1)`.
