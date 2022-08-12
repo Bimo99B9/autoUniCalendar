@@ -108,7 +108,7 @@ def parseLocation(loc):
     if not enableLocationParsing: return loc
     epRegex = re.compile(r'\d\.\d\.\d\d') # Edificio Polivalente regex
     anRegex = re.compile(r'[A-Z]\d') # Aulario Norte regex
-    asRegex = re.compile(r'A[Ss]-\d') # Aulario Sur regex
+    asRegex = re.compile(r'A[Ss]-\d\d?') # Aulario Sur regex
 
     asResult = asRegex.search(loc)
     if bool(asResult):
