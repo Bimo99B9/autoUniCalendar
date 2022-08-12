@@ -18,10 +18,8 @@ rSession = requests.Session()
 # Toggle location and class type parsing using the following global variables.
 # If all special parsing is disabled, this script behaves almost exactly as the original one.
 # If you intend to use this script for a non-EPI calendar, you should disable them all.
-# Disabling location parsing will disable experimental location parsing.
 # This options can be easily toggled through argument flags.
 enableLocationParsing = True
-enableExperimentalLocationParsing = True
 enableClassTypeParsing = True
 enableStatistics = False
 
@@ -106,32 +104,46 @@ def postCalendarRequest(jsessionid, ajax, source, view, start, end, submit) -> s
 def parseLocation(loc):
 
     if not enableLocationParsing: return loc
-    epRegex = re.compile(r'\d\.\d\.\d\d') # Edificio Polivalente regex
-    anRegex = re.compile(r'[A-Z]\d') # Aulario Norte regex
-    asRegex = re.compile(r'A[Ss]-\d\d?') # Aulario Sur regex
 
-    asResult = asRegex.search(loc)
+    # Parse Aula AS-1 through Aula AS-11. (sometimes Aula As-X instead of Aula AS-X)
+    asResult = re.search(r'A[Ss]-\d\d?', loc)
     if bool(asResult):
         return asResult.group(0).upper()
 
-    anResult = anRegex.search(loc)
+    # Parse 'Sala Informática Px', 'Aula de Informática Bx' and 'Aula Informática Sx'
+    anResult = re.search(r'[PBS]\d', loc)
     if bool(anResult):
         return f"AN-{anResult.group(0)}"
 
-    epResult = epRegex.search(loc)
+    # Parse rooms from Edificio Polivalente using their code (format: X.X.XX)
+    epResult = re.search(r'\d\.\d\.\d\d', loc)
     if bool(epResult):
         return f"EP-{epResult.group(0)}"
 
-    if not enableExperimentalLocationParsing: return loc
-    # The following conditions are experimental and NOT thoroughly tested.
-    location = loc.rsplit()
-    i = 0
-    while i < len(location):
-        if "(" in location[i]: return f"DO-{location[i]}"
-        elif "BC" in location[i]: return f"DE-{location[i]}"
-        i += 1
+    # Parse 'Aula DE-1' through 'Aula DE-8'.
+    deResult = re.search(r'DE-\d', loc)
+    if bool(deResult):
+        return f"{deResult.group(0)}"
 
-    return loc # If the location is not recognized, return the original string.
+    # Parse 'Aula DO-1' through 'Aula DO -17'
+    doResult = re.search(r'DO[ ]?-\d\d?', loc)
+    if bool(doResult):
+        doFinal = doResult.group(0).replace(' ', '')
+        if doFinal[-2:] == "10": # DO-10 can be DO-10A or DO-10B.
+            return f"{doFinal}{loc[-1]}"
+        return doFinal
+
+    # Parse rooms from Departamental Oeste (Bajo cubierta) using their code (format: X.BC.XX)
+    # Very similar codes to the EP rooms, can be difficult to parse.
+    doResult = re.search(r'(\d.BC.\d\d)|(\d.S.\d\d)|(\d.B.\d\d)', loc)
+    if bool(doResult):
+        return f"DO-{doResult.group(0)}"
+
+    # Parse 'Aula A' through 'Aula E'.
+    # Has to be last because it is very generic and could match other locations.
+    aeResult = re.search(r'Aula [A-E]', loc)
+    if bool(aeResult):
+        return f"AN-{aeResult.group(0)[-1]}"
 
 # Parse the correct "class type" for each entry.
 # Also parses the group for each entry except for "Clase Expositiva".
@@ -232,18 +244,17 @@ def createCsv(rawResponse):
 
 
 def main(argv) -> int:
-    global enableLocationParsing, enableClassTypeParsing, enableExperimentalLocationParsing, enableStatistics, csvFile
+    global enableLocationParsing, enableClassTypeParsing, enableStatistics, csvFile
     session = ""
 
     # Read flags from arguments.
     if not len(argv) == 1 and (argv[1] == "--help" or argv[1] == "-h"):
-        print("Usage: python3 epiCalendar.py [JSESSIONID] [-o | --output-file <filename>] [--disable-location-parsing] [--disable-class-type-parsing] [--disable-experimental-location-parsing]")
+        print("Usage: python3 epiCalendar.py [JSESSIONID] [-o | --output-file <filename>] [--disable-location-parsing] [--disable-class-type-parsing]")
         exit(0)
 
     for i in range(1, len(argv)):
         if argv[i] == "--disable-location-parsing": enableLocationParsing = False
         if argv[i] == "--disable-class-type-parsing": enableClassTypeParsing = False
-        if argv[i] == "--disable-experimental-location-parsing": enableExperimentalLocationParsing = False
         if argv[i] == "-o" or argv[i] == "--output-file" : csvFile = argv[i+1]
         if argv[i] == "-s" or argv[i] == "--stats" or argv[i] == "--enable-statistics": enableStatistics = True
         if utils.verifyCookieStructure(argv[i]): session = argv[i]
