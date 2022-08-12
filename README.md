@@ -64,6 +64,19 @@ Se añade al final de cada clase el tipo de clase, como por ejemplo: `Cálculo (
 - `PLx` cuando es una práctica de laboratorio, incluyendo el número del grupo.
 - `TGx` cuando es una tutoría grupal, incluyendo el número del grupo.
 
+Se incluye el grupo excepto en clases de teoría.
+
+### Estadísticas
+
+El script recoge varias estadísticas sobre el calendario:
+
+- Número de clases.
+- Número de horas.
+- Número de clases por tipo de clase.
+- Número de clases por aula.
+
+Para activar las estadísticas se debe introducir el parámetro `--stats` o `-s`.
+
 ### Flags
 
 - `[-h | --help]` para mostrar el diálogo de ayuda.
@@ -71,5 +84,6 @@ Se añade al final de cada clase el tipo de clase, como por ejemplo: `Cálculo (
 - `[--disable-location-parsing]` para desactivar el filtrado de localización específico de la EPI.
 - `[--disable-experimental-location-parsing]` para desactivar el filtrado experimental específico de la EPI.
 - `[--disable-class-type-parsing]` para desactivar el filtrado del tipo de clases.
+- `[-s | --stats | --enable-statistics]` para activar las estadísticas al final del script.
 
 [epiCalendar](https://github.com/miermontoto/epiCalendar), a fork of [autoUniCalendar](https://github.com/BimoBB9B/autoUniCalendar), 2022 by [Juan Mier](https://github.com/miermontoto) is licensed under [CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)

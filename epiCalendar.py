@@ -23,7 +23,7 @@ rSession = requests.Session()
 enableLocationParsing = True
 enableExperimentalLocationParsing = True
 enableClassTypeParsing = True
-
+enableStatistics = False
 
 
 # Function to send the first GET request using the cookie provided.
@@ -103,7 +103,7 @@ def postCalendarRequest(jsessionid, ajax, source, view, start, end, submit) -> s
     return r.text
 
 # Parse the correct class name for each entry.
-def parseLocation(loc) -> str:
+def parseLocation(loc):
 
     if not enableLocationParsing: return loc
     epRegex = re.compile(r'\d\.\d\.\d\d') # Edificio Polivalente regex
@@ -134,16 +134,17 @@ def parseLocation(loc) -> str:
     return loc # If the location is not recognized, return the original string.
 
 # Parse the correct "class type" for each entry.
-# AFAIK there are only "Teoría (CEX)", "Prácticas de Aula (PA)", "Prácticas de Laboratorio (PL)" and "Teorías Grupales (TG)".
-def parseClassType(type) -> str:
+# Also parses the group for each entry except for "Clase Expositiva".
+# AFAIK there are only "Teoría (CEX)", "Prácticas de Aula (PAx)", "Prácticas de Laboratorio (PLx)" and "Teorías Grupales (TGx)".
+def parseClassType(type):
 
     if not enableClassTypeParsing: return type
-    classType = type.replace('.','').replace('-', ' ').rsplit()
+    classGroup = type.replace('.','').replace('-', ' ').rsplit()[-1].strip('0').upper()
 
-    if classType[0] == "Teoría": return f"CEX"
-    if classType[1] == "Grupales": return f"TG{classType[2].strip('0')}"
-    if classType[2] == "Aula": return f"PA{classType[3].strip('0')}"
-    if classType[2] == "Laboratorio": return f"PL{classType[3].strip('0')}"
+    if "Teoría" in type: return f"CEX"
+    if "Tutoría" in type or "Grupal" in type: return f"TG{classGroup}"
+    if "Aula" in type: return f"PA{classGroup}"
+    if "Laboratorio": return f"PL{classGroup}"
 
     return type # If the class type is not recognized, return the original string.
 
@@ -153,7 +154,13 @@ def createCsv(rawResponse):
     print("Parsing data and generating new csv...", end=" ", flush=True)
     initTime = time.time()
 
-    # Create the file.
+    stats = {
+        "hours": 0,
+        "classes": 0,
+        "classTypes": {},
+        "locations": {}
+    }
+
     g = open(csvFile, "w")
 
     # Write the headers in the first line.
@@ -202,12 +209,30 @@ def createCsv(rawResponse):
         csv_line = f"{title},{start_date_csv},{start_hour},{end_date_csv},{end_hour},Falso,Falso,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
         g.write(csv_line)
 
+        # Update the statistics.
+        stats["classes"] += 1
+        stats["hours"] += int(end_hour.split(':')[0]) - int(start_hour.split(':')[0])
+        if classType not in stats["classTypes"]:
+            stats["classTypes"] [classType] = 1
+        else:
+            stats["classTypes"][classType] += 1
+        if location not in stats["locations"]:
+            stats["locations"][location] = 1
+        else:
+            stats["locations"][location] += 1
+
     g.close()
     print("✓ (%.3fs)" % (time.time() - initTime))
 
+    # Sort the class types and locations by number of occurrences.
+    stats["classTypes"] = sorted(stats["classTypes"].items(), key=lambda x: x[1], reverse=True)
+    stats["locations"] = sorted(stats["locations"].items(), key=lambda x: x[1], reverse=True)
+
+    return stats
+
 
 def main(argv) -> int:
-    global enableLocationParsing, enableClassTypeParsing, enableExperimentalLocationParsing, csvFile
+    global enableLocationParsing, enableClassTypeParsing, enableExperimentalLocationParsing, enableStatistics, csvFile
     session = ""
 
     # Read flags from arguments.
@@ -220,6 +245,7 @@ def main(argv) -> int:
         if argv[i] == "--disable-class-type-parsing": enableClassTypeParsing = False
         if argv[i] == "--disable-experimental-location-parsing": enableExperimentalLocationParsing = False
         if argv[i] == "-o" or argv[i] == "--output-file" : csvFile = argv[i+1]
+        if argv[i] == "-s" or argv[i] == "--stats" or argv[i] == "--enable-statistics": enableStatistics = True
         if utils.verifyCookieStructure(argv[i]): session = argv[i]
 
     # If the required argument hasn't been provided, read from input.
@@ -268,8 +294,12 @@ create_csv(tmp)
     create_csv(tmp)
 =======
     cookies = extractCookies(getFirstRequest(session))
+<<<<<<< HEAD
     createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
 >>>>>>> 542ef996 (removal of temp files, verifications/optimizations)
+=======
+    stats = createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
+>>>>>>> 613083fe (better class type parsing, stats)
     print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -277,7 +307,22 @@ create_csv(tmp)
 =======
 =======
     print("Saved as \"%s\"" % csvFile)
+<<<<<<< HEAD
 >>>>>>> dea54aa3 (f/b comms, no settings and no download)
+=======
+
+    if enableStatistics:
+        print("\nStatistics:")
+        print("\tClasses: %d" % stats["classes"])
+        print("\tHours: %d" % stats["hours"])
+        print("\tClass types:")
+        for classType in stats["classTypes"]:
+            print("\t\t%s: %d" % (classType[0], classType[1]))
+        print("\tLocations:")
+        for location in stats["locations"]:
+            print("\t\t%s: %d" % (location[0], location[1]))
+
+>>>>>>> 613083fe (better class type parsing, stats)
     return 0
 
 if __name__ == "__main__":
