@@ -10,10 +10,6 @@ const Checkboxes = () => {
 
   // State for the checkboxes
   const [parse, setParse] = useState({ parse: true, parseDisabled: false });
-  const [experimental, setExperimental] = useState({
-    experimental: true,
-    experimentalDisabled: false,
-  });
   const [classParse, setClassParse] = useState({
     classParsing: true,
     classParsingDisabled: false,
@@ -26,10 +22,6 @@ const Checkboxes = () => {
         parse: ctx.oviedoCheck.parse,
         parseDisabled: ctx.oviedoCheck.parseDisabled,
       });
-      setExperimental({
-        experimental: ctx.oviedoCheck.experimental,
-        experimentalDisabled: ctx.oviedoCheck.experimentalDisabled,
-      });
       setClassParse({
         classParsing: ctx.oviedoCheck.classParsing,
         classParsingDisabled: ctx.oviedoCheck.classParsingDisabled,
@@ -38,10 +30,6 @@ const Checkboxes = () => {
       setParse({
         parse: ctx.epiCheck.parse,
         parseDisabled: ctx.epiCheck.parseDisabled,
-      });
-      setExperimental({
-        experimental: ctx.epiCheck.experimental,
-        experimentalDisabled: ctx.epiCheck.experimentalDisabled,
       });
       setClassParse({
         classParsing: ctx.epiCheck.classParsing,
@@ -53,24 +41,14 @@ const Checkboxes = () => {
   // Effect for updating the checkboxes
   useEffect(() => {
     ctx.parseHandler(parse.parse);
-    ctx.experimentalHandler(experimental.experimental);
     ctx.classParsingHandler(classParse.classParsing);
-  }, [parse.parse, experimental.experimental, classParse.classParsing]);
+  }, [parse.parse, classParse.classParsing]);
 
   // Function that handles the checkbox change (parse or location)
   const parseHandler = () => {
     setParse((previousState) => ({
       ...previousState,
       parse: !previousState.parse,
-    }));
-    ctx.updateHandler(true);
-  };
-
-  // Function that handles the checkbox change (experimental or experimental-location)
-  const experimentalHandler = () => {
-    setExperimental((previousState) => ({
-      ...previousState,
-      experimental: !previousState.experimental,
     }));
     ctx.updateHandler(true);
   };
@@ -94,21 +72,7 @@ const Checkboxes = () => {
           onChange={parseHandler}
           disabled={parse.parseDisabled}
         />
-        <label htmlFor="location-parsing">
-          Location parsing (EPI Gijón)
-        </label>
-      </div>
-      <div>
-        <input
-          type="checkbox"
-          id="experimental-parsing"
-          checked={experimental.experimental}
-          onChange={experimentalHandler}
-          disabled={experimental.experimentalDisabled}
-        />
-        <label htmlFor="experimental-parsing">
-          Experimental location parsing (EPI Gijón)
-        </label>
+        <label htmlFor="location-parsing">Location parsing (EPI Gijón)</label>
       </div>
       <div>
         <input
