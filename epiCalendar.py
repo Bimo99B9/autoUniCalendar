@@ -145,6 +145,8 @@ def parseLocation(loc):
     if bool(aeResult):
         return f"AN-{aeResult.group(0)[-1]}"
 
+    return loc
+
 # Parse the correct "class type" for each entry.
 # Also parses the group for each entry except for "Clase Expositiva".
 # AFAIK there are only "Teoría (CEX)", "Prácticas de Aula (PAx)", "Prácticas de Laboratorio (PLx)" and "Teorías Grupales (TGx)".
