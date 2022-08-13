@@ -11,10 +11,8 @@ const SettingsContext = createContext({
   saveNameHandler: (name) => {},
   saveas: "",
   parse: true,
-  experimental: true,
   classParsing: true,
   parseHandler: (state) => {},
-  experimentalHandler: (state) => {},
   classParsingHandler: (state) => {},
   update: false,
   updateHandler: (state) => {},
@@ -27,24 +25,19 @@ export const SettingsProvider = (props) => {
   // States for checkboxes
   const [update, setUpdate] = useState(false);
   const [isCheckedParsing, setIsCheckedParsing] = useState(true);
-  const [isCheckedExperimental, setIsCheckedExperimental] = useState(true);
   const [isClassParsing, setIsClassParsing] = useState(true);
 
   // More general states which are used in the form to save the settings
   const [oviedoCheck, setOviedoCheck] = useState({
     parse: false,
-    experimental: false,
     classParsing: true,
     parseDisabled: true,
-    experimentalDisabled: true,
     classParsingDisabled: false,
   });
   const [epiCheck, setEpiCheck] = useState({
     parse: true,
-    experimental: true,
     classParsing: true,
     parseDisabled: false,
-    experimentalDisabled: false,
     classParsingDisabled: false,
   });
 
@@ -55,22 +48,11 @@ export const SettingsProvider = (props) => {
         ...existingValues,
         parse: isCheckedParsing,
         parseDisabled: false,
-        experimental: isCheckedParsing === true ? true : false,
-        experimentalDisabled: isCheckedParsing === true ? false : true,
         classParsingDisabled: false,
       }));
     }
     setUpdate(false);
   }, [isCheckedParsing]);
-  useEffect(() => {
-    if (university === "epi") {
-      setEpiCheck((previousState) => ({
-        ...previousState,
-        experimental: isCheckedParsing === true ? isCheckedExperimental : false,
-      }));
-    }
-    setUpdate(false);
-  }, [isCheckedExperimental]);
   useEffect(() => {
     if (university === "uo") {
       setOviedoCheck((previousState) => ({
@@ -100,9 +82,6 @@ export const SettingsProvider = (props) => {
   const parseHandler = (state) => {
     setIsCheckedParsing(state);
   };
-  const experimentalHandler = (state) => {
-    setIsCheckedExperimental(state);
-  };
   const classParsingHandler = (state) => {
     setIsClassParsing(state);
   };
@@ -120,7 +99,6 @@ export const SettingsProvider = (props) => {
         saveNameHandler: saveNameHandler,
         saveas: saveas,
         parseHandler: parseHandler,
-        experimentalHandler: experimentalHandler,
         classParsingHandler: classParsingHandler,
         oviedoCheck: oviedoCheck,
         epiCheck: epiCheck,
