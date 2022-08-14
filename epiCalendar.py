@@ -8,6 +8,8 @@ import urllib.parse
 import os
 import time
 import utils
+import datetime
+import calendar
 
 # Declare global variables.
 url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
@@ -71,7 +73,7 @@ def extractCookies(get_response):
 
 # Function that sends the HTTP POST request to the server and retrieves the raw data of the calendar.
 # The raw text response is returned.
-def postCalendarRequest(jsessionid, ajax, source, view, start, end, submit) -> str:
+def postCalendarRequest(jsessionid, cookies):
 
     print("Obtaining raw calendar data...", end=" ", flush=True)
     initTime = time.time()
@@ -81,24 +83,44 @@ def postCalendarRequest(jsessionid, ajax, source, view, start, end, submit) -> s
         'cookieconsent_status': 'dismiss'
     }
 
-    # Define variables of the request.
-    string_start = source + "_start"
-    string_end = source + "_end"
-    string_submit = submit + "_SUBMIT"
+    e = datetime.datetime.now()
+    start = int(datetime.datetime.timestamp(datetime.datetime(e.year if e.month >= 9 else e.year - 1, 9, 1))*1000)
+    end = int(datetime.datetime.timestamp(datetime.datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1))*1000)
+
+    source = cookies[0]
+    view = cookies[1]
+    submit = cookies[2]
 
     # Creating the body with the parameters extracted before, with the syntax required by the server.
-    body_payload = f"javax.faces.partial.ajax={ajax}&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{string_start}={start}&{string_end}={end}&{string_submit}=1&javax.faces.ViewState={view}"
+    calendarPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{source}_start={start}&{source}_end={end}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
 
     # Send the POST request.
-    r = rSession.post(url, data=body_payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, cookies=payload)
+    result = postRequest(calendarPayload, payload).text
 
     # Basic response verification.
-    if r.text.split('<')[-1] != "/partial-response>":
+    if result.split('<')[-1] != "/partial-response>":
         print("× (Invalid response)")
         exit(1)
 
+    sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
+    locationPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source[:10:]}eventDetails+{source[:10:]}aulas_url&javax.faces.behaviour.event=eventSelect&javax.faces.partial.event=eventSelect&{source}_selectedEventId={sampleId}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
+
+    locationInfo = postRequest(locationPayload, payload).text
+    removeCharacters = ['\t', '\n', 'class="enlaceUniovi"', '</li>', '</a>', '<a href=', 'target="_blank">' , '"']
+    for char in removeCharacters:
+        locationInfo = locationInfo.replace(char, '')
+
+    locationInfo = locationInfo.split('<li>')[1:]
+    locationInfo[-1] = locationInfo[-1].split('</ul>')[0]
+    locations = {}
+    for location in locationInfo:
+        locations[location.split('  ')[1]] = location.split('  ')[0]
+
     print("✓ (%.3fs)" % (time.time() - initTime))
-    return r.text
+    return result, locations
+
+def postRequest(payload, cookiePayload):
+    return rSession.post(url, data=payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, cookies=cookiePayload)
 
 # Parse the correct class name for each entry.
 def parseLocation(loc):
@@ -110,7 +132,8 @@ def parseLocation(loc):
     if bool(asResult):
         return asResult.group(0).upper()
 
-    # Parse 'Sala Informática Px', 'Aula de Informática Bx' and 'Aula Informática Sx'
+    # Parse 'Sala Informática Px', 'Aula de Informática Bx' , 'Aula Informática Sx' and 'Aula Bx'.
+    # Also parses 'Aula Bx' from Edificio Polivalente incorrectly, but there is no way to tell them apart from the data.
     anResult = re.search(r'[PBS]\d', loc)
     if bool(anResult):
         return f"AN-{anResult.group(0)}"
@@ -154,8 +177,9 @@ def parseClassType(type):
 
     if not enableClassTypeParsing: return type
     classGroup = type.replace('.','').replace('-', ' ').rsplit()[-1].strip('0').upper()
+    lang = "🇬🇧" if "inglés" in type.lower() else ""
 
-    if "Teoría" in type: return f"CEX"
+    if "Teoría" in type: return f"CEX{lang}"
     if "Tutoría" in type or "Grupal" in type: return f"TG{classGroup}"
     if "Aula" in type: return f"PA{classGroup}"
     if "Laboratorio": return f"PL{classGroup}"
@@ -227,7 +251,7 @@ def createCsv(rawResponse):
         stats["classes"] += 1
         stats["hours"] += int(end_hour.split(':')[0]) - int(start_hour.split(':')[0])
         if classType not in stats["classTypes"]:
-            stats["classTypes"] [classType] = 1
+            stats["classTypes"][classType] = 1
         else:
             stats["classTypes"][classType] += 1
         if location not in stats["locations"]:
@@ -308,11 +332,16 @@ create_csv(tmp)
 =======
     cookies = extractCookies(getFirstRequest(session))
 <<<<<<< HEAD
+<<<<<<< HEAD
     createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
 >>>>>>> 542ef996 (removal of temp files, verifications/optimizations)
 =======
     stats = createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
 >>>>>>> 613083fe (better class type parsing, stats)
+=======
+    rawResponse, locations = postCalendarRequest(session, cookies)
+    stats = createCsv(rawResponse)
+>>>>>>> 2b1fc7ee (obtain links for each location , english parsing, other minor changes)
     print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
 <<<<<<< HEAD
 <<<<<<< HEAD
