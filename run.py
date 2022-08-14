@@ -49,7 +49,7 @@ def form_post():
         try:
             if epiCalendar.main(argv) == 0:
                 target = send_file(uuidStr+".csv", as_attachment=True, attachment_filename=filename+".csv")
-                if os.path.exists(uuidStr): os.remove(uuidStr)
+                if os.path.exists(uuidStr+".csv"): os.remove(uuidStr+".csv")
                 return target
         except FileNotFoundError:
             print("[DEBUG] [ERROR] Exception occurred while generating the CSV file.")
