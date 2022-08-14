@@ -41,13 +41,14 @@ def form_post():
         uuidStr = str(uuid.uuid4())
         argv.append('-o')
         argv.append(uuidStr)
+        argv.append("--csv")
         if debug:
             print(f"[DEBUG] UUID: {uuidStr}")
             print(f"[DEBUG] Arguments: {argv}")
 
         try:
             if epiCalendar.main(argv) == 0:
-                target = send_file(uuidStr, as_attachment=True, attachment_filename=filename)
+                target = send_file(uuidStr+".csv", as_attachment=True, attachment_filename=filename+".csv")
                 if os.path.exists(uuidStr): os.remove(uuidStr)
                 return target
         except FileNotFoundError:
