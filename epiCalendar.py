@@ -8,8 +8,9 @@ import urllib.parse
 import os
 import time
 import utils
-import datetime
 import calendar
+from ics import Calendar, Event
+from datetime import datetime
 
 # Declare global variables.
 url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
@@ -83,9 +84,9 @@ def postCalendarRequest(jsessionid, cookies):
         'cookieconsent_status': 'dismiss'
     }
 
-    e = datetime.datetime.now()
-    start = int(datetime.datetime.timestamp(datetime.datetime(e.year if e.month >= 9 else e.year - 1, 9, 1))*1000)
-    end = int(datetime.datetime.timestamp(datetime.datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1))*1000)
+    e = datetime.now()
+    start = int(datetime.timestamp(datetime(e.year if e.month >= 9 else e.year - 1, 9, 1))*1000)
+    end = int(datetime.timestamp(datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1))*1000)
 
     source = cookies[0]
     view = cookies[1]
@@ -114,7 +115,7 @@ def postCalendarRequest(jsessionid, cookies):
     locationInfo[-1] = locationInfo[-1].split('</ul>')[0]
     locations = {}
     for location in locationInfo:
-        locations[location.split('  ')[1]] = location.split('  ')[0]
+        locations[location.split('  ')[1].lower()] = location.split('  ')[0]
 
     print("✓ (%.3fs)" % (time.time() - initTime))
     return result, locations
@@ -187,7 +188,7 @@ def parseClassType(type):
     return type # If the class type is not recognized, return the original string.
 
 # Function that creates a CSV file readable by the applications, from the raw data previously retrieved.
-def createCsv(rawResponse):
+def createCsv(rawResponse, locations):
 
     print("Parsing data and generating new csv...", end=" ", flush=True)
     initTime = time.time()
@@ -202,7 +203,7 @@ def createCsv(rawResponse):
     g = open(csvFile, "w")
 
     # Write the headers in the first line.
-    g.write("Asunto,Fecha de comienzo,Comienzo,Fecha de finalización,Finalización,Todo el día,Reminder on/off,Reminder Date,Reminder Time,Meeting Organizer,Required Attendees,Optional Attendees,Recursos de la reuniÃƒÂ³n,Billing Information,Categories,Description,Location,Mileage,Priority,Private,Sensitivity,Show time as\n")
+    g.write("Subject,Start Date,Start Time,End Date,End Time,Description,Location,Organizer\n")
 
     # Separate the events from its XML context.
     text = rawResponse.split('<')
@@ -230,21 +231,17 @@ def createCsv(rawResponse):
         title = f"{titleSplit[0]} ({classType})"
 
         start_date = start.split(' ')[1].split('T')[0].split('"')[1]
-        start_date_csv = start_date.split('-')[2]+'/'+start_date.split('-')[1]+'/'+start_date.split('-')[0]
         start_hour = start.split(' ')[1].split('T')[1].split('+')[0]
         end_date = end.split(' ')[1].split('T')[0].split('"')[1]
-        end_date_csv = end_date.split('-')[2]+'/'+end_date.split('-')[1]+'/'+end_date.split('-')[0]
         end_hour = end.split(' ')[1].split('T')[1].split('+')[0]
-        alert_date = start_date_csv
-        alert_hour = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
-        event_creator = "Universidad de Oviedo"
 
         body = description.split('"')[3].replace(r'\n', '')
-        info = body.replace(' - ', ' @ ')
-        location = parseLocation(body.split(" - ")[1])
+        loc = body.split(" - ")[1]
+        location = parseLocation(loc)
+        link = locations[loc.lower()]
 
         # Write all the fields into a single line, and append it to the file.
-        csv_line = f"{title},{start_date_csv},{start_hour},{end_date_csv},{end_hour},Falso,Falso,{alert_date},{alert_hour},{event_creator},,,,,,{info},{location},,Normal,Falso,Normal,2\n"
+        csv_line = f"{title},{start_date},{start_hour},{end_date},{end_hour},{body} ({link}),{location},Universidad de Oviedo\n"
         g.write(csv_line)
 
         # Update the statistics.
@@ -340,8 +337,12 @@ create_csv(tmp)
 >>>>>>> 613083fe (better class type parsing, stats)
 =======
     rawResponse, locations = postCalendarRequest(session, cookies)
+<<<<<<< HEAD
     stats = createCsv(rawResponse)
 >>>>>>> 2b1fc7ee (obtain links for each location , english parsing, other minor changes)
+=======
+    stats = createCsv(rawResponse, locations)
+>>>>>>> 47c7e784 (reduce csv length, add link to location)
     print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
 <<<<<<< HEAD
 <<<<<<< HEAD
