@@ -7,7 +7,7 @@ import re
 from flask import Flask, render_template, request, send_file
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 
-defaultFilename = epiCalendar.csvFile
+defaultFilename = epiCalendar.filename
 debug = os.environ.get('FLASK_ENV') == 'development'
 
 @app.route('/', methods = ['GET'])
@@ -19,7 +19,7 @@ def form_post():
     if debug: print(f"[DEBUG] POST data received from React: {request.form}")
 
     jsessionid = request.form['jsessionid']
-    filename = request.form['filename'] + ".csv"
+    filename = request.form['filename']
     location = request.form['location'] == "true"
     classType = request.form['class-type'] == "true"
     experimentalLocation = request.form['experimental-location'] == "true"

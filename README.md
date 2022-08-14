@@ -22,7 +22,7 @@ Para utilizar la web, solo hay que [obtener una cookie](https://github.com/mierm
 - Una vez descargado, el script se ejecuta normalmente como cualquier otro input de Python: `python3 epiCalendar.py`
   - El script admite parámetros de entrada, tanto flags como la propia cookie necesaria.
 
-Necesita el paquete [`requests`](https://pypi.org/project/requests/).
+Necesita los paquetes [`requests`](https://pypi.org/project/requests/) y [`ics`](https://pypi.org/project/ics/) para funcionar.
 
 ## Obtener JSESSIONID
 
@@ -57,6 +57,12 @@ Se añade al final de cada clase el tipo de clase, como por ejemplo: `Cálculo (
 
 Se incluye el grupo excepto en clases de teoría.
 
+### Links
+
+En cada evento en el calendario, se añade el link de la localización de la clase según el SIES a la descripción del mismo.
+Por ejemplo:
+`Prácticas De Laboratorio - Aula B5 (http://gis.uniovi.es/GISUniovi/GeoLoc.do?codEspacio=02.01.01.00.P0.00.01.13)`
+
 ### Estadísticas
 
 El script recoge varias estadísticas sobre el calendario:
@@ -68,13 +74,18 @@ El script recoge varias estadísticas sobre el calendario:
 
 Para activar las estadísticas se debe introducir el parámetro `--stats` o `-s`.
 
+## iCalendar
+
+Por defecto, el script genera archivos en formato iCalendar (extensión `.ics`), que son más compatibles con calendarios como Outlook Calendar. Para generar archivos en formato CSV, se debe introducir el parámetro `--csv`.
+
 ### Flags
 
 - `[-h | --help]` para mostrar el diálogo de ayuda.
 - `[-o | --output <filename>]` para cambiar el nombre del archivo resultante.
 - `[--disable-location-parsing]` para desactivar el filtrado de localización específico de la EPI.
-- `[--disable-experimental-location-parsing]` para desactivar el filtrado experimental específico de la EPI.
 - `[--disable-class-type-parsing]` para desactivar el filtrado del tipo de clases.
+- `[--disable-links]` para desactivar los enlaces en las descripciones de los eventos.
+- `[--csv]` para generar archivos en formato CSV.
 - `[-s | --stats | --enable-statistics]` para activar las estadísticas al final del script.
 
 [epiCalendar](https://github.com/miermontoto/epiCalendar), a fork of [autoUniCalendar](https://github.com/BimoBB9B/autoUniCalendar), 2022 by [Juan Mier](https://github.com/miermontoto) is licensed under [CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)
