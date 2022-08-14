@@ -31,7 +31,7 @@ Para obtener tu `JSESSIONID`, inicia sesión en el SIES y pulsa `F12` o `Ctrl+Sh
 - En Chrome y derivados (Opera, Edge, Brave), accede al menú `Application` y dentro de `Cookies / https://sies.uniovi.es`...
 - En Firefox, accede al menú `Storage` y dentro de `Cookies / https://sies.uniovi.es`...
 
-Copia la cookie `JSESSIONID`. Si hay varias, busca la que tenga como `Path`: `/serviciosacademicos`.
+... copia la cookie `JSESSIONID`. Si hay varias, busca la que tenga como `Path`: `/serviciosacademicos`.
 
 ## Modificaciones
 
