@@ -72,7 +72,7 @@ El script recoge varias estadísticas sobre el calendario:
 - Número de clases por tipo de clase.
 - Número de clases por aula.
 
-Para activar las estadísticas se debe introducir el parámetro `--stats` o `-s`.
+Para activar las estadísticas se debe introducir el parámetro `--stats` o `-s`. (No disponible en web)
 
 ## iCalendar
 
