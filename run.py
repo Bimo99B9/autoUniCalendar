@@ -22,12 +22,10 @@ def form_post():
     filename = request.form['filename']
     location = request.form['location'] == "true"
     classType = request.form['class-type'] == "true"
-    experimentalLocation = request.form['experimental-location'] == "true"
 
     if debug:
         print(f"[DEBUG] Calendar info: {jsessionid} → {filename}")
         print(f"[DEBUG] Location: {location}")
-        print(f"[DEBUG] Experimental location: {experimentalLocation}")
         print(f"[DEBUG] Class type: {classType}")
 
     if utils.verifyCookieExpiration(jsessionid):
@@ -36,7 +34,6 @@ def form_post():
 
         if not location: argv.append('--disable-location-parsing')
         if not classType: argv.append('--disable-class-type-parsing')
-        if not experimentalLocation: argv.append('--disable-experimental-location-parsing')
 
         uuidStr = str(uuid.uuid4())
         argv.append('-o')
