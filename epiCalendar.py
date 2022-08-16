@@ -187,10 +187,10 @@ def parseClassType(type):
     if classGroup == "INGLÉS": classGroup = "🇬🇧"
     lang = "🇬🇧" if "inglés" in typeL or "ingles" in typeL else ""
 
-    if "teoría" in typeL: return f"CEX{lang}"
-    if "tutoría" in typeL or "grupal" in typeL: return f"TG{classGroup}"
-    if "laboratorio" in typeL: return f"PL{classGroup}"
-    if "aula" in typeL: return f"PA{classGroup}"
+    if "teoría" in typeL or typeL == "te": return f"CEX{lang}"
+    if "tutoría" in typeL or "grupal" in typeL or typeL == "tg": return f"TG{classGroup}"
+    if "laboratorio" in typeL or typeL == "pl": return f"PL{classGroup}"
+    if "aula" in typeL or typeL == "pa": return f"PA{classGroup}"
 
     return type # If the class type is not recognized, return the original string.
 
