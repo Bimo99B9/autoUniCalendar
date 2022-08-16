@@ -54,9 +54,8 @@ def form_post():
 
     elif debug:
         print("[DEBUG] [ERROR] Expired cookie submited.")
-        return render_template('index.html', slug="ERROR: cookie inválida.")
 
-    return render_template('index.html', slug="ERROR: error desconocido.")
+    return render_template('index.html', slug="ERROR: cookie inválida.")
 
 
 @app.errorhandler(404)
