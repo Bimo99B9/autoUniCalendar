@@ -5,7 +5,7 @@ import utils
 import re
 
 from flask import Flask, render_template, request, send_file
-app = Flask(__name__, static_folder='./build', static_url_path='/')
+app = Flask(__name__, static_folder='./build', static_url_path='/', template_folder='./build')
 
 defaultFilename = epiCalendar.filename
 debug = os.environ.get('FLASK_ENV') == 'development'
@@ -50,14 +50,15 @@ def form_post():
                 return target
         except FileNotFoundError:
             print("[DEBUG] [ERROR] Exception occurred while generating the CSV file.")
-            return serve()
+            return render_template('index.html', slug="ERROR: error al generar el calendario.")
 
     elif debug:
         print("[DEBUG] [ERROR] Expired cookie submited.")
+        return render_template('index.html', slug="ERROR: cookie inválida.")
 
-    return serve()
+    return render_template('index.html', slug="ERROR: error desconocido.")
 
 
 @app.errorhandler(404)
 def serve():
-    return app.send_static_file('index.html')
+    return render_template('index.html')

@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Error popup notification */
+#error {
+  background-color: #0d151f;
+  color: red;
+  border-radius: 5px;
+  margin: 1rem;
+}
