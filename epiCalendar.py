@@ -184,7 +184,8 @@ def parseClassType(type):
     if not enableClassTypeParsing: return type
     typeL = type.lower()
     classGroup = type.replace('-', ' ').rsplit()[-1].strip('0').upper()
-    lang = "🇬🇧" if "inglés" in typeL else ""
+    if classGroup == "INGLÉS": classGroup = "🇬🇧"
+    lang = "🇬🇧" if "inglés" in typeL or "ingles" in typeL else ""
 
     if "teoría" in typeL: return f"CEX{lang}"
     if "tutoría" in typeL or "grupal" in typeL: return f"TG{classGroup}"
