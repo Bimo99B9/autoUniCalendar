@@ -16,6 +16,8 @@ const SettingsContext = createContext({
   classParsingHandler: (state) => {},
   update: false,
   updateHandler: (state) => {},
+  extension: ".ics",
+  extensionHandler: (extension) => {},
 });
 
 export const SettingsProvider = (props) => {
@@ -26,6 +28,9 @@ export const SettingsProvider = (props) => {
   const [update, setUpdate] = useState(false);
   const [isCheckedParsing, setIsCheckedParsing] = useState(true);
   const [isClassParsing, setIsClassParsing] = useState(true);
+
+  // State for the extension of the file
+  const [extension, setExtension] = useState(".ics");
 
   // More general states which are used in the form to save the settings
   const [oviedoCheck, setOviedoCheck] = useState({
@@ -91,6 +96,11 @@ export const SettingsProvider = (props) => {
     setUpdate(state);
   };
 
+  // Function to set the extension state
+  const extensionHandler = (extension) => {
+    setExtension(extension);
+  };
+
   return (
     <SettingsContext.Provider
       value={{
@@ -104,6 +114,8 @@ export const SettingsProvider = (props) => {
         epiCheck: epiCheck,
         update: update,
         updateHandler: updateHandler,
+        extension: extension,
+        extensionHandler: extensionHandler,
       }}
     >
       {props.children}
