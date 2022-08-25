@@ -1,6 +1,7 @@
 import requests
 import sys
 import epiCalendar
+import re
 
 # Verifies if the cookie is valid server-side.
 # This check is slower than the basic cookie verification, but it is 100% reliable.
@@ -17,14 +18,7 @@ def verifyCookieExpiration(cookie) -> bool:
 # Quick cookie verification.
 # Checks if the structure of the cookie matches '0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX'.
 def verifyCookieStructure(cookie) -> bool:
-    if cookie is None: return False
-    if cookie == "0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX": return False
-    if len(cookie) != 37: return False
-    for i in range(4):
-        if cookie[i] != "0": return False
-    if cookie[27] != ":" or cookie[28] != "1" or cookie[29] != "d":
-        return False
-    return True
+    return re.compile(r'^0000[0-9a-zA-Z]{23}:1d[0-9a-zA-Z]{7}$').match(cookie) is not None and cookie != "0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"
 
 if __name__ == "__main__":
     try:
