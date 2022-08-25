@@ -2,21 +2,22 @@
 # coding: utf-8
 
 import re
-import requests
 import sys
 import urllib.parse
 import os
 import time
-import utils
 import calendar
-from ics import Calendar, Event
-from datetime import datetime
+from ics import Calendar, Event # needed to save calendar in .ics format (iCalendar)
+from datetime import datetime # needed to convert academic years to unix timestamps
+
+# import custom modules
+import connect
+import utils
 
 # Declare global variables.
-url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
 reg = '"([^"]*)"'
 filename = "Calendario" # Can be changed through "-o" flag.
-rSession = requests.Session()
+
 
 # Toggle location and class type parsing using the following global variables.
 # If all special parsing is disabled, this script behaves almost exactly as the original one.
@@ -31,17 +32,12 @@ dryRun = False
 
 
 # Function to send the first GET request using the cookie provided.
-def getFirstRequest(session_token):
+def getFirstRequest(jsessionid):
 
     print("Sending initial payload...", end=" ", flush=True)
     initTime = time.time()
 
-    payload = {
-        'JSESSIONID': session_token,
-        'cookieconsent_status': 'dismiss'
-    }
-
-    r = rSession.get(url, cookies=payload)
+    r = connect.firstRequest(jsessionid)
     print("✓ (%.3fs)" % (time.time() - initTime))
 
     return r.text
@@ -82,11 +78,6 @@ def postCalendarRequest(jsessionid, cookies):
     print("Obtaining raw calendar data...", end=" ", flush=True)
     initTime = time.time()
 
-    payload = {
-        'JSESSIONID': jsessionid,
-        'cookieconsent_status': 'dismiss'
-    }
-
     e = datetime.now()
     start = int(datetime.timestamp(datetime(e.year if e.month >= 9 else e.year - 1, 9, 1))*1000)
     end = int(datetime.timestamp(datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1))*1000)
@@ -99,7 +90,7 @@ def postCalendarRequest(jsessionid, cookies):
     calendarPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source}&{source}={source}&{source}_start={start}&{source}_end={end}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
 
     # Send the POST request.
-    result = postRequest(calendarPayload, payload).text
+    result = connect.postRequest(calendarPayload, jsessionid).text
 
     # Basic response verification.
     if result.split('<')[-1] != "/partial-response>":
@@ -111,7 +102,7 @@ def postCalendarRequest(jsessionid, cookies):
         sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
         locationPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source[:10:]}eventDetails+{source[:10:]}aulas_url&javax.faces.behaviour.event=eventSelect&javax.faces.partial.event=eventSelect&{source}_selectedEventId={sampleId}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
 
-        locationInfo = postRequest(locationPayload, payload).text
+        locationInfo = connect.postRequest(locationPayload, jsessionid).text
         removeCharacters = ['\t', '\n', 'class="enlaceUniovi"', '</li>', '</a>', '<a href=', 'target="_blank">' , '"']
         for char in removeCharacters:
             locationInfo = locationInfo.replace(char, '')
@@ -125,8 +116,7 @@ def postCalendarRequest(jsessionid, cookies):
     print("✓ (%.3fs)" % (time.time() - initTime))
     return result, locations
 
-def postRequest(payload, cookiePayload):
-    return rSession.post(url, data=payload, headers={'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, cookies=cookiePayload)
+
 
 # Parse the correct class name for each entry.
 def parseLocation(loc):

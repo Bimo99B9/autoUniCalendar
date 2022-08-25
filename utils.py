@@ -2,15 +2,13 @@ import requests
 import sys
 import epiCalendar
 import re
+import connect
 
 # Verifies if the cookie is valid server-side.
 # This check is slower than the basic cookie verification, but it is 100% reliable.
-def verifyCookieExpiration(cookie) -> bool:
-    payload = {
-        'JSESSIONID': cookie,
-        'cookieconsent_status': 'dismiss'
-    }
-    r = requests.get(epiCalendar.url, cookies=payload)
+def verifyCookieExpiration(jsessionid) -> bool:
+
+    r = connect.firstRequest(jsessionid)
     if '<div id="j_id' in r.text:
             return True
     return False
