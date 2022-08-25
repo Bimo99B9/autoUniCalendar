@@ -38,15 +38,20 @@ def form_post():
         uuidStr = str(uuid.uuid4())
         argv.append('-o')
         argv.append(uuidStr)
+
+        # temporal csv fixes (ics not supported on web yet)
         argv.append("--csv")
+        uuidStr += ".csv"
+        filename += ".csv"
+
         if debug:
             print(f"[DEBUG] UUID: {uuidStr}")
             print(f"[DEBUG] Arguments: {argv}")
 
         try:
             if epiCalendar.main(argv) == 0:
-                target = send_file(uuidStr+".csv", as_attachment=True, attachment_filename=filename+".csv")
-                if os.path.exists(uuidStr+".csv"): os.remove(uuidStr+".csv")
+                target = send_file(uuidStr, as_attachment=True, attachment_filename=filename)
+                if os.path.exists(uuidStr): os.remove(uuidStr)
                 return target
         except FileNotFoundError:
             print("[DEBUG] [ERROR] Exception occurred while generating the CSV file.")
