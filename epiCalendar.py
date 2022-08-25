@@ -27,7 +27,7 @@ enableClassTypeParsing = True
 enableLinks = True
 enableStatistics = False
 icsMode = True
-
+dryRun = False
 
 
 # Function to send the first GET request using the cookie provided.
@@ -202,8 +202,12 @@ def generateCalendar(rawResponse, locations):
     stats = {
         "hours": 0,
         "classes": 0,
+        "days": {},
         "classTypes": {},
-        "locations": {}
+        "locations": {},
+        "subjects": {},
+        "Q1": [0, 0],
+        "Q2": [0, 0]
     }
 
     # Separate the events from its XML context.
@@ -213,7 +217,7 @@ def generateCalendar(rawResponse, locations):
 
     if icsMode:
         c = Calendar()
-    else:
+    elif not dryRun:
         g = open(filename + ".csv", "w")
         g.write("Subject,Start Date,Start Time,End Date,End Time,Description,Location\n")
 
@@ -246,31 +250,52 @@ def generateCalendar(rawResponse, locations):
 
         # Update the statistics.
         if enableStatistics:
+            hours = int(end_hour.split(':')[0]) - int(start_hour.split(':')[0])
             stats["classes"] += 1
-            stats["hours"] += int(end_hour.split(':')[0]) - int(start_hour.split(':')[0])
+            stats["hours"] += hours
+
             if classType not in stats["classTypes"]:
-                stats["classTypes"][classType] = 1
-            else:
-                stats["classTypes"][classType] += 1
+                stats["classTypes"][classType] = [0, 0]
+
             if location not in stats["locations"]:
-                stats["locations"][location] = 1
+                stats["locations"][location] = [0, 0]
+
+            if start_date not in stats["days"]:
+                stats["days"][start_date] = 0
+
+            if titleSplit[0] not in stats["subjects"]:
+                stats["subjects"][titleSplit[0]] = [0, 0]
+
+            stats["classTypes"][classType][0] += 1
+            stats["classTypes"][classType][1] += hours
+            stats["locations"][location][0] += 1
+            stats["locations"][location][1] += hours
+            stats["days"][start_date] += hours
+            stats["subjects"][titleSplit[0]][0] += 1
+            stats["subjects"][titleSplit[0]][1] += hours
+
+            if int(start_date.split('-')[1]) >= 9:
+                stats["Q1"][0] += 1
+                stats["Q1"][1] += hours
             else:
-                stats["locations"][location] += 1
+                stats["Q2"][0] += 1
+                stats["Q2"][1] += hours
 
         if icsMode:
             e = Event(name=title, begin=start, end=end, description=description, location=location, uid=uid)
             c.events.add(e)
         else:
             csv_line = f"{title},{start_date},{start_hour},{end_date},{end_hour},{description},{location}\n"
-            g.write(csv_line)
+            if not dryRun: g.write(csv_line)
 
-    if icsMode:
-        with open(filename + ".ics", "w") as f:
-            f.writelines(c.serialize_iter())
-    else:
-        g.close()
+    if not dryRun:
+        if icsMode:
+            with open(filename + ".ics", "w") as f:
+                f.writelines(c.serialize_iter())
+        else:
+            g.close()
 
-    print("✓ (%.3fs)" % (time.time() - initTime))
+    print("%s (%.3fs)" % ("~" if dryRun else "✓", time.time() - initTime))
 
     # Sort the class types and locations by number of occurrences.
     stats["classTypes"] = sorted(stats["classTypes"].items(), key=lambda x: x[1], reverse=True)
@@ -279,7 +304,7 @@ def generateCalendar(rawResponse, locations):
     return stats
 
 def main(argv) -> int:
-    global enableLocationParsing, enableClassTypeParsing, enableStatistics, filename, icsMode, enableLinks
+    global enableLocationParsing, enableClassTypeParsing, enableStatistics, filename, icsMode, enableLinks, dryRun
     session = ""
 
     # Read flags from arguments.
@@ -294,6 +319,7 @@ def main(argv) -> int:
         if argv[i] == "--csv": icsMode = False
         if argv[i] == "-o" or argv[i] == "--output-file" : filename = argv[i+1]
         if argv[i] == "-s" or argv[i] == "--stats" or argv[i] == "--enable-statistics": enableStatistics = True
+        if argv[i] == "--dry-run": dryRun = True
         if utils.verifyCookieStructure(argv[i]): session = argv[i]
 
     # If the required argument hasn't been provided, read from input.
@@ -374,21 +400,69 @@ create_csv(tmp)
 =======
 =======
     stats = generateCalendar(rawResponse, locations)
-    print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
+    if dryRun:
+        print("\n%s, took %.3fs" % ("Dry run completed" if dryRun else "Calendar generated",time.time() - startTime))
     ext = "ics" if icsMode else "csv"
+<<<<<<< HEAD
     print(f"Saved as \"{filename}.{ext}\"")
 >>>>>>> c9a6a02f (support iCalendar format (default), other fixes)
+=======
+    if not dryRun: print(f"Saved as \"{filename}.{ext}\"")
+>>>>>>> cddd3715 (dry run mode, better statistics)
 
     if enableStatistics:
         print("\nStatistics:")
         print("\tClasses: %d" % stats["classes"])
         print("\tHours: %d" % stats["hours"])
-        print("\tClass types:")
+        print("\tDays of attendance: %d" % len(stats["days"]))
+
+        print("\tAverage hours per day: %.2f" % (stats["hours"] / len(stats["days"])))
+        print("\tMax hours per day: %d" % max(stats["days"].values()))
+
+        print("\tFirst quarter: %d classes (%d hours)" % (stats["Q1"][0], stats["Q1"][1]))
+        print("\tSecond quarter: %d classes (%d hours)" % (stats["Q2"][0], stats["Q2"][1]))
+
+        print("\n\tClass types:")
         for classType in stats["classTypes"]:
-            print("\t\t%s: %d" % (classType[0], classType[1]))
-        print("\tLocations:")
+            print("\t\t%s: %d (%dh)" % (classType[0], classType[1][0], classType[1][1]))
+
+        globalLocations = {
+            "Aulario Norte": [0, 0],
+            "Aulario Sur": [0, 0],
+            "Departamental Oeste": [0, 0],
+            "Departamental Este": [0, 0],
+            "Edificio Polivalente": [0, 0]
+        }
+
+        print("\n\tLocations:")
         for location in stats["locations"]:
-            print("\t\t%s: %d" % (location[0], location[1]))
+            if enableLocationParsing:
+                if location[0][:2] == "AN":
+                    globalLocations["Aulario Norte"][0] += location[1][0]
+                    globalLocations["Aulario Norte"][1] += location[1][1]
+                elif location[0][:2] == "AS":
+                    globalLocations["Aulario Sur"][0] += location[1][0]
+                    globalLocations["Aulario Sur"][1] += location[1][1]
+                elif location[0][:2] == "DO":
+                    globalLocations["Departamental Oeste"][0] += location[1][0]
+                    globalLocations["Departamental Oeste"][1] += location[1][1]
+                elif location[0][:2] == "DE":
+                    globalLocations["Departamental Este"][0] += location[1][0]
+                    globalLocations["Departamental Este"][1] += location[1][1]
+                elif location[0][:2] == "EP":
+                    globalLocations["Edificio Polivalente"][0] += location[1][0]
+                    globalLocations["Edificio Polivalente"][1] += location[1][1]
+            print("\t\t%s: %d (%dh)" % (location[0], location[1][0], location[1][1]))
+
+        if enableLocationParsing:
+            print("\t\tGlobal locations:")
+            for location in globalLocations:
+                if globalLocations[location][0] != 0: print("\t\t\t%s: %d (%dh)" % (location, globalLocations[location][0], globalLocations[location][1]))
+
+        print("\n\tSubjects:")
+        for subject in stats["subjects"]:
+            print("\t\t%s: %d (%dh)" % (subject, stats["subjects"][subject][0], stats["subjects"][subject][1]))
+
 
 >>>>>>> 613083fe (better class type parsing, stats)
     return 0
