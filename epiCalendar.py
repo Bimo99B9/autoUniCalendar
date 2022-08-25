@@ -309,7 +309,16 @@ def main(argv) -> int:
 
     # Read flags from arguments.
     if "--help" in argv or "-h" in argv:
-        print("Usage: python3 epiCalendar.py [JSESSIONID] [-o | --output-file <filename>] [--disable-location-parsing] [--disable-class-type-parsing]")
+        print("Usage: python3 epiCalendar.py [JSESSIONID]")
+        print("\nFLAGS:")
+        print("\t[--disable-location-parsing]: Disables the parsing of the location of the class.")
+        print("\t[--disable-class-type-parsing]: Disables the parsing of the class type of the class.")
+        print("\t[--disable-links]: Disables placing links of rooms in the description of the events.")
+        print("\t[--enable-statistics | -s | --stats]: Returns various statistics about all the events collected.")
+        print("\t[--csv]: saves the calendar as a CSV file instead of an iCalendar file.")
+        print("\t[--dry-run]: blocks any file from being created.")
+        print("\t[--help], -h: shows this help message.")
+        print("\t[--output-file | -o]: sets the name of the output file.")
         return 0
 
     for i in range(1, len(argv)):
@@ -400,8 +409,7 @@ create_csv(tmp)
 =======
 =======
     stats = generateCalendar(rawResponse, locations)
-    if dryRun:
-        print("\n%s, took %.3fs" % ("Dry run completed" if dryRun else "Calendar generated",time.time() - startTime))
+    print("\n%s, took %.3fs" % ("Dry run completed" if dryRun else "Calendar generated", time.time() - startTime))
     ext = "ics" if icsMode else "csv"
 <<<<<<< HEAD
     print(f"Saved as \"{filename}.{ext}\"")
