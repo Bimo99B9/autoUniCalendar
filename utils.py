@@ -18,7 +18,7 @@ def verifyCookieExpiration(cookie) -> bool:
 # Quick cookie verification.
 # Checks if the structure of the cookie matches '0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX'.
 def verifyCookieStructure(cookie) -> bool:
-    return re.compile(r'^0000[0-9a-zA-Z]{23}:1d[0-9a-zA-Z]{7}$').match(cookie) is not None and cookie != "0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"
+    return re.compile(r'^0000.{23}:1d.{7}$').match(cookie) is not None and cookie != "0000XXXXXXXXXXXXXXXXXXXXXXX:1dXXXXXXX"
 
 if __name__ == "__main__":
     try:
@@ -26,5 +26,5 @@ if __name__ == "__main__":
         print(result)
         exit(0 if result == True else 1)
     except Exception:
-        print("Usage: python3 fastCheckCookieExpiration.py <cookie>")
+        print("Usage: python3 utils.py <cookie>")
         exit(2)

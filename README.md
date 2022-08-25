@@ -65,7 +65,7 @@ Por ejemplo:
 
 ### Estadísticas
 
-El script recoge varias estadísticas sobre el calendario:
+El script recoge varias estadísticas sobre el calendario, entre ellas:
 
 - Número de clases.
 - Número de horas.
@@ -87,5 +87,6 @@ Por defecto, el script genera archivos en formato iCalendar (extensión `.ics`),
 - `[--disable-links]` para desactivar los enlaces en las descripciones de los eventos.
 - `[--csv]` para generar archivos en formato CSV.
 - `[-s | --stats | --enable-statistics]` para activar las estadísticas al final del script.
+- `[--dry-run]` para no generar archivos.
 
-[epiCalendar](https://github.com/miermontoto/epiCalendar), a fork of [autoUniCalendar](https://github.com/BimoBB9B/autoUniCalendar), 2022 by [Juan Mier](https://github.com/miermontoto) is licensed under [CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)
+[epiCalendar](https://github.com/miermontoto/epiCalendar), a fork of [autoUniCalendar](https://github.com/BimoBB9B/autoUniCalendar), 2022 by [Juan Mier](https://github.com/miermontoto) is licensed under [CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1). React code by [Jonathan Arias](https://github.com/JonathanAriass), licensed to this repository under the same license.
