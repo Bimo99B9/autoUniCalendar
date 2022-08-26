@@ -112,17 +112,6 @@ const Form = (props) => {
           <div>
             <input
               type="hidden"
-              name="experimental-location"
-              value={
-                ctx.university === "uo"
-                  ? ctx.oviedoCheck.experimental
-                  : ctx.epiCheck.experimental
-              }
-            />
-          </div>
-          <div>
-            <input
-              type="hidden"
               name="class-type"
               value={
                 ctx.university === "uo"
