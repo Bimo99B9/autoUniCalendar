@@ -19,18 +19,6 @@ reg = '"([^"]*)"'
 filename = "Calendario" # Can be changed through "-o" flag.
 
 
-# Toggle location and class type parsing using the following global variables.
-# If all special parsing is disabled, this script behaves almost exactly as the original one.
-# If you intend to use this script for a non-EPI calendar, you should disable them all.
-# This options can be easily toggled through argument flags.
-enableLocationParsing = True
-enableClassTypeParsing = True
-enableLinks = True
-enableStatistics = False
-icsMode = True
-dryRun = False
-
-
 # Function to send the first GET request using the cookie provided.
 def getFirstRequest(jsessionid):
 
@@ -295,6 +283,17 @@ def generateCalendar(rawResponse, locations):
 
 def main(argv) -> int:
     global enableLocationParsing, enableClassTypeParsing, enableStatistics, filename, icsMode, enableLinks, dryRun
+    # Toggle location and class type parsing using the following global variables.
+    # If all special parsing is disabled, this script behaves almost exactly as the original one.
+    # If you intend to use this script for a non-EPI calendar, you should disable them all.
+    # This options can be easily toggled through argument flags.
+    enableLocationParsing = True
+    enableClassTypeParsing = True
+    enableLinks = True
+    enableStatistics = False
+    icsMode = True
+    dryRun = False
+
     session = ""
 
     # Read flags from arguments.
