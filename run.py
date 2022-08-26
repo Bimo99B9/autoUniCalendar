@@ -22,11 +22,13 @@ def form_post():
     filename = request.form['filename']
     location = request.form['location'] == "true"
     classType = request.form['class-type'] == "true"
+    icsMode = request.form['extension'] == ".ics"
 
     if debug:
         print(f"[DEBUG] Calendar info: {jsessionid} → {filename}")
         print(f"[DEBUG] Location: {location}")
         print(f"[DEBUG] Class type: {classType}")
+        print(f"[DEBUG] iCalendar mode: {icsMode}")
 
     if utils.verifyCookieExpiration(jsessionid):
 
@@ -40,9 +42,13 @@ def form_post():
         argv.append(uuidStr)
 
         # temporal csv fixes (ics not supported on web yet)
-        argv.append("--csv")
-        uuidStr += ".csv"
-        filename += ".csv"
+        if icsMode:
+            backendFilename = uuidStr + '.ics'
+            downloadFilename = filename + '.ics'
+        else:
+            argv.append("--csv")
+            backendFilename = uuidStr + '.csv'
+            downloadFilename = filename + '.csv'
 
         if debug:
             print(f"[DEBUG] UUID: {uuidStr}")
@@ -50,11 +56,13 @@ def form_post():
 
         try:
             if epiCalendar.main(argv) == 0:
-                target = send_file(uuidStr, as_attachment=True, attachment_filename=filename)
-                if os.path.exists(uuidStr): os.remove(uuidStr)
+                if debug:
+                    print(f"[DEBUG] Attempting to serve {backendFilename} as {downloadFilename}.")
+                target = send_file(backendFilename, as_attachment=True, attachment_filename=downloadFilename)
+                if os.path.exists(backendFilename): os.remove(backendFilename)
                 return target
         except FileNotFoundError:
-            print("[DEBUG] [ERROR] Exception occurred while generating the CSV file.")
+            print("[DEBUG] [ERROR] Exception occurred while generating/serving the calendar file.")
             return render_template('index.html', slug="ERROR: error al generar el calendario.")
 
     elif debug:
