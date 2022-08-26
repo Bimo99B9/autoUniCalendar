@@ -31,13 +31,13 @@ def getFirstRequest(jsessionid):
     return r.text
 
 # Function to extract the cookies necessary to make the POST request, from the server response of the first request.
-def extractCookies(get_response):
+def extractCookies(response):
     print("Extracting cookies...", end=" ", flush=True)
     initTime = time.time()
 
     # Iterate the response lines to search the cookies, and save them in variables.
     found_first, found_second, found_third = False, False, False
-    for line in get_response.split('\n'):
+    for line in response.split('\n'):
         if '<div id="j_id' in line and not found_first:
             source = urllib.parse.quote(re.findall(reg, line.split('<')[1])[0])
             found_first = True

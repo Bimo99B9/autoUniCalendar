@@ -22,13 +22,13 @@ def form_post():
     filename = request.form['filename']
     location = request.form['location'] == "true"
     classType = request.form['class-type'] == "true"
-    icsMode = request.form['extension'] == ".ics"
+    extension = request.form['extension']
 
     if debug:
-        print(f"[DEBUG] Calendar info: {jsessionid} → {filename}")
-        print(f"[DEBUG] Location: {location}")
-        print(f"[DEBUG] Class type: {classType}")
-        print(f"[DEBUG] iCalendar mode: {icsMode}")
+        print(f"[DEBUG] Calendar info: {jsessionid} → {filename}{extension}")
+        print(f"[DEBUG] Location parsing: {location}")
+        print(f"[DEBUG] Class type parsing: {classType}")
+        print(f"[DEBUG] iCalendar mode: {extension == '.ics'}")
 
     if utils.verifyCookieExpiration(jsessionid):
 
@@ -41,14 +41,9 @@ def form_post():
         argv.append('-o')
         argv.append(uuidStr)
 
-        # temporal csv fixes (ics not supported on web yet)
-        if icsMode:
-            backendFilename = uuidStr + '.ics'
-            downloadFilename = filename + '.ics'
-        else:
-            argv.append("--csv")
-            backendFilename = uuidStr + '.csv'
-            downloadFilename = filename + '.csv'
+        backendFilename = uuidStr + extension
+        downloadFilename = filename + extension
+        if extension == ".csv": argv.append('--csv')
 
         if debug:
             print(f"[DEBUG] UUID: {uuidStr}")
@@ -56,10 +51,10 @@ def form_post():
 
         try:
             if epiCalendar.main(argv) == 0:
-                if debug:
-                    print(f"[DEBUG] Attempting to serve {backendFilename} as {downloadFilename}.")
+                if debug: print(f"[DEBUG] Attempting to serve {backendFilename} as {downloadFilename}.")
                 target = send_file(backendFilename, as_attachment=True, attachment_filename=downloadFilename)
                 if os.path.exists(backendFilename): os.remove(backendFilename)
+                if debug: print(f"[DEBUG] File served.")
                 return target
         except FileNotFoundError:
             print("[DEBUG] [ERROR] Exception occurred while generating/serving the calendar file.")
