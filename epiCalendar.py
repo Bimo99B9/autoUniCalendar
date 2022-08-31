@@ -99,6 +99,14 @@ def postCalendarRequest(jsessionid, cookies):
 
     locations = {}
     if enableLocationParsing:
+<<<<<<< HEAD
+=======
+        try:
+            sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
+        except AttributeError:
+            print("× (No calendar events)")
+            exit(1)
+>>>>>>> 53820258 (fix crash when there are no calendar events)
         locationPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source[:10:]}eventDetails+{source[:10:]}aulas_url&javax.faces.behaviour.event=eventSelect&javax.faces.partial.event=eventSelect&{source}_selectedEventId={sampleId}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
         locationInfo = connect.postRequest(locationPayload, jsessionid).text
 
