@@ -10,32 +10,57 @@ import os
 import time
 
 from flask import Flask, render_template, request, send_file
+import gunicorn
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
+    #return render_template('index.html')
+
     cookie1 = request.form.get('cookie1')
     cookie2 = request.form.get('cookie2')
 
+    user = request.form.get('user')
+    password = request.form.get('password')
+
     if(cookie1 != None and cookie2 != None):
-
-        autoUniCalendar(cookie1, cookie2)
+        autoUniCalendar_cookies(cookie1, cookie2)
         time.sleep(1)
-
         return send_file("Calendario.CSV", as_attachment=True, attachment_filename="Calendario.CSV")
 
+    if(user != None and password != None):
+        autoUniCalendar_login(user, password)
+        time.sleep(1)
+        return send_file("Calendario.CSV", as_attachment=True, attachment_filename="Calendario.CSV")
+
+    return render_template('index.html')
     return render_template("form.html")
     
+'''
+Get the CSV calendar with the user and password
+of the user.
+'''
+def autoUniCalendar_login(user, password):
+    user = user
+    password = password
 
+    # With the credentials, retrieve the cookies and use them as if
+    # the cookies had been provided
+    def getCookies(user, password):
+        print()
+        # TODO Create the algorithm.
+        cookie1 = ""
+        cookie2 = ""
 
-def autoUniCalendar(cookie1, cookie2):
-    # Check if the required arguments have been provided, and indicate the use of the script.
+        autoUniCalendar_cookies(cookie1, cookie2)
+
     
-    # if len(sys.argv) != 3:
-    #     print("\n[!] Uso: python3 " + sys.argv[0] + " <JSESSIONID> <RENDERMAP.TOKEN>\n")
-    #     sys.exit(1)
+'''
+Get the CSV calendar with the user cookies.
+'''
+def autoUniCalendar_cookies(cookie1, cookie2):
 
     # Declare global variables.
     url = 'https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml'
@@ -178,6 +203,6 @@ def autoUniCalendar(cookie1, cookie2):
 
     first_request = get_first_request(session, render_map)
     cookies = extract_cookies(first_request)
-    post_second_request(session, render_map, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
+    post_second_request(session, render_map, "true", cookies[0], cookies[1], "1662444000000", "1683612000000", cookies[2])    
     create_csv("raw.txt")
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>autoUniCalendar</title>
+    <link rel="stylesheet" href="{{ url_for("static", filename="base.css" ) }}">
+</head>
+
+<body>
+    <h1>autoUniCalendar: Descarga tu calendario de Uniovi.</h1>
+
+    <br>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="" method="post">
+                <h1>Descargar usando credenciales</h1>
+                <span> Usa tus credenciales para tramitar la solicitud y descargar el calendario. (Pendiente por implementar, se requiere colaboración de Uniovi desde que el inicio de sesión es con Microsoft.)</span>
+                <input type="text" placeholder="UO" />
+                <input type="password" placeholder="Password" />
+                <button>Descargar</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="" method="post">
+                <h1>Cookies</h1>
+                <span>Introduce tus cookies de sesión.</span>
+                <input type="text" placeholder="JSession" id="cookie1" name="cookie1" />
+                <input type="text" placeholder="RenderToken" id="cookie2" name="cookie2" />
+                
+                <a href="https://bimo99b9.github.io/scripts-autounicalendar/#" target=_blank>¿Necesitas ayuda?</a>
+
+                <button>Descargar</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Descargar usando cookies.</h1>
+                    <p>Puedes descargar el calendario usando las cookies de sesión, haciendo click aquí.</p>
+                    <button class="ghost" id="signIn">Usar cookies</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Descargar usando credenciales.</h1>
+                    <p>
+                        Si lo prefieres, puedes usar tus credenciales en lugar de tus cookies
+                        de sesión para descargar el calendario. Es más sencillo, ¡pero recomendamos usar las cookies!
+                    </p>
+                    <button class="ghost" id="signUp">Usar credenciales</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
+    <div>
+        <h2> ¿Cómo funciona? </h2>
+
+        <p>
+            Cuando entras a ver el calendario en el SIES de la Universidad de Oviedo, 
+            se tramitan una serie de solicitudes web, que se pueden replicar y automatizar 
+            si se hace de la manera adecuada. autoUniCalendar utiliza las cookies de sesión 
+            para obtener la respuesta del servidor con todo el calendario, 
+            y después lo convierte a un archivo CSV importable en cualquier otro calendario.
+        </p>
+
+        <p>
+            Por tanto, autoUniCalendar es originalmente un script de Python, y aún sigue funcionando para quienes prefieran ejecutar la aplicación localmente y evitar la abstracción de esta nueva página web, que busca facilitar la descarga del calendario a todos los alumnos.
+        </p>
+
+        <p>
+            autoUniCalendar está escrito en Python, utiliza Flask para introducir el frontend, y está alojado usando Heroku.
+        </p>
+
+
+    </div>
+
+    -->
+
+    
+    <footer>
+        <p>
+            Created with love by Daniel López Gala.
+        </p>
+    </footer>
+
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+            console.log("here");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+    </script>
+
+</body>
+
+</html>
