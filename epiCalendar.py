@@ -95,7 +95,7 @@ def postCalendarRequest(jsessionid, cookies):
         errorOut("Invalid response")
 
     try: sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
-    except AttributeError: errorOut("No calendar events")
+    except AttributeError: print ("× (No calendar events)")
 
     locations = {}
     if enableLocationParsing:
@@ -515,6 +515,7 @@ create_csv(tmp)
 
 def errorOut(message):
     print(f"× ({message})")
+    exit(1)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
