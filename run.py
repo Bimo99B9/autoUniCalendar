@@ -49,23 +49,25 @@ def form_post():
             print(f"[DEBUG] UUID: {uuidStr}")
             print(f"[DEBUG] Arguments: {argv}")
 
-        try:
-            if epiCalendar.main(argv) == 0:
-                if debug: print(f"[DEBUG] Attempting to serve {backendFilename} as {downloadFilename}.")
-                target = send_file(backendFilename, as_attachment=True, attachment_filename=downloadFilename)
-                if os.path.exists(backendFilename): os.remove(backendFilename)
-                if debug: print(f"[DEBUG] File served.")
-                return target
-        except FileNotFoundError:
-            print("[DEBUG] [ERROR] Exception occurred while generating/serving the calendar file.")
-            return render_template('index.html', slug="ERROR: error al generar el calendario.")
+        exitCode = epiCalendar.main(argv)
+        if os.path.exists(backendFilename) and exitCode == 0:
+            if debug: print(f"[DEBUG] Attempting to serve {backendFilename} as {downloadFilename}.")
+            target = send_file(backendFilename, as_attachment=True, attachment_filename=downloadFilename)
+            if os.path.exists(backendFilename): os.remove(backendFilename)
+            if debug: print(f"[DEBUG] File served.")
+            return target
+        elif exitCode == 2:
+            if debug: print("[DEBUG] [ERROR] ¿No calendar events?")
+            return serve(slug="ERROR: No hay eventos en el calendario.")
+        if debug: print("[DEBUG] [ERROR] Script failed to generate file.")
+        return serve("ERROR: No se pudo generar el calendario.")
 
     elif debug:
         print("[DEBUG] [ERROR] Expired cookie submited.")
 
-    return render_template('index.html', slug="ERROR: cookie inválida.")
+    return serve(slug="ERROR: cookie inválida.")
 
 
 @app.errorhandler(404)
-def serve():
-    return render_template('index.html')
+def serve(slug=""):
+    return render_template('index.html', slug=slug)
