@@ -1,3 +1,4 @@
+import { parse } from "nth-check";
 import React, { createContext, useEffect, useState } from "react";
 
 // Default values for the context
@@ -6,13 +7,12 @@ export const DEFAULT_UNIVERSITY = "epi";
 
 // Context for the settings of the app (better autocomplete)
 const SettingsContext = createContext({
-  check: (name) => {},
-  university: "",
+  
   saveNameHandler: (name) => {},
   saveas: "",
   parse: true,
-  classParsing: true,
   parseHandler: (state) => {},
+  classParsing: true,
   classParsingHandler: (state) => {},
   update: false,
   updateHandler: (state) => {},
@@ -21,7 +21,6 @@ const SettingsContext = createContext({
 });
 
 export const SettingsProvider = (props) => {
-  const [university, setUniversity] = useState("epi"); // State for the university
   const [saveas, setSaveas] = useState("Calendario"); // State for the filename
 
   // States for checkboxes
@@ -33,50 +32,45 @@ export const SettingsProvider = (props) => {
   const [extension, setExtension] = useState(".ics");
 
   // More general states which are used in the form to save the settings
-  const [oviedoCheck, setOviedoCheck] = useState({
-    parse: false,
-    classParsing: true,
-    parseDisabled: true,
-    classParsingDisabled: false,
-  });
-  const [epiCheck, setEpiCheck] = useState({
-    parse: true,
-    classParsing: true,
-    parseDisabled: false,
-    classParsingDisabled: false,
-  });
+  // const [oviedoCheck, setOviedoCheck] = useState({
+  //   parse: false,
+  //   classParsing: true,
+  //   parseDisabled: true,
+  //   classParsingDisabled: false,
+  // });
+  // const [epiCheck, setEpiCheck] = useState({
+  //   parse: true,
+  //   classParsing: true,
+  //   parseDisabled: false,
+  //   classParsingDisabled: false,
+  // });
 
   // useEffect hooks to update the states of the checkboxes
-  useEffect(() => {
-    if (university === "epi") {
-      setEpiCheck((existingValues) => ({
-        ...existingValues,
-        parse: isCheckedParsing,
-        parseDisabled: false,
-        classParsingDisabled: false,
-      }));
-    }
-    setUpdate(false);
-  }, [isCheckedParsing]);
-  useEffect(() => {
-    if (university === "uo") {
-      setOviedoCheck((previousState) => ({
-        ...previousState,
-        classParsing: isClassParsing,
-      }));
-    } else {
-      setEpiCheck((previousState) => ({
-        ...previousState,
-        classParsing: isClassParsing,
-      }));
-    }
-    setUpdate(false);
-  }, [isClassParsing]);
-
-  // Function to set the university state
-  const checkHandler = (name) => {
-    setUniversity(name);
-  };
+  // useEffect(() => {
+  //   if (university === "epi") {
+  //     setEpiCheck((existingValues) => ({
+  //       ...existingValues,
+  //       parse: isCheckedParsing,
+  //       parseDisabled: false,
+  //       classParsingDisabled: false,
+  //     }));
+  //   }
+  //   setUpdate(false);
+  // }, [isCheckedParsing]);
+  // useEffect(() => {
+  //   if (university === "uo") {
+  //     setOviedoCheck((previousState) => ({
+  //       ...previousState,
+  //       classParsing: isClassParsing,
+  //     }));
+  //   } else {
+  //     setEpiCheck((previousState) => ({
+  //       ...previousState,
+  //       classParsing: isClassParsing,
+  //     }));
+  //   }
+  //   setUpdate(false);
+  // }, [isClassParsing]);
 
   // Function to set the filename state
   const saveNameHandler = (name) => {
@@ -104,14 +98,13 @@ export const SettingsProvider = (props) => {
   return (
     <SettingsContext.Provider
       value={{
-        check: checkHandler,
-        university: university,
+        // check: checkHandler,
         saveNameHandler: saveNameHandler,
         saveas: saveas,
         parseHandler: parseHandler,
+        parse: isCheckedParsing,
+        classParsing: isClassParsing,
         classParsingHandler: classParsingHandler,
-        oviedoCheck: oviedoCheck,
-        epiCheck: epiCheck,
         update: update,
         updateHandler: updateHandler,
         extension: extension,
