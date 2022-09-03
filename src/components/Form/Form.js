@@ -8,7 +8,7 @@ import classes from "./Form.module.css";
 // Import the default state
 import {
   DEFAULT_FILENAME,
-  DEFAULT_UNIVERSITY,
+  // DEFAULT_UNIVERSITY,
 } from "../../store/settings-context";
 
 // Component that represents the form
@@ -64,7 +64,7 @@ const Form = (props) => {
 
     document.getElementById("form").submit();
     ctx.saveNameHandler(DEFAULT_FILENAME);
-    ctx.check(DEFAULT_UNIVERSITY);
+    // ctx.check(DEFAULT_UNIVERSITY);
     codeReset();
   };
 
@@ -103,9 +103,7 @@ const Form = (props) => {
               type="hidden"
               name="location"
               value={
-                ctx.university === "uo"
-                  ? ctx.oviedoCheck.parse
-                  : ctx.epiCheck.parse
+                ctx.parse
               }
             />
           </div>
@@ -114,9 +112,7 @@ const Form = (props) => {
               type="hidden"
               name="class-type"
               value={
-                ctx.university === "uo"
-                  ? ctx.oviedoCheck.classParsing
-                  : ctx.epiCheck.classParsing
+                ctx.classParsing
               }
             />
           </div>
