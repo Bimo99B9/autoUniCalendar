@@ -17,6 +17,13 @@ import utils
 # Declare global variables.
 reg = '"([^"]*)"'
 filename = "Calendario" # Can be changed through "-o" flag.
+buildingCodes = { # building codes for 'Milla del Conocimiento' (Gijón 02.01) sourced from gis.uniovi.es
+    '01': 'AN',
+    '02': 'AS',
+    '04': 'DE',
+    '05': 'DO',
+    '08': 'EP'
+}
 
 
 # Function to send the first GET request using the cookie provided.
@@ -26,6 +33,7 @@ def getFirstRequest(jsessionid):
     initTime = time.time()
 
     r = connect.firstRequest(jsessionid)
+    if r.status_code != 200: errorOut("Unexpected response code")
     print("✓ (%.3fs)" % (time.time() - initTime))
 
     return r.text
@@ -53,8 +61,7 @@ def extractCookies(response):
         if found_first and found_second and found_third: break
 
     if not 'source' in locals(): # If the variable 'source' is not defined, the cookie was probably not valid.
-        print("× (¿Invalid JSESSIONID?)")
-        exit(1)
+        errorOut("Invalid JSESSIONID")
 
     print("✓ (%.3fs)" % (time.time() - initTime))
     return [source, viewstate, submit] # Return a list that contains the extracted parameters.
@@ -67,8 +74,11 @@ def postCalendarRequest(jsessionid, cookies):
     initTime = time.time()
 
     e = datetime.now()
-    start = int(datetime.timestamp(datetime(e.year if e.month >= 9 else e.year - 1, 9, 1))*1000)
-    end = int(datetime.timestamp(datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1))*1000)
+    start = int(datetime.timestamp(datetime(e.year if e.month >= 9 else e.year - 1, 9, 1)) * 1000)
+    end = int(datetime.timestamp(datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1)) * 1000)
+
+    #start = 1598914597000
+    #end = 1693522597000
 
     source = cookies[0]
     view = cookies[1]
@@ -82,15 +92,16 @@ def postCalendarRequest(jsessionid, cookies):
 
     # Basic response verification.
     if result.split('<')[-1] != "/partial-response>":
-        print("× (Invalid response)")
-        exit(1)
+        errorOut("Invalid response")
+
+    try: sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
+    except AttributeError: errorOut("No calendar events")
 
     locations = {}
-    if enableLinks:
-        sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
+    if enableLocationParsing:
         locationPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source[:10:]}eventDetails+{source[:10:]}aulas_url&javax.faces.behaviour.event=eventSelect&javax.faces.partial.event=eventSelect&{source}_selectedEventId={sampleId}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
-
         locationInfo = connect.postRequest(locationPayload, jsessionid).text
+
         removeCharacters = ['\t', '\n', 'class="enlaceUniovi"', '</li>', '</a>', '<a href=', 'target="_blank">' , '"']
         for char in removeCharacters:
             locationInfo = locationInfo.replace(char, '')
@@ -107,52 +118,67 @@ def postCalendarRequest(jsessionid, cookies):
 
 
 # Parse the correct class name for each entry.
-def parseLocation(loc):
+def parseLocation(loc, codEspacio):
 
-    if not enableLocationParsing: return loc
+    #if not enableLocationParsing: return loc
 
-    # Parse Aula AS-1 through Aula AS-11. (sometimes Aula As-X instead of Aula AS-X)
-    asResult = re.search(r'A[Ss]-\d\d?', loc)
-    if bool(asResult):
-        return asResult.group(0).upper()
+    try: buildingCode = codEspacio.split('.')[2] # current building code
+    except IndexError: # should never happen, but this way it's more robust.
+        return loc
 
-    # Parse 'Sala Informática Px', 'Aula de Informática Bx' , 'Aula Informática Sx' and 'Aula Bx'.
-    # Also parses 'Aula Bx' from Edificio Polivalente incorrectly, but there is no way to tell them apart from the data.
-    anResult = re.search(r'[PBS]\d', loc)
-    if bool(anResult):
-        return f"AN-{anResult.group(0)}"
+    floor = codEspacio.split('.')[4]
+    if not codEspacio[:5] == "02.01" and buildingCode in buildingCodes: return loc
 
-    # Parse rooms from Edificio Polivalente using their code (format: X.X.XX)
-    epResult = re.search(r'\d\.\d\.\d\d', loc)
-    if bool(epResult):
-        return f"EP-{epResult.group(0)}"
 
-    # Parse 'Aula DE-1' through 'Aula DE-8'.
-    deResult = re.search(r'DE-\d', loc)
-    if bool(deResult):
-        return f"{deResult.group(0)}"
+    # Aula AS-1 through Aula AS-11
+    result = re.search(r'02.01.02.00.P1.00.(0[1-9]|1[0-1])', codEspacio)
+    if bool(result):
+        return f"AS-{loc.split('-')[1]}"
+
+    # Parse 'Sala Informática Px', 'Aula de Informática Bx' , 'Aula Informática Sx' and 'Aula Bx' from Aulario Norte.
+    result = re.search(r'02.01.01.00.((P1.00.0[3-6])|(P0.00.01.((1[2-7])|(0[189])))|(S1.00.(0[45789]|1[023])))', codEspacio)
+    if bool(result):
+        return f"AN-{loc.split(' ')[-1].upper()}"
+
+    # Parse 'Aula A' through 'Aula E' from Aulario Norte.
+    result = re.search(r'02.01.01.00.P1.00.((0[7-9])|(1[0-1]))', codEspacio)
+    if bool(result):
+        return f"AN-{loc.split(' ')[-1].upper()}"
+
+    # Parse rooms with standard room codes (x.x.xx)
+    result = re.search(r'\d\...?\.\d\d', loc)
+    if bool(result):
+        return f"{buildingCodes[buildingCode]}-{result.group(0)}"
 
     # Parse 'Aula DO-1' through 'Aula DO -17'
-    doResult = re.search(r'DO[ ]?-\d\d?', loc)
-    if bool(doResult):
-        doFinal = doResult.group(0).replace(' ', '')
+    # No code-specific parsing is needed, names are unique and easily identifiable.
+    # Same goes for Departamental Este below.
+    result = re.search(r'^AULA DO[ ]?-1?\d[A-B]?$', loc.upper())
+    if bool(result):
+        doFinal = result.group(0).replace('AULA ', '').replace(' ', '')
         if doFinal[-2:] == "10": # DO-10 can be DO-10A or DO-10B.
             return f"{doFinal}{loc[-1]}"
         return doFinal
 
-    # Parse rooms from Departamental Oeste (Bajo cubierta) using their code (format: X.BC.XX)
+    # Parse 'Aula DE-1' through 'Aula DE-8'.
+    result = re.search(r'^AULA DE-[1-8]$', loc.upper())
+    if bool(result):
+        return f"{result.group(0).replace('AULA ', '')}"
+
+    # Parse rooms from Departamental Oeste using their code (format: X.BC.XX)
     # Very similar codes to the EP rooms, can be difficult to parse.
-    doResult = re.search(r'(\d.BC.\d\d)|(\d.S.\d\d)|(\d.B.\d\d)', loc)
-    if bool(doResult):
-        return f"DO-{doResult.group(0)}"
+    result = re.search(r'\d\...?\.\d\d', loc)
+    if bool(result):
+        return f"DO-{result.group(0)}"
 
-    # Parse 'Aula A' through 'Aula E'.
-    # Has to be last because it is very generic and could match other locations.
-    aeResult = re.search(r'Aula [A-E]', loc)
-    if bool(aeResult):
-        return f"AN-{aeResult.group(0)[-1]}"
+    # Parse Aula A2 through A6 and Aula A1 through A8 from Edificio Polivalente.
+    result = re.search(r'02.01.08.00.P((1.00.06.0[1-5])|(0.00.0[2-9]))', codEspacio)
+    if bool(result):
+        return f"EP-{loc.split(' ')[-1].upper()}"
 
-    return loc
+
+    # If no match is found, return the original name including building and floor.
+    return f"{buildingCodes[buildingCode]}-{loc} ({floor})"
 
 # Parse the correct "class type" for each entry.
 # Also parses the group for each entry except for "Clase Expositiva".
@@ -160,14 +186,14 @@ def parseLocation(loc):
 def parseClassType(type):
 
     if not enableClassTypeParsing: return type
-    typeL = type.lower()
+    typeL = type.lower().replace('.', '')
     classGroup = type.replace('-', ' ').rsplit()[-1].strip('0').upper()
     if classGroup == "INGLÉS": classGroup = "🇬🇧"
     lang = "🇬🇧" if "inglés" in typeL or "ingles" in typeL else ""
 
-    if "teoría" in typeL or typeL == "te": return f"CEX{lang}"
-    if "tutoría" in typeL or "grupal" in typeL or typeL == "tg": return f"TG{classGroup}"
-    if "laboratorio" in typeL or typeL == "pl": return f"PL{classGroup}"
+    if "teo" in typeL or typeL == "te" or "expositiv" in typeL: return f"CEX{lang}"
+    if "tut" in typeL or "grupal" in typeL or typeL == "tg": return f"TG{classGroup}"
+    if "lab" in typeL or typeL == "pl": return f"PL{classGroup}"
     if "aula" in typeL or typeL == "pa": return f"PA{classGroup}"
 
     return type # If the class type is not recognized, return the original string.
@@ -197,7 +223,7 @@ def generateCalendar(rawResponse, locations):
         c = Calendar()
     elif not dryRun:
         g = open(filename + ".csv", "w")
-        g.write("Subject,Start Date,Start Time,End Date,End Time,Description,Location\n")
+        g.write("Subject,Start Date,Start Time,End Date,End Time,Location,Description\n")
 
     # Each field of the event is separated by commas.
     for event in events:
@@ -223,10 +249,11 @@ def generateCalendar(rawResponse, locations):
         end_hour = end.split(' ')[1]
 
         loc = description.split(" - ")[1]
-        location = parseLocation(loc)
+        location = parseLocation(loc, locations[loc.lower()].split('?codEspacio=')[1])
         if enableLinks: description += f" ({locations[loc.lower()]})"
 
         # Update the statistics.
+        stats["classes"] += 1
         if enableStatistics:
             hours = int(end_hour.split(':')[0]) - int(start_hour.split(':')[0])
             stats["classes"] += 1
@@ -263,7 +290,7 @@ def generateCalendar(rawResponse, locations):
             e = Event(name=title, begin=start, end=end, description=description, location=location, uid=uid)
             c.events.add(e)
         else:
-            csv_line = f"{title},{start_date},{start_hour},{end_date},{end_hour},{description},{location}\n"
+            csv_line = f"{title},{start_date},{start_hour},{end_date},{end_hour},{location},{description}\n"
             if not dryRun: g.write(csv_line)
 
     if not dryRun:
@@ -354,6 +381,7 @@ create_csv(tmp)
 =======
     # If the JSESSIONID is not valid, exit.
     if not utils.verifyCookieStructure(session):
+<<<<<<< HEAD
         print("× Invalid JSESSIONID.")
 <<<<<<< HEAD
         exit(1)
@@ -399,6 +427,19 @@ create_csv(tmp)
 =======
     stats = generateCalendar(rawResponse, locations)
     print("\n%s, took %.3fs" % ("Dry run completed" if dryRun else "Calendar generated", time.time() - startTime))
+=======
+        errorOut("Invalid JSESSIONID.")
+
+    startTime = time.time()
+    try:
+        cookies = extractCookies(getFirstRequest(session))
+        rawResponse, locations = postCalendarRequest(session, cookies)
+        stats = generateCalendar(rawResponse, locations)
+    except UnboundLocalError:
+        return 2
+
+    print("\n%s, took %.3fs (%d events parsed)" % ("Dry run completed" if dryRun else "Calendar generated", time.time() - startTime, stats["classes"]))
+>>>>>>> 7b812d00 (better parsing, automatic detection of epi rooms, other enhancements and fixes)
     ext = "ics" if icsMode else "csv"
 <<<<<<< HEAD
     print(f"Saved as \"{filename}.{ext}\"")
@@ -463,6 +504,9 @@ create_csv(tmp)
 
 >>>>>>> 613083fe (better class type parsing, stats)
     return 0
+
+def errorOut(message):
+    print(f"× ({message})")
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
