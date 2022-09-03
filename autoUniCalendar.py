@@ -153,5 +153,5 @@ def create_csv(file):
 
 first_request = get_first_request(session, render_map)
 cookies = extract_cookies(first_request)
-post_second_request(session, render_map, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
+post_second_request(session, render_map, "true", cookies[0], cookies[1], "1662444000000", "1683612000000", cookies[2])
 create_csv("raw.txt")
