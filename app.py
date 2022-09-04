@@ -10,9 +10,12 @@ import os
 import time
 
 from flask import Flask, render_template, request, send_file
+from flask_talisman import Talisman
 import gunicorn
 
 app = Flask(__name__)
+
+Talisman(app, content_security_policy=None)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -36,8 +39,9 @@ def index():
         return send_file("Calendario.CSV", as_attachment=True, attachment_filename="Calendario.CSV")
 
     return render_template('index.html')
-    return render_template("form.html")
     
+
+
 '''
 Get the CSV calendar with the user and password
 of the user.
