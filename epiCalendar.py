@@ -99,14 +99,6 @@ def postCalendarRequest(jsessionid, cookies):
 
     locations = {}
     if enableLocationParsing:
-<<<<<<< HEAD
-=======
-        try:
-            sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
-        except AttributeError:
-            print("× (No calendar events)")
-            exit(1)
->>>>>>> 53820258 (fix crash when there are no calendar events)
         locationPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source[:10:]}eventDetails+{source[:10:]}aulas_url&javax.faces.behaviour.event=eventSelect&javax.faces.partial.event=eventSelect&{source}_selectedEventId={sampleId}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
         locationInfo = connect.postRequest(locationPayload, jsessionid).text
 
@@ -362,80 +354,8 @@ def main(argv) -> int:
         except (KeyboardInterrupt, EOFError):
             return 0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-first_request = get_first_request(session, render_map)
-cookies = extract_cookies(first_request)
-post_second_request(session, render_map, "true", cookies[0], cookies[1], "1662444000000", "1683612000000", cookies[2])
-create_csv("raw.txt")
-=======
-cookies = extract_cookies(get_first_request(session, render_map))
-post_second_request(session, render_map, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
-create_csv(tmp)
-<<<<<<< HEAD
->>>>>>> d7a59862 (console output, minor changes)
-=======
->>>>>>> 729f7937 (EOF new line)
-=======
-=======
-    # Cookie verification.
-    if (len(session)) != 37: invalidChar()
-    for i in range(4):
-        if session[i] != "0": invalidChar()
-    if session[27] != ":" or session[28] != "1" or session[29] != "d":
-        invalidChar()
-=======
     # If the JSESSIONID is not valid, exit.
     if not utils.verifyCookieStructure(session):
-<<<<<<< HEAD
-        print("× Invalid JSESSIONID.")
-<<<<<<< HEAD
-        exit(1)
->>>>>>> 8d8cb67e (it works!)
-=======
-        return 1
->>>>>>> c9a6a02f (support iCalendar format (default), other fixes)
-
-    startTime = time.time()
-<<<<<<< HEAD
->>>>>>> fbbc953c (ajustado tiempo de ejecución, comprobación de cookie, readme)
-    cookies = extract_cookies(get_first_request(session))
-    post_second_request(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2])
-    create_csv(tmp)
-=======
-    cookies = extractCookies(getFirstRequest(session))
-<<<<<<< HEAD
-<<<<<<< HEAD
-    createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
->>>>>>> 542ef996 (removal of temp files, verifications/optimizations)
-=======
-    stats = createCsv(postCalendarRequest(session, "true", cookies[0], cookies[1], "1630886400000", "1652054400000", cookies[2]))
->>>>>>> 613083fe (better class type parsing, stats)
-=======
-    rawResponse, locations = postCalendarRequest(session, cookies)
-<<<<<<< HEAD
-<<<<<<< HEAD
-    stats = createCsv(rawResponse)
->>>>>>> 2b1fc7ee (obtain links for each location , english parsing, other minor changes)
-=======
-    stats = createCsv(rawResponse, locations)
->>>>>>> 47c7e784 (reduce csv length, add link to location)
-    print("\nCalendar generated, took %.3fs" % (time.time() - startTime))
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 0bf041e8 (cambios importantes)
-=======
-=======
-    print("Saved as \"%s\"" % csvFile)
-<<<<<<< HEAD
->>>>>>> dea54aa3 (f/b comms, no settings and no download)
-=======
-=======
-    stats = generateCalendar(rawResponse, locations)
-    print("\n%s, took %.3fs" % ("Dry run completed" if dryRun else "Calendar generated", time.time() - startTime))
-=======
         errorOut("Invalid JSESSIONID.")
 
     startTime = time.time()
@@ -447,14 +367,8 @@ create_csv(tmp)
         return 2
 
     print("\n%s, took %.3fs (%d events parsed)" % ("Dry run completed" if dryRun else "Calendar generated", time.time() - startTime, stats["classes"]))
->>>>>>> 7b812d00 (better parsing, automatic detection of epi rooms, other enhancements and fixes)
     ext = "ics" if icsMode else "csv"
-<<<<<<< HEAD
-    print(f"Saved as \"{filename}.{ext}\"")
->>>>>>> c9a6a02f (support iCalendar format (default), other fixes)
-=======
     if not dryRun: print(f"Saved as \"{filename}.{ext}\"")
->>>>>>> cddd3715 (dry run mode, better statistics)
 
     if enableStatistics:
         print("\nStatistics:")
@@ -510,7 +424,6 @@ create_csv(tmp)
             print("\t\t%s: %d (%dh)" % (subject, stats["subjects"][subject][0], stats["subjects"][subject][1]))
 
 
->>>>>>> 613083fe (better class type parsing, stats)
     return 0
 
 def errorOut(message):
@@ -519,4 +432,3 @@ def errorOut(message):
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
->>>>>>> e87fc758 (estructura general, form html)
