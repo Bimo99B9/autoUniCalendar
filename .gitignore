@@ -1,6 +1,7 @@
-.vscode/**
+.vscode
 *.csv
 *.ics
-__pycache__/**
-node_modules/**
+__pycache__
+node_modules
+env
 test.py
