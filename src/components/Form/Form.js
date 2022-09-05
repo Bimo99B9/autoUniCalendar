@@ -16,12 +16,8 @@ const Form = (props) => {
   // Access the settings context
   const ctx = React.useContext(SettingsContext);
 
-<<<<<<< HEAD
   const [isValidCookie, setIsValidCookie] = useState(true);
 
-  // useInput hook for the jsessionid input
-=======
->>>>>>> 81c3b366 (Revert "cookie check script prep on form")
   const {
     value: enteredCode,
     isValid: codeIsValid,
@@ -44,7 +40,6 @@ const Form = (props) => {
   // Variable for the validity of the form
   let formIsValid = codeIsValid;
 
-<<<<<<< HEAD
   useEffect(() => {
     if (codeIsValid) {
       setIsValidCookie(false);
@@ -53,8 +48,6 @@ const Form = (props) => {
   }, [codeIsValid]);
 
   // Function that handles the form submit and the post request
-=======
->>>>>>> 81c3b366 (Revert "cookie check script prep on form")
   const formSubmissionHandler = (event) => {
     event.preventDefault();
     if (!codeIsValid) {
