@@ -16,8 +16,6 @@ const Form = (props) => {
   // Access the settings context
   const ctx = React.useContext(SettingsContext);
 
-  const [isValidCookie, setIsValidCookie] = useState(true);
-
   const {
     value: enteredCode,
     isValid: codeIsValid,
@@ -40,14 +38,6 @@ const Form = (props) => {
   // Variable for the validity of the form
   let formIsValid = codeIsValid;
 
-  useEffect(() => {
-    if (codeIsValid) {
-      setIsValidCookie(false);
-      // AQUI VA EL SCRIPT
-    }
-  }, [codeIsValid]);
-
-  // Function that handles the form submit and the post request
   const formSubmissionHandler = (event) => {
     event.preventDefault();
     if (!codeIsValid) {
