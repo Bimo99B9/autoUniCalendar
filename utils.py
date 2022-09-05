@@ -1,6 +1,5 @@
 import requests
 import sys
-import epiCalendar
 import re
 import connect
 
