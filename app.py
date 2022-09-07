@@ -192,7 +192,7 @@ def autoUniCalendar_cookies(cookie1, cookie2):
             alert_date = start_date_csv
             alert_hour = str(int(start.split(' ')[1].split('T')[1].split('+')[0].split(':')[0]) - 1) + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[1] + ':' + start.split(' ')[1].split('T')[1].split('+')[0].split(':')[2]
             event_creator = "Universidad de Oviedo"
-            body = description.split('"')[3].replace(r'\n', '')
+            body = description.split('"')[2].replace(r'\n', '')
             # Write all the fields into a single line, and append it to the file.
             csv_line = f"{title_csv},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{body},,,Normal,Falso,Normal,2\n"
             g.write(csv_line)
