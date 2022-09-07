@@ -1,4 +1,4 @@
-import epiCalendar
+import autoUniCalendar
 import os
 import uuid
 import utils
@@ -10,7 +10,7 @@ from flask_talisman import Talisman
 app = Flask(__name__)
 Talisman(app, content_security_policy=None)
 
-defaultFilename = epiCalendar.filename
+defaultFilename = autoUniCalendar.filename
 debug = os.environ.get('FLASK_ENV') == 'development'
 
 @app.route('/', methods = ['GET'])
@@ -35,7 +35,7 @@ def form_post():
 
     if utils.verifyCookieExpiration(jsessionid):
 
-        argv = ['epiCalendar.py', jsessionid]
+        argv = ['autoUniCalendar.py', jsessionid]
 
         if not location: argv.append('--disable-location-parsing')
         if not classType: argv.append('--disable-class-type-parsing')
@@ -52,7 +52,7 @@ def form_post():
             print(f"[DEBUG] UUID: {uuidStr}")
             print(f"[DEBUG] Arguments: {argv}")
 
-        exitCode = epiCalendar.main(argv)
+        exitCode = autoUniCalendar.main(argv)
         if os.path.exists(backendFilename) and exitCode == 0:
             if debug: print(f"[DEBUG] Attempting to serve {backendFilename} as {downloadFilename}.")
             target = send_file(backendFilename, as_attachment=True, attachment_filename=downloadFilename)

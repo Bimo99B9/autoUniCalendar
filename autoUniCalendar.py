@@ -77,8 +77,8 @@ def postCalendarRequest(jsessionid, cookies):
     start = int(datetime.timestamp(datetime(e.year if e.month >= 9 else e.year - 1, 9, 1)) * 1000)
     end = int(datetime.timestamp(datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1)) * 1000)
 
-    #start = 1598914597000
-    #end = 1693522597000
+    start = 1598914597000
+    end = 1693522597000
 
     source = cookies[0]
     view = cookies[1]
@@ -325,7 +325,7 @@ def main(argv) -> int:
 
     # Read flags from arguments.
     if "--help" in argv or "-h" in argv:
-        print("Usage: python3 epiCalendar.py [JSESSIONID]")
+        print("Usage: python3 autoUniCalendar.py [JSESSIONID]")
         print("\nFLAGS:")
         print("\t[--disable-location-parsing]: Disables the parsing of the location of the class.")
         print("\t[--disable-class-type-parsing]: Disables the parsing of the class type of the class.")
