@@ -148,7 +148,7 @@ def parseLocation(loc, codEspacio):
     # Parse rooms with standard room codes (x.x.xx)
     result = re.search(r'\d\...?\.\d\d', loc)
     if bool(result):
-        return f"{buildingCodes[buildingCode]}-{result.group(0)}"
+        return f"{buildingCodes[buildingCode]}-{result.group(0).upper()}"
 
     # Parse 'Aula DO-1' through 'Aula DO -17'
     # No code-specific parsing is needed, names are unique and easily identifiable.
@@ -414,7 +414,7 @@ def main(argv) -> int:
         if enableLocationParsing:
             print("\t\tGlobal locations:")
             for location in globalLocations:
-                if globalLocations[location][0] != 0: print("\t\t\t%s: %d (%dh)" % (location, globalLocations[location][0], globalLocations[location][1]))
+                if globalLocations[location][0] != 0: print("\t\t\t%s: %d (%.2fh)" % (location, globalLocations[location][0], globalLocations[location][1]))
 
         print("\n\tSubjects:")
         for subject in stats["subjects"]:
