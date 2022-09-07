@@ -127,7 +127,7 @@ def parseLocation(loc, codEspacio):
         return loc
 
     floor = codEspacio.split('.')[4]
-    if not codEspacio[:5] == "02.01" and buildingCode in buildingCodes: return loc
+    if not codEspacio[:5] == "02.01" or not buildingCode in buildingCodes: return loc
 
 
     # Aula AS-1 through Aula AS-11
