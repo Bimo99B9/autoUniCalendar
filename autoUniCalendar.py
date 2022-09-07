@@ -227,11 +227,11 @@ def generateCalendar(rawResponse, locations):
             if field.strip():
                 data.append(field)
         # Save in variables the fields needed to build the CSV line of the event.
-        uid = data[0].split('": "')[1].replace('"', '')
-        title = data[1].split('": "')[1].replace('"', '')
-        start = data[2].split('": "')[1].replace('T', ' ').replace('"', '').split('+')[0]
-        end = data[3].split('": "')[1].replace('T', ' ').replace('"', '').split('+')[0]
-        description = data[7].split('":"')[1].replace(r'\n', '').replace('"}', '').replace(']}]]>', '')
+        uid = data[0].replace('"id": "', '')[0:-1]
+        title = data[1].replace('"title": "', '')[0:-1]
+        start = data[2].replace('"start": "', '')[0:-1].replace('T', ' ').split('+')[0]
+        end = data[3].replace('"end": "', '')[0:-1].replace('T', ' ').split('+')[0]
+        description = data[7].replace('"description":"', '').replace(r'\n', '').replace('"}', '').replace(']}]]>', '')
 
         titleSplit = title.split(" - ")
         classType = parseClassType(titleSplit[1])
