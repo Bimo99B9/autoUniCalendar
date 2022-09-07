@@ -14,7 +14,7 @@ Puede instalarse con `python3 -m pip install <librería>` en Windows o `pip inst
 
 ![](/assets/burp.jpg)
 
-Para ejecutar el script, es. El procedimiento para obtenerlos es muy sencillo, se debe entrar en el [SIES](https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml), autenticarse normalmente, acceder al calendario, y presionar `F12`. Según el navegador, dirijirse a `Almacenamiento --> Cookies` y copiar los dos valores, JSESSIONID y oam.Flash.RENDERMAP.TOKEN, pues son los parámetros del comando para ejecutar el script.
+Para ejecutar el script, es necesario un parámetro. El procedimiento para obtenerlo es muy sencillo, se debe entrar en el [SIES](https://sies.uniovi.es/serviciosacademicos/web/expedientes/calendario.xhtml), autenticarse normalmente, acceder al calendario, y presionar `F12`. Según el navegador, dirijirse a `Almacenamiento --> Cookies` y copiar el valor `JSESSIONID`.
 
 ![](/assets/cookies.jpg)
 
