@@ -77,8 +77,8 @@ def postCalendarRequest(jsessionid, cookies):
     start = int(datetime.timestamp(datetime(e.year if e.month >= 9 else e.year - 1, 9, 1)) * 1000)
     end = int(datetime.timestamp(datetime(e.year + 1 if e.month >= 9 else e.year, 6, 1)) * 1000)
 
-    start = 1598914597000
-    end = 1693522597000
+    #start = 1598914597000
+    #end = 1693522597000
 
     source = cookies[0]
     view = cookies[1]
@@ -165,12 +165,6 @@ def parseLocation(loc, codEspacio):
     if bool(result):
         return f"{result.group(0).replace('AULA ', '')}"
 
-    # Parse rooms from Departamental Oeste using their code (format: X.BC.XX)
-    # Very similar codes to the EP rooms, can be difficult to parse.
-    result = re.search(r'\d\...?\.\d\d', loc)
-    if bool(result):
-        return f"DO-{result.group(0)}"
-
     # Parse Aula A2 through A6 and Aula A1 through A8 from Edificio Polivalente.
     result = re.search(r'02.01.08.00.P((1.00.06.0[1-5])|(0.00.0[2-9]))', codEspacio)
     if bool(result):
@@ -256,6 +250,9 @@ def generateCalendar(rawResponse, locations):
         stats["classes"] += 1
         if enableStatistics:
             hours = int(end_hour.split(':')[0]) - int(start_hour.split(':')[0])
+            minutes = int(end_hour.split(':')[1]) - int(start_hour.split(':')[1])
+            hours = hours + minutes / 60
+            print(hours)
             stats["classes"] += 1
             stats["hours"] += hours
 
@@ -373,18 +370,18 @@ def main(argv) -> int:
     if enableStatistics:
         print("\nStatistics:")
         print("\tClasses: %d" % stats["classes"])
-        print("\tHours: %d" % stats["hours"])
+        print("\tHours: %.2f" % stats["hours"])
         print("\tDays of attendance: %d" % len(stats["days"]))
 
         print("\tAverage hours per day: %.2f" % (stats["hours"] / len(stats["days"])))
-        print("\tMax hours per day: %d" % max(stats["days"].values()))
+        print("\tMax hours per day: %.2f" % max(stats["days"].values()))
 
-        print("\tFirst quarter: %d classes (%d hours)" % (stats["Q1"][0], stats["Q1"][1]))
-        print("\tSecond quarter: %d classes (%d hours)" % (stats["Q2"][0], stats["Q2"][1]))
+        print("\tFirst quarter: %d classes (%.2f hours)" % (stats["Q1"][0], stats["Q1"][1]))
+        print("\tSecond quarter: %d classes (%.2f hours)" % (stats["Q2"][0], stats["Q2"][1]))
 
         print("\n\tClass types:")
         for classType in stats["classTypes"]:
-            print("\t\t%s: %d (%dh)" % (classType[0], classType[1][0], classType[1][1]))
+            print("\t\t%s: %d (%.2fh)" % (classType[0], classType[1][0], classType[1][1]))
 
         globalLocations = {
             "Aulario Norte": [0, 0],
@@ -412,7 +409,7 @@ def main(argv) -> int:
                 elif location[0][:2] == "EP":
                     globalLocations["Edificio Polivalente"][0] += location[1][0]
                     globalLocations["Edificio Polivalente"][1] += location[1][1]
-            print("\t\t%s: %d (%dh)" % (location[0], location[1][0], location[1][1]))
+            print("\t\t%s: %d (%.2fh)" % (location[0], location[1][0], location[1][1]))
 
         if enableLocationParsing:
             print("\t\tGlobal locations:")
@@ -421,7 +418,7 @@ def main(argv) -> int:
 
         print("\n\tSubjects:")
         for subject in stats["subjects"]:
-            print("\t\t%s: %d (%dh)" % (subject, stats["subjects"][subject][0], stats["subjects"][subject][1]))
+            print("\t\t%s: %d (%.2fh)" % (subject, stats["subjects"][subject][0], stats["subjects"][subject][1]))
 
 
     return 0
