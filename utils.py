@@ -6,6 +6,7 @@ import connect
 # Verifies if the cookie is valid server-side.
 # This check is slower than the basic cookie verification, but it is 100% reliable.
 def verifyCookieExpiration(jsessionid) -> bool:
+    if not verifyCookieStructure(jsessionid): return False
     return '<div id="j_id' in connect.firstRequest(jsessionid).text
 
 # Quick cookie verification.
