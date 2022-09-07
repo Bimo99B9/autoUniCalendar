@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for("static", filename="base.css" ) }}">
+</head>
+
+<body>
+    <h1>Hello, World!</h1>
+
+    <form action="" method="post">
+        <label for="cookie1">JSESSIONID: </label>
+        <input type="text" id="cookie1" name="cookie1" /><br>
+        <label for="cookie2">RENDERMAP.TOKEN: </label>
+        <input type="text" id="cookie2" name="cookie2" /><br>
+        <input type="submit" id="send-generate" name="generate" value="Download calendar" />
+    </form>
+    
+    <form action="" method="post">
+        <label for="user">Username: </label>
+        <input type="text" id="user" name="user" /><br>
+        <label for="password">Password: </label>
+        <input type="password" id="password" name="password" /><br>
+        <input type="submit" id="send-generate" name="generate" value="Download calendar" />
+    </form>
+
+</body>
+
+</html>
