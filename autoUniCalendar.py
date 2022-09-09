@@ -100,7 +100,7 @@ def postCalendarRequest(jsessionid, cookies):
     except AttributeError: raise AttributeError("Empty calendar")
 
     locations = {}
-    if enableLocationParsing:
+    if enableLocationParsing or enableLinks:
         # obtain links for each event location.
         # links are used to obtain room codes, which include city, building and other important info.
         locationPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source[:10:]}eventDetails+{source[:10:]}aulas_url&javax.faces.behaviour.event=eventSelect&javax.faces.partial.event=eventSelect&{source}_selectedEventId={sampleId}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
@@ -254,7 +254,8 @@ def generateCalendar(rawResponse, locations):
         end_hour = end.split(' ')[1]
 
         loc = description.split(" - ")[1]
-        location = parseLocation(loc, locations[loc.lower()].split('?codEspacio=')[1])
+        location = parseLocation(loc, locations[loc.lower()].split('?codEspacio=')[1] if enableLinks or enableLocationParsing else {})
+
         if enableLinks: description += f" ({locations[loc.lower()]})"
 
         # Update the statistics.
