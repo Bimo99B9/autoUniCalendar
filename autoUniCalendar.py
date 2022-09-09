@@ -4,9 +4,7 @@
 import re
 import sys
 import urllib.parse
-import os
 import time
-import calendar
 from ics import Calendar, Event # needed to save calendar in .ics format (iCalendar)
 from datetime import datetime # needed to convert academic years to unix timestamps
 
@@ -33,13 +31,14 @@ def getFirstRequest(jsessionid):
     initTime = time.time()
 
     r = connect.firstRequest(jsessionid)
-    if r.status_code != 200: errorOut("Unexpected response code")
+    if r.status_code != 200: raise Exception("Unexpected response code")
     print("✓ (%.3fs)" % (time.time() - initTime))
 
     return r.text
 
 # Function to extract the cookies necessary to make the POST request, from the server response of the first request.
 def extractCookies(response):
+
     print("Extracting cookies...", end=" ", flush=True)
     initTime = time.time()
 
@@ -61,7 +60,7 @@ def extractCookies(response):
         if found_first and found_second and found_third: break
 
     if not 'source' in locals(): # If the variable 'source' is not defined, the cookie was probably not valid.
-        errorOut("Invalid JSESSIONID")
+        raise Exception("Invalid JSESSIONID")
 
     print("✓ (%.3fs)" % (time.time() - initTime))
     return [source, viewstate, submit] # Return a list that contains the extracted parameters.
@@ -92,16 +91,22 @@ def postCalendarRequest(jsessionid, cookies):
 
     # Basic response verification.
     if result.split('<')[-1] != "/partial-response>":
-        errorOut("Invalid response")
+        raise Exception("Invalid response")
 
+    # extract a sample event id from the first event.
+    # used to craft the payload for the second request.
+    # if there are no ids, the calendar is empty.
     try: sampleId = re.search(r'[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}', result).group(0)
-    except AttributeError: print ("× (No calendar events)")
+    except AttributeError: raise AttributeError("Empty calendar")
 
     locations = {}
     if enableLocationParsing:
+        # obtain links for each event location.
+        # links are used to obtain room codes, which include city, building and other important info.
         locationPayload = f"javax.faces.partial.ajax=true&javax.faces.source={source}&javax.faces.partial.execute={source}&javax.faces.partial.render={source[:10:]}eventDetails+{source[:10:]}aulas_url&javax.faces.behaviour.event=eventSelect&javax.faces.partial.event=eventSelect&{source}_selectedEventId={sampleId}&{submit}_SUBMIT=1&javax.faces.ViewState={view}"
         locationInfo = connect.postRequest(locationPayload, jsessionid).text
 
+        # process response and filter out html code and garbage.
         removeCharacters = ['\t', '\n', 'class="enlaceUniovi"', '</li>', '</a>', '<a href=', 'target="_blank">' , '"']
         for char in removeCharacters:
             locationInfo = locationInfo.replace(char, '')
@@ -109,6 +114,7 @@ def postCalendarRequest(jsessionid, cookies):
         locationInfo = locationInfo.split('<li>')[1:]
         locationInfo[-1] = locationInfo[-1].split('</ul>')[0]
 
+        # save each link in a dictionary.
         for location in locationInfo:
             locations[location.split('  ')[1].lower()] = location.split('  ')[0]
 
@@ -120,15 +126,15 @@ def postCalendarRequest(jsessionid, cookies):
 # Parse the correct class name for each entry.
 def parseLocation(loc, codEspacio):
 
-    #if not enableLocationParsing: return loc
+    if not enableLocationParsing: return loc
 
     try: buildingCode = codEspacio.split('.')[2] # current building code
     except IndexError: # should never happen, but this way it's more robust.
         return loc
 
+    # if location isn't in "Milla del Conocimiento Gijón" or building is outside of EPI Gijón, return location as is.
     floor = codEspacio.split('.')[4]
     if not codEspacio[:5] == "02.01" or not buildingCode in buildingCodes: return loc
-
 
     # Aula AS-1 through Aula AS-11
     result = re.search(r'02.01.02.00.P1.00.(0[1-9]|1[0-1])', codEspacio)
@@ -180,11 +186,16 @@ def parseLocation(loc, codEspacio):
 def parseClassType(type):
 
     if not enableClassTypeParsing: return type
-    typeL = type.lower().replace('.', '')
+
+    typeL = type.lower().replace('.', '') # lowercase and remove dots so it's easier to parse.
     classGroup = type.replace('-', ' ').rsplit()[-1].strip('0').upper()
+
+    # detect bilingual classes and replace with GB flag emoji.
     if classGroup == "INGLÉS": classGroup = "🇬🇧"
     lang = "🇬🇧" if "inglés" in typeL or "ingles" in typeL else ""
 
+    # parse class type. it has to be as generic as possible because different subjects use different
+    # abbreviations or styles for the same thing.
     if "teo" in typeL or typeL == "te" or "expositiv" in typeL: return f"CEX{lang}"
     if "tut" in typeL or "grupal" in typeL or typeL == "tg": return f"TG{classGroup}"
     if "lab" in typeL or typeL == "pl": return f"PL{classGroup}"
@@ -197,7 +208,7 @@ def generateCalendar(rawResponse, locations):
     print("Parsing data and creating calendar...", end=" ", flush=True)
     initTime = time.time()
 
-    stats = {
+    stats = { # dictionary to store stats about the calendar. it's only used if stats are enabled.
         "hours": 0,
         "classes": 0,
         "days": {},
@@ -247,7 +258,7 @@ def generateCalendar(rawResponse, locations):
         if enableLinks: description += f" ({locations[loc.lower()]})"
 
         # Update the statistics.
-        stats["classes"] += 1
+        stats["classes"] += 1 # 'classes' is displayed even if stats are disabled.
         if enableStatistics:
             hours = int(end_hour.split(':')[0]) - int(start_hour.split(':')[0])
             minutes = int(end_hour.split(':')[1]) - int(start_hour.split(':')[1])
@@ -307,10 +318,6 @@ def generateCalendar(rawResponse, locations):
 
 def main(argv) -> int:
     global enableLocationParsing, enableClassTypeParsing, enableStatistics, filename, icsMode, enableLinks, dryRun
-    # Toggle location and class type parsing using the following global variables.
-    # If all special parsing is disabled, this script behaves almost exactly as the original one.
-    # If you intend to use this script for a non-EPI calendar, you should disable them all.
-    # This options can be easily toggled through argument flags.
     enableLocationParsing = True
     enableClassTypeParsing = True
     enableLinks = True
@@ -318,7 +325,7 @@ def main(argv) -> int:
     icsMode = True
     dryRun = False
 
-    session = ""
+    session = "" # JSESSIONID cookie value.
 
     # Read flags from arguments.
     if "--help" in argv or "-h" in argv:
@@ -353,15 +360,17 @@ def main(argv) -> int:
 
     # If the JSESSIONID is not valid, exit.
     if not utils.verifyCookieStructure(session):
-        errorOut("Invalid JSESSIONID.")
+        print("Invalid JSESSIONID.")
+        return 1
 
     startTime = time.time()
     try:
         cookies = extractCookies(getFirstRequest(session))
         rawResponse, locations = postCalendarRequest(session, cookies)
         stats = generateCalendar(rawResponse, locations)
-    except UnboundLocalError:
-        return 2
+    except Exception as e:
+        print(f"× ({e})")
+        return 1 if e.__class__ != AttributeError else 2
 
     print("\n%s, took %.3fs (%d events parsed)" % ("Dry run completed" if dryRun else "Calendar generated", time.time() - startTime, stats["classes"]))
     ext = "ics" if icsMode else "csv"
@@ -422,10 +431,6 @@ def main(argv) -> int:
 
 
     return 0
-
-def errorOut(message):
-    print(f"× ({message})")
-    exit(1)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
