@@ -1,0 +1,7 @@
+.vscode
+*.csv
+*.ics
+__pycache__
+env
+test.py
+flask_session
