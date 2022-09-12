@@ -20,6 +20,12 @@ h1 {
     margin: 0;
 }
 
+span#error-message {
+    color: red;
+    background-color: inherit;
+    text-align: center;
+}
+
 h2 {
     text-align: center;
 }

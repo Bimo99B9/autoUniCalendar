@@ -33,10 +33,13 @@ def form_post():
         print(f"[DEBUG] Class type parsing: {classType}")
         print(f"[DEBUG] iCalendar mode: {extension == '.ics'}")
 
+    """
     if not utils.verifyCookieExpiration(jsessionid):
         print("[DEBUG] [ERROR] Expired cookie submited.")
         # an exception should not be raised in backend, but there is no way to communicate with frontend yet.
-        return serve()
+        return serve(error="ERROR Invalid cookie submited.")
+    """
+
 
     argv = ['autoUniCalendar.py', jsessionid]
 
@@ -64,13 +67,14 @@ def form_post():
         return target
     elif exitCode == 2:
         if debug: print("[DEBUG] [ERROR] ¿No calendar events?")
-        #return serve(slug="ERROR: No hay eventos en el calendario.")
-    if debug: print("[DEBUG] [ERROR] Script failed to generate file.")
-    #return serve(slug="ERROR: No se pudo generar el calendario.")
+        return serve(error="ERROR: No hay eventos en el calendario.")
+    if debug:
+        print("[DEBUG] [ERROR] Script failed to generate file.")
+        return serve(error="ERROR: No se pudo generar el calendario.")
 
     return serve()
 
 
 @app.errorhandler(404)
-def serve():
-    return render_template('index.html')
+def serve(error=""):
+    return render_template('index.html', errormsg=error)
