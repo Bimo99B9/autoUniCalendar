@@ -305,7 +305,11 @@ def generateCalendar(rawResponse, locations):
     if not dryRun:
         if icsMode:
             with open(filename + ".ics", "w") as f:
-                f.writelines(c.serialize_iter())
+                for i in c.serialize_iter():
+                    if "DTSTART" in i.strip() or "DTEND" in i.strip():
+                        f.write(i.replace('Z', ''))
+                    else:
+                        f.write(i)
         else:
             g.close()
 
