@@ -4,14 +4,12 @@
 import re
 from webbrowser import get
 import requests
-import sys
 import urllib.parse
 import os
 import time
 
 from flask import Flask, render_template, request, send_file
 from flask_talisman import Talisman
-import gunicorn
 
 app = Flask(__name__)
 

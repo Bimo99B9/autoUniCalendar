@@ -21,8 +21,8 @@ render_map = sys.argv[2]
 print("[i] autoUniCalendar, a script which converts the Uniovi calendar into Google and Microsoft calendars.")
 print("[i] Designed and programmed by Daniel López Gala from the University of Oviedo.")
 print("[i] Visit Bimo99B9.github.io for more content.\n")
-print(f"[*] The provided session cookie is: {session}")
-print(f"[*] The provided render token is: {render_map}")
+#print(f"[*] The provided session cookie is: {session}")
+#print(f"[*] The provided render token is: {render_map}")
 
 # Function to send the first GET HTTP request using the tokens provided.
 def get_first_request(session_token, render_token):
