@@ -29,8 +29,8 @@ if __name__ == "__main__":
         JSESSIONID,
         cookies[0],
         cookies[1],
-        "1662444000000",
-        "1683612000000",
+        "1662444000000", # Start date
+        "1683612000000", # End date
         cookies[2],
     )
     create_csv("raw.txt")

@@ -228,6 +228,20 @@ input {
     width: 40px;
 }
 
+.date-selectors {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.date-selectors div {
+    display: flex;
+    flex-direction: column;
+    margin-right: 5px;
+}
+
+
+
 footer {
     background-color: #222;
     color: #fff;

@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, send_file
 from flask_talisman import Talisman
 from utils.http_utils import get_first_request, post_second_request
 from utils.data_utils import extract_cookies, create_csv
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -21,8 +22,17 @@ def index():
     user = request.form.get("user")
     password = request.form.get("password")
 
+    start_date = request.form.get("start")
+    end_date = request.form.get("end")
+
+    # Convert to Unix timestamp
+    if start_date and end_date:
+        start_timestamp = int(datetime.strptime(start_date, "%Y-%m-%d").timestamp()) * 1000
+        end_timestamp = int(datetime.strptime(end_date, "%Y-%m-%d").timestamp()) * 1000
+
+
     if cookie != None:
-        autoUniCalendar_cookies(cookie)
+        autoUniCalendar_cookies(cookie, start_timestamp, end_timestamp)
         time.sleep(1)
         return send_file(
             "Calendario.CSV", as_attachment=True, download_name="Calendario.CSV"
@@ -39,7 +49,7 @@ def index():
     return render_template("index.html")
 
 # Get the CSV calendar with the user cookies.
-def autoUniCalendar_cookies(cookie):
+def autoUniCalendar_cookies(cookie, start_date, end_date):
     # Declare global variables.
     JSESSIONID = cookie
     
@@ -49,8 +59,8 @@ def autoUniCalendar_cookies(cookie):
         JSESSIONID,
         cookies[0],
         cookies[1],
-        "1662444000000",
-        "1683612000000",
+        str(start_date), # Start date
+        str(end_date), # End date
         cookies[2],
     )
     create_csv("raw.txt")
