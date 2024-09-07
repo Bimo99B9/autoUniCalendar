@@ -64,8 +64,15 @@ def create_csv(file):
             end = data[3] if len(data) > 3 else '"end": "0000-00-00T00:00:00+0000"'
             description = data[7] if len(data) > 7 else '"description": "No description available"'
 
+            # Use regular expressions to extract values from the fields.
+            # This ensures that we can handle cases where the title has extra colons.
+            title_match = re.search(r'"title":\s*"([^"]*)"', title)
+            if title_match:
+                title_csv = title_match.group(1)
+            else:
+                title_csv = "No Title"
+
             # Make the necessary string transformations to adapt the raw field data into a CSV-readable file.
-            title_csv = re.findall('"([^"]*)"', title.split(":")[1])[0]
             start_date = start.split(" ")[1].split("T")[0].split('"')[1]
             start_date_csv = (
                 start_date.split("-")[2]
