@@ -37,73 +37,74 @@ def create_csv(file):
     print("[@] Creating the CSV file...")
 
     # Create the file.
-    f = open(file, "r")
-    g = open("Calendario.CSV", "w")
+    with open(file, "r") as f, open("Calendario.CSV", "w") as g:
 
-    # Write the headers in the first line.
-    g.write(
-        "Asunto,Fecha de comienzo,Comienzo,Fecha de finalización,Finalización,Todo el dí­a,Reminder on/off,Reminder Date,Reminder Time,Meeting Organizer,Required Attendees,Optional Attendees,Recursos de la reuniÃƒÂ³n,Billing Information,Categories,Description,Location,Mileage,Priority,Private,Sensitivity,Show time as\n"
-    )
-
-    # Separate the events from its XML context.
-    text = f.read().split("<")
-    events = text[5].split("{")
-    del events[0:2]
-
-    # Each field of the event is separated by commas.
-    print("[*] Parsing the data...")
-    for event in events:
-        data = []
-        for field in event.split(","):
-            # Remove empty fields.
-            if field.strip():
-                data.append(field)
-        # Save in variables the fields needed to build the CSV line of the event.
-        title = data[1]
-        start = data[2]
-        end = data[3]
-        description = data[7]
-
-        # Make the necessary strings transformations to adapts the raw field data into a CSV readable file.
-        title_csv = re.findall('"([^"]*)"', title.split(":")[1])[0]
-        start_date = start.split(" ")[1].split("T")[0].split('"')[1]
-        start_date_csv = (
-            start_date.split("-")[2]
-            + "/"
-            + start_date.split("-")[1]
-            + "/"
-            + start_date.split("-")[0]
+        # Write the headers in the first line.
+        g.write(
+            "Asunto,Fecha de comienzo,Comienzo,Fecha de finalización,Finalización,Todo el dí­a,Reminder on/off,Reminder Date,Reminder Time,Meeting Organizer,Required Attendees,Optional Attendees,Recursos de la reuniÃƒÂ³n,Billing Information,Categories,Description,Location,Mileage,Priority,Private,Sensitivity,Show time as\n"
         )
-        start_hour = start.split(" ")[1].split("T")[1].split("+")[0]
-        end_date = end.split(" ")[1].split("T")[0].split('"')[1]
-        end_date_csv = (
-            end_date.split("-")[2]
-            + "/"
-            + end_date.split("-")[1]
-            + "/"
-            + end_date.split("-")[0]
-        )
-        end_hour = end.split(" ")[1].split("T")[1].split("+")[0]
-        alert_date = start_date_csv
-        alert_hour = (
-            str(int(start.split(" ")[1].split("T")[1].split("+")[0].split(":")[0]) - 1)
-            + ":"
-            + start.split(" ")[1].split("T")[1].split("+")[0].split(":")[1]
-            + ":"
-            + start.split(" ")[1].split("T")[1].split("+")[0].split(":")[2]
-        )
-        event_creator = "Universidad de Oviedo"
-        body = description.split('"')[3].replace(r"\n", "")
-        # Write all the fields into a single line, and append it to the file.
-        csv_line = f"{title_csv},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{body},,,Normal,Falso,Normal,2\n"
-        g.write(csv_line)
+
+        # Separate the events from its XML context.
+        text = f.read().split("<")
+        events = text[5].split("{")
+        del events[0:2]
+
+        # Each field of the event is separated by commas.
+        print("[*] Parsing the data...")
+        for event in events:
+            data = []
+            for field in event.split(","):
+                # Remove empty fields.
+                if field.strip():
+                    data.append(field)
+
+            # Handle cases where data is missing by providing default values.
+            title = data[1] if len(data) > 1 else '"title": "No Title"'
+            start = data[2] if len(data) > 2 else '"start": "0000-00-00T00:00:00+0000"'
+            end = data[3] if len(data) > 3 else '"end": "0000-00-00T00:00:00+0000"'
+            description = data[7] if len(data) > 7 else '"description": "No description available"'
+
+            # Make the necessary string transformations to adapt the raw field data into a CSV-readable file.
+            title_csv = re.findall('"([^"]*)"', title.split(":")[1])[0]
+            start_date = start.split(" ")[1].split("T")[0].split('"')[1]
+            start_date_csv = (
+                start_date.split("-")[2]
+                + "/"
+                + start_date.split("-")[1]
+                + "/"
+                + start_date.split("-")[0]
+            )
+            start_hour = start.split(" ")[1].split("T")[1].split("+")[0]
+            end_date = end.split(" ")[1].split("T")[0].split('"')[1]
+            end_date_csv = (
+                end_date.split("-")[2]
+                + "/"
+                + end_date.split("-")[1]
+                + "/"
+                + end_date.split("-")[0]
+            )
+            end_hour = end.split(" ")[1].split("T")[1].split("+")[0]
+            alert_date = start_date_csv
+            alert_hour = (
+                str(int(start.split(" ")[1].split("T")[1].split("+")[0].split(":")[0]) - 1)
+                + ":"
+                + start.split(" ")[1].split("T")[1].split("+")[0].split(":")[1]
+                + ":"
+                + start.split(" ")[1].split("T")[1].split("+")[0].split(":")[2]
+            )
+            event_creator = "Universidad de Oviedo"
+            body = description.split('"')[3].replace(r"\n", "") if len(description.split('"')) > 3 else description
+
+            # Write all the fields into a single line, and append it to the file.
+            csv_line = f"{title_csv},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{body},,,Normal,Falso,Normal,2\n"
+            g.write(csv_line)
 
     print("[*] Events correctly written in the CSV file.")
-    f.close()
-    g.close()
-    print("[*] Removing raw .txt file...")
-    os.remove("raw.txt")
+    
+    # Remove the raw file.
+    os.remove(file)
+    print("[*] Removing raw file...")
+    
     print(
-        "\n[#] Calendar generated. You can now import it in Outlook or Google Calendar selecting 'import from file' and providing the CSV file generated.\n"
+        "\n[#] Calendar generated. You can now import it in Outlook or Google Calendar by selecting 'import from file' and providing the CSV file generated.\n"
     )
-
