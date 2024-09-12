@@ -3,6 +3,7 @@ import re
 import urllib.parse
 import os
 
+
 def extract_cookies(get_response):
     print("[@] Extracting the calendar parameters...")
 
@@ -32,7 +33,9 @@ def extract_cookies(get_response):
     return [source, viewstate, submit]
 
 
-# Function that creates a CSV file readable by the applications, from the raw data previously retrieved.
+import re
+
+
 def create_csv(file):
     print("[@] Creating the CSV file...")
 
@@ -49,69 +52,60 @@ def create_csv(file):
         events = text[5].split("{")
         del events[0:2]
 
-        # Each field of the event is separated by commas.
         print("[*] Parsing the data...")
         for event in events:
-            data = []
-            for field in event.split(","):
-                # Remove empty fields.
-                if field.strip():
-                    data.append(field)
+            data = {}
+
+            # Use regular expressions to extract key-value pairs for each event
+            matches = re.findall(r'"(\w+)":\s*"(.*?)"', event)
+            for match in matches:
+                key, value = match
+                data[key] = value
 
             # Handle cases where data is missing by providing default values.
-            title = data[1] if len(data) > 1 else '"title": "No Title"'
-            start = data[2] if len(data) > 2 else '"start": "0000-00-00T00:00:00+0000"'
-            end = data[3] if len(data) > 3 else '"end": "0000-00-00T00:00:00+0000"'
-            description = data[7] if len(data) > 7 else '"description": "No description available"'
+            title = data.get("title", "No Title")
+            start = data.get("start", "0000-00-00T00:00:00+0000")
+            end = data.get("end", "0000-00-00T00:00:00+0000")
+            description = data.get("description", "No description available")
 
-            # Use regular expressions to extract values from the fields.
-            # This ensures that we can handle cases where the title has extra colons.
-            title_match = re.search(r'"title":\s*"([^"]*)"', title)
-            if title_match:
-                title_csv = title_match.group(1)
-            else:
-                title_csv = "No Title"
+            # Ensure title is properly handled even with commas
+            title_csv = title
 
-            # Make the necessary string transformations to adapt the raw field data into a CSV-readable file.
-            start_date = start.split(" ")[1].split("T")[0].split('"')[1]
-            start_date_csv = (
-                start_date.split("-")[2]
-                + "/"
-                + start_date.split("-")[1]
-                + "/"
-                + start_date.split("-")[0]
-            )
-            start_hour = start.split(" ")[1].split("T")[1].split("+")[0]
-            end_date = end.split(" ")[1].split("T")[0].split('"')[1]
-            end_date_csv = (
-                end_date.split("-")[2]
-                + "/"
-                + end_date.split("-")[1]
-                + "/"
-                + end_date.split("-")[0]
-            )
-            end_hour = end.split(" ")[1].split("T")[1].split("+")[0]
+            # Transform start and end date-time fields into CSV format
+            start_date = start.split("T")[0]
+            start_date_csv = "/".join(
+                start_date.split("-")[::-1]
+            )  # Convert from yyyy-mm-dd to dd/mm/yyyy
+            start_hour = start.split("T")[1].split("+")[0]
+
+            end_date = end.split("T")[0]
+            end_date_csv = "/".join(
+                end_date.split("-")[::-1]
+            )  # Convert from yyyy-mm-dd to dd/mm/yyyy
+            end_hour = end.split("T")[1].split("+")[0]
+
+            # Alert is set 1 hour before the start time
             alert_date = start_date_csv
             alert_hour = (
-                str(int(start.split(" ")[1].split("T")[1].split("+")[0].split(":")[0]) - 1)
+                str(int(start_hour.split(":")[0]) - 1)
                 + ":"
-                + start.split(" ")[1].split("T")[1].split("+")[0].split(":")[1]
+                + start_hour.split(":")[1]
                 + ":"
-                + start.split(" ")[1].split("T")[1].split("+")[0].split(":")[2]
+                + start_hour.split(":")[2]
             )
             event_creator = "Universidad de Oviedo"
-            body = description.split('"')[3].replace(r"\n", "") if len(description.split('"')) > 3 else description
+            body = description.replace(r"\n", "").strip()
 
             # Write all the fields into a single line, and append it to the file.
             csv_line = f"{title_csv},{start_date_csv},{start_hour},{end_date_csv},{end_hour},FALSO,FALSO,{alert_date},{alert_hour},{event_creator},,,,,,{body},,,Normal,Falso,Normal,2\n"
             g.write(csv_line)
 
     print("[*] Events correctly written in the CSV file.")
-    
+
     # Remove the raw file.
     os.remove(file)
     print("[*] Removing raw file...")
-    
+
     print(
         "\n[#] Calendar generated. You can now import it in Outlook or Google Calendar by selecting 'import from file' and providing the CSV file generated.\n"
     )
